@@ -1,0 +1,6 @@
+eccube.event.render.admin_product_product_edit.before:
+    - [addContentOnProductEdit, NORMAL]
+eccube.event.controller.admin_product_product_edit.before:
+    - [registerRelatedProduct, NORMAL]
+eccube.event.render.product_detail.before:
+    - [showRelatedProduct, NORMAL]
