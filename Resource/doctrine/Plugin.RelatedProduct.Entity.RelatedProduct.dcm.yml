@@ -1,0 +1,30 @@
+Plugin\RelatedProduct\Entity\RelatedProduct:
+    type: entity
+    table: plg_related_product
+    repositoryClass: Plugin\RelatedProduct\Repository\RelatedProductRepository
+    id:
+        id:
+            type: smallint
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        explain:
+            type: text
+            nullable: true
+    manyToOne:
+        Product:
+            targetEntity: Eccube\Entity\Product
+            inversedBy: RelatedProducts
+            joinColumn:
+                name: product_id
+                referencedColumnName: product_id
+        ChildProduct:
+            targetEntity: Eccube\Entity\Product
+            inversedBy: RelatedChildProducts
+            joinColumn:
+                name: child_product_id
+                referencedColumnName: product_id
+    lifecycleCallbacks: {  }
