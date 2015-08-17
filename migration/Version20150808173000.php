@@ -10,7 +10,7 @@ class Version20150808173000 extends AbstractMigration
 
     public function up(Schema $schema)
     {
-        $this->createDtbCategoyContentPlugin($schema);
+        $this->createRelatedProductTable($schema);
     }
 
     public function down(Schema $schema)
@@ -18,15 +18,16 @@ class Version20150808173000 extends AbstractMigration
         $schema->dropTable('plg_related_product');
     }
 
-    protected function createDtbCategoryContentPlugin(Schema $schema)
+    protected function createRelatedProductTable(Schema $schema)
     {
         $table = $schema->createTable("plg_related_product");
-        $table
-            ->addColumn('product_id', 'integer')
-            ->addColumn('child_product_id', 'integer')
-            ->addColumn('explain', 'integer', array(
-                'notnull' => true,
+        $table->addColumn('id', 'integer', array('autoincrement' => true));
+        $table->addColumn('product_id', 'integer');
+        $table->addColumn('child_product_id', 'integer');
+        $table->addColumn('explain', 'integer', array(
+                'notnull' => false,
             ))
         ;
+        $table->setPrimaryKey(array('id'));
     }
 }
