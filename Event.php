@@ -52,12 +52,11 @@ class Event
     {
         $app = $this->app;
         $id = $app['request']->attributes->get('id');
-        
+
         $form = $app['form.factory']
             ->createBuilder('admin_product')
             ->remove('class')
             ->getForm();
-
 
         $form->handleRequest($app['request']);
         if ('POST' === $app['request']->getMethod()) {
