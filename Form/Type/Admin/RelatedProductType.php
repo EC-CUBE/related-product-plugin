@@ -45,7 +45,7 @@ class RelatedProductType extends AbstractType
                 'class' => 'Eccube\Entity\Product',
                 'required' => false,
             ))
-            ->add('explain', 'textarea', array(
+            ->add('content', 'textarea', array(
                 'label' => '説明文',
                 'required' => false,
             ))

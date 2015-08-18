@@ -39,7 +39,7 @@ class Event
             ->filter('#main');
 
         $oldHtml = $oldElement->html();
-        $newHtml = $oldHtml . $twig;
+        $newHtml = $oldHtml.$twig;
 
         $html = $crawler->html();
         $html = str_replace($oldHtml, $newHtml, $html);
@@ -52,10 +52,13 @@ class Event
     {
         $app = $this->app;
         $id = $app['request']->attributes->get('id');
-
+        
         $form = $app['form.factory']
             ->createBuilder('admin_product')
+            ->remove('class')
             ->getForm();
+
+
         $form->handleRequest($app['request']);
         if ('POST' === $app['request']->getMethod()) {
             if ($form->isValid()) {
@@ -136,9 +139,9 @@ class Event
             ->last();
         if ($oldElement->count() > 0) {
             $oldHtml = $oldElement->html();
-            $newHtml = $oldHtml . $twig;
+            $newHtml = $oldHtml.$twig;
 
-            $html = $crawler->html() . $modal;
+            $html = $crawler->html().$modal;
             $html = str_replace($oldHtml, $newHtml, $html);
 
             $response->setContent($html);
