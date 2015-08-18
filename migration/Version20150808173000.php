@@ -24,7 +24,7 @@ class Version20150808173000 extends AbstractMigration
         $table->addColumn('id', 'integer', array('autoincrement' => true));
         $table->addColumn('product_id', 'integer');
         $table->addColumn('child_product_id', 'integer');
-        $table->addColumn('explain', 'integer', array(
+        $table->addColumn('content', 'text', array(
                 'notnull' => false,
             ))
         ;

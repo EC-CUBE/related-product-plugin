@@ -6,7 +6,7 @@ class RelatedProduct
 {
     private $id;
 
-    private $explain;
+    private $content;
 
     private $Product;
 
@@ -21,14 +21,14 @@ class RelatedProduct
         return $this->id;
     }
 
-    public function getExplain()
+    public function getContent()
     {
-        return $this->explain;
+        return $this->content;
     }
 
-    public function setExplain($explain)
+    public function setContent($content)
     {
-        $this->explain = $explain;
+        $this->content = $content;
 
         return $this;
     }

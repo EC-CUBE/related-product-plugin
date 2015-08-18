@@ -20,7 +20,7 @@ class RelatedProductController
 
             /** @var $Products \Eccube\Entity\Product[] */
             $Products = $app['eccube.repository.product']
-                ->getQueryBuilderBySearchData($searchData)
+                ->getQueryBuilderBySearchDataForAdmin($searchData)
                 ->getQuery()
                 ->getResult();
 

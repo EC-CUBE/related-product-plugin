@@ -39,7 +39,7 @@ class Event
             ->filter('#main');
 
         $oldHtml = $oldElement->html();
-        $newHtml = $oldHtml . $twig;
+        $newHtml = $oldHtml.$twig;
 
         $html = $crawler->html();
         $html = str_replace($oldHtml, $newHtml, $html);
@@ -48,18 +48,31 @@ class Event
         $event->setResponse($response);
     }
 
-    public function registerRelatedProduct()
+    public function registerRelatedProduct(FilterResponseEvent $event)
     {
         $app = $this->app;
-        $id = $app['request']->attributes->get('id');
 
-        $form = $app['form.factory']
-            ->createBuilder('admin_product')
-            ->getForm();
-        $form->handleRequest($app['request']);
+        if ($app['request']->attributes->get('id')) {
+            $id = $app['request']->attributes->get('id');
+        } else {
+            $location = explode('/', $event->getResponse()->headers->get('location'));
+            $url = explode('/', $app->url('admin_product_product_edit', array('id' => '0')));
+            $diffs = array_values(array_diff($location, $url));
+            $id = $diffs[0];
+        }
+
+        /* @var $Product \Eccube\Entity\Product */
+        $Product = $app['eccube.repository.product']->find($id);
+
+        $builder = $app['form.factory']->createBuilder('admin_product');
+        if ($Product->hasProductClass()) {
+            $builder->remove('class');
+        }
+        $form = $builder->getForm();
+
         if ('POST' === $app['request']->getMethod()) {
+            $form->handleRequest($app['request']);
             if ($form->isValid()) {
-                $Product = $app['eccube.repository.product']->find($id);
                 $app['eccube.plugin.repository.related_product']
                     ->removeChildProduct($Product);
                 $app['orm.em']->flush();
@@ -136,9 +149,9 @@ class Event
             ->last();
         if ($oldElement->count() > 0) {
             $oldHtml = $oldElement->html();
-            $newHtml = $oldHtml . $twig;
+            $newHtml = $oldHtml.$twig;
 
-            $html = $crawler->html() . $modal;
+            $html = $crawler->html().$modal;
             $html = str_replace($oldHtml, $newHtml, $html);
 
             $response->setContent($html);

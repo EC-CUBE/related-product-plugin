@@ -11,7 +11,7 @@ Plugin\RelatedProduct\Entity\RelatedProduct:
             generator:
                 strategy: AUTO
     fields:
-        explain:
+        content:
             type: text
             nullable: true
     manyToOne:

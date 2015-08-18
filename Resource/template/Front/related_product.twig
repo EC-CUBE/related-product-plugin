@@ -6,6 +6,7 @@
                 <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}" class="item_photo">
                     <img src="{{ app.config.image_save_urlpath }}/{{ RelatedProduct.ChildProduct.main_list_image|no_image_product }}">
                 </a>
+                <p>{{ RelatedProduct.content }}</p>
             </li>
         {% endfor %}
     </ul>
