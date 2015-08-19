@@ -32,71 +32,82 @@ class Event
         $Product = $app['eccube.repository.product']->find($id);
         $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(array('Product' => $Product));
 
-        $twig = $app->renderView(
-            'RelatedProduct/Resource/template/Front/related_product.twig',
-            array(
-                'RelatedProducts' => $RelatedProducts,
-            )
-        );
+        if (count($RelatedProducts) > 0) {
+            $twig = $app->renderView(
+                'RelatedProduct/Resource/template/Front/related_product.twig',
+                array(
+                    'RelatedProducts' => $RelatedProducts,
+                )
+            );
 
-        $response = $event->getResponse();
+            $response = $event->getResponse();
 
-        $html = $response->getContent();
-        $crawler = new Crawler($html);
+            $html = $response->getContent();
+            $crawler = new Crawler($html);
 
-        $oldElement = $crawler
-            ->filter('#main');
+            $oldElement = $crawler
+                ->filter('#main');
 
-        $oldHtml = $oldElement->html();
-        $newHtml = $oldHtml.$twig;
+            $oldHtml = $oldElement->html();
+            $newHtml = $oldHtml.$twig;
 
-        $html = $crawler->html();
-        $html = str_replace($oldHtml, $newHtml, $html);
+            $html = $crawler->html();
+            $html = str_replace($oldHtml, $newHtml, $html);
 
-        $response->setContent($html);
-        $event->setResponse($response);
+            $response->setContent($html);
+            $event->setResponse($response);
+        }
     }
 
     public function registerRelatedProduct(FilterResponseEvent $event)
     {
         $app = $this->app;
 
-        if ($app['request']->attributes->get('id')) {
-            $id = $app['request']->attributes->get('id');
-        } else {
-            $location = explode('/', $event->getResponse()->headers->get('location'));
-            $url = explode('/', $app->url('admin_product_product_edit', array('id' => '0')));
-            $diffs = array_values(array_diff($location, $url));
-            $id = $diffs[0];
-        }
-
-        /* @var $Product \Eccube\Entity\Product */
-        $Product = $app['eccube.repository.product']->find($id);
-
-        $builder = $app['form.factory']->createBuilder('admin_product');
-        if ($Product->hasProductClass()) {
-            $builder->remove('class');
-        }
-        $form = $builder->getForm();
-
         if ('POST' === $app['request']->getMethod()) {
+            /* @var $Product \Eccube\Entity\Product */
+            $Product = $this->getTargetProduct($event);
+            $builder = $app['form.factory']->createBuilder('admin_product');
+
+            if ($Product->hasProductClass()) {
+                $builder->remove('class');
+            }
+
+            $form = $builder->getForm();
             $form->handleRequest($app['request']);
+
             if ($form->isValid()) {
-                $app['eccube.plugin.repository.related_product']
-                    ->removeChildProduct($Product);
+                $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
                 $app['orm.em']->flush();
+
                 $RelatedProducts = $form->get('related_collection')->getData();
                 foreach ($RelatedProducts as $RelatedProduct) {
                     /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
                     if ($RelatedProduct->getChildProduct() instanceof \Eccube\Entity\Product) {
-                        $RelatedProduct
-                            ->setProduct($Product);
+                        $RelatedProduct->setProduct($Product);
                         $app['orm.em']->persist($RelatedProduct);
                     }
                 }
                 $app['orm.em']->flush();
             }
         }
+    }
+
+    private function getTargetProduct($event)
+    {
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+        if ($request->attributes->get('id')) {
+            $id = $request->attributes->get('id');
+        } else {
+            $location = explode('/', $response->headers->get('location'));
+            $url = explode('/', $this->app->url('admin_product_product_edit', array('id' => '0')));
+            $diffs = array_values(array_diff($location, $url));
+            $id = $diffs[0];
+        }
+
+        $Product = $this->app['eccube.repository.product']->find($id);
+
+        return $Product;
     }
 
     public function addContentOnProductEdit(FilterResponseEvent $event)
