@@ -64,6 +64,12 @@ class Event
         $app = $this->app;
 
         if ('POST' === $app['request']->getMethod()) {
+            // ProductControllerの登録成功時のみ処理を通す
+            // RedirectResponseかどうかで判定する.
+            $response = $event->getResponse();
+            if (!$response instanceof RedirectResponse) {
+                return;
+            }
             /* @var $Product \Eccube\Entity\Product */
             $Product = $this->getTargetProduct($event);
             $builder = $app['form.factory']->createBuilder('admin_product');
