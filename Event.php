@@ -13,6 +13,7 @@ namespace Plugin\RelatedProduct;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Event
 {
