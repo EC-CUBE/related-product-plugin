@@ -65,6 +65,9 @@ class Event
     public function registerRelatedProduct(FilterResponseEvent $event)
     {
         $app = $this->app;
+        if (!$app->isGranted('ROLE_ADMIN')) {
+            return;
+        }
 
         if ('POST' === $app['request']->getMethod()) {
             // ProductControllerの登録成功時のみ処理を通す
@@ -122,6 +125,9 @@ class Event
     public function addContentOnProductEdit(FilterResponseEvent $event)
     {
         $app = $this->app;
+        if (!$app->isGranted('ROLE_ADMIN')) {
+            return;
+        }
         $request = $event->getRequest();
         $response = $event->getResponse();
         $id = $request->attributes->get('id');
