@@ -43,16 +43,18 @@ class Event
 
             $response = $event->getResponse();
 
+            if ($response instanceof RedirectResponse) {
+                return;
+            }
+
             $html = $response->getContent();
             $crawler = new Crawler($html);
 
-            $oldElement = $crawler
-                ->filter('#main');
-
-            $oldHtml = $oldElement->html();
+            $oldHtml = $crawler->filter('#main')->html();
+            $oldHtml = html_entity_decode($oldHtml, ENT_NOQUOTES, 'UTF-8');
             $newHtml = $oldHtml.$twig;
 
-            $html = $crawler->html();
+            $html = $this->getHtml($crawler);
             $html = str_replace($oldHtml, $newHtml, $html);
 
             $response->setContent($html);
@@ -178,12 +180,29 @@ class Event
             $oldHtml = $oldElement->html();
             $newHtml = $oldHtml.$twig;
 
-            $html = $crawler->html().$modal;
+            $html = $this->getHtml($crawler);
+            $html = $html.$modal;
             $html = str_replace($oldHtml, $newHtml, $html);
 
             $response->setContent($html);
             $event->setResponse($response);
         }
+    }
+
+    /**
+     * 解析用HTMLを取得
+     *
+     * @param Crawler $crawler
+     * @return string
+     */
+    private function getHtml(Crawler $crawler)
+    {
+        $html = '';
+        foreach ($crawler as $domElement) {
+            $domElement->ownerDocument->formatOutput = true;
+            $html .= $domElement->ownerDocument->saveHTML();
+        }
+        return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 
 }
