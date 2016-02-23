@@ -176,7 +176,8 @@ class Event
         $modal = $app->renderView(
             'RelatedProduct/Resource/template/Admin/modal.twig',
             array(
-                'searchForm' => $searchForm->createView()
+                'searchForm' => $searchForm->createView(),
+                'Product' => $Product,
             )
         );
         $oldElement = $crawler

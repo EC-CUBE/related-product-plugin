@@ -33,10 +33,31 @@ class RelatedProductController
                 ->getQuery()
                 ->getResult();
 
+            // 表示されている商品は検索結果に含めない
+            $productId = $request->get('product_id');
+            $ProductsData = array();
+            $count = count($Products);
+            $i = 0;
+            for($i = 0; $i < $count; $i++) {
+                $Product = $Products[$i];
+                if ($Product->getId() != $productId) {
+                    $ProductsData[] = $Product;
+                }
+                if ($i >= 10) {
+                    break;
+                }
+            }
+
+            $message = '';
+            if ($count > $i) {
+                $message = '検索結果の上限を超えています。検索条件を設定してください。';
+            }
+
             return $app->renderView(
                 'RelatedProduct/Resource/template/Admin/modal_result.twig',
                 array(
-                    'Products' => $Products,
+                    'Products' => $ProductsData,
+                    'message' => $message,
                 )
             );
 
