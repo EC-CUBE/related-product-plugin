@@ -8,6 +8,9 @@
  file that was distributed with this source code.
 #}
 
+{% if message is not empty  %}
+<p class="text-danger">{{ message }}</p>
+{% endif %}
 <div class="table-responsive">
     <table class="table">
         <tbody>
