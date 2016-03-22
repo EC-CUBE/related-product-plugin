@@ -50,7 +50,7 @@ class Event
             $html = $response->getContent();
             $crawler = new Crawler($html);
 
-            $oldHtml = $crawler->filter('#main')->html();
+            $oldHtml = $crawler->filter('#main_middle')->html();
             $oldHtml = html_entity_decode($oldHtml, ENT_NOQUOTES, 'UTF-8');
             $newHtml = $oldHtml.$twig;
 
