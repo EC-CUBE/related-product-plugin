@@ -35,7 +35,7 @@ $(function() {
             <svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg>
         </h3>
     </div><!-- /.box-header -->
-    <div class="box-body accpanel">
+    <div class="box-body accpanel" style="{% if toggleActive %}display: block;{% endif %}">
 
         {% for child in form.related_collection %}
             <div class="form-group">

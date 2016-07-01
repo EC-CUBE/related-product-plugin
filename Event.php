@@ -162,6 +162,10 @@ class Event
 
         $form->handleRequest($request);
 
+        $ExistsRelativeProducts = array_filter($form['related_collection']->getData(), function ($v) {
+            return !is_null($v->getChildProduct());
+        });
+
         // 商品検索フォーム
         $searchForm = $app['form.factory']
             ->createBuilder('admin_search_product')
@@ -171,6 +175,7 @@ class Event
             'RelatedProduct/Resource/template/Admin/related_product.twig',
             array(
                 'form' => $form->createView(),
+                'toggleActive' => (count($ExistsRelativeProducts) > 0),
             )
         );
         $modal = $app->renderView(
