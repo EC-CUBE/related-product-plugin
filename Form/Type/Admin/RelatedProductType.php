@@ -19,19 +19,32 @@ use \Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RelatedProductType extends AbstractType
 {
+    protected $app;
+
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('Product', 'entity', array(
-                'class' => 'Eccube\Entity\Product',
-                'required' => false,
-                'mapped' => false,
-            ))
-            ->add('ChildProduct', 'entity', array(
-                'label' => '関連商品',
-                'class' => 'Eccube\Entity\Product',
-                'required' => false,
-            ))
+            ->add(
+                $builder
+                    ->create('Product', 'hidden', array(
+                        'required' => false,
+                        'mapped' => false,
+                    ))
+                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($this->app['orm.em'], 'Eccube\Entity\Product'))
+            )
+            ->add(
+                $builder
+                    ->create('ChildProduct', 'hidden', array(
+                        'label' => '関連商品',
+                        'required' => false,
+                    ))
+                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($this->app['orm.em'], 'Eccube\Entity\Product'))
+            )
             ->add('content', 'textarea', array(
                 'label' => '説明文',
                 'required' => false,

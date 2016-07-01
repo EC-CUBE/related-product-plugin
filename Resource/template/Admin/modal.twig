@@ -13,10 +13,6 @@
 <script>
     var searchId = null;
     $(function () {
-        for (var i = 0; i < 5; i++) {
-            var $select = $("#admin_product_related_collection_" + i + "_ChildProduct :selected");
-            $("#view_" + i).text($select.text());
-        }
 
         $("a[id^='search_']").on("click", function () {
             searchId = $(this)
@@ -46,10 +42,9 @@
             });
         });
     });
-    function setProduct(id) {
+    function setProduct(id, name) {
         $("#admin_product_related_collection_" + searchId + "_ChildProduct").val(id);
-        var $selected = $("#admin_product_related_collection_" + searchId + "_ChildProduct :selected");
-        $("#view_" + searchId).text($selected.text());
+        $("#view_" + searchId).text(name);
         $("#searchResult").children().remove();
         $("#searchProductModal").modal("hide");
     };

@@ -23,7 +23,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
             ->bind('admin_related_product_search');
         // Formの定義
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new \Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType();
+            $types[] = new \Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType($app);
 
             return $types;
         }));

@@ -45,9 +45,9 @@ $(function() {
                         商品を選択
                     </a>
                 </div>
-                <label id="view_{{ loop.index0 }}" class="control-label"></label>
-                {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' } }) }}
-                {% if child.vars.value.id is not null %}
+                <label id="view_{{ loop.index0 }}" class="control-label">{{ child.vars.value.ChildProduct }}</label>
+                {{ form_widget(child.ChildProduct) }}
+                {% if child.vars.value.ChildProduct is not null %}
                     <button type="button" class="btn btn-default text-right delete" data-id="{{ loop.index0 }}">削除</button>
                 {% endif %}
             </div>
