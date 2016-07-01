@@ -14,6 +14,7 @@ namespace Plugin\RelatedProduct\ServiceProvider;
 use Eccube\Application;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class RelatedProductServiceProvider implements ServiceProviderInterface
 {
@@ -42,6 +43,18 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         $app['eccube.plugin.service.related_product'] = $app->share(function () use ($app) {
             return new \Plugin\RelatedProduct\Service\RelatedProductService($app);
         });
+
+        // Config
+        $app['config'] = $app->share($app->extend('config', function ($configAll) {
+            $configYml = __DIR__ . '/../config/config.yml';
+            if (file_exists($configYml)) {
+                $config = Yaml::parse($configYml);
+                if (is_array($config)) {
+                    $configAll = array_merge($configAll, $config);
+                }
+            }
+            return $configAll;
+        }));
     }
 
     public function boot(BaseApplication $app)

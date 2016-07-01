@@ -150,7 +150,7 @@ class Event
                 'Product' => $Product,
             ));
 
-        $loop = 5 - count($RelatedProducts);
+        $loop = $this->app['config']['plg_related_product_count'] - count($RelatedProducts);
         for ($i = 0; $i < $loop; $i++) {
             $RelatedProduct = new \Plugin\RelatedProduct\Entity\RelatedProduct();
             $RelatedProduct

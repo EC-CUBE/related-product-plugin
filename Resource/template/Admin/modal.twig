@@ -13,7 +13,7 @@
 <script>
     var searchId = null;
     $(function () {
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < {{ app.config.plg_related_product_count }}; i++) {
             var $select = $("#admin_product_related_collection_" + i + "_ChildProduct :selected");
             $("#view_" + i).text($select.text());
         }
