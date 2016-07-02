@@ -12,6 +12,7 @@
 namespace Plugin\RelatedProduct\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * CategoryTotalCountRepository
@@ -28,5 +29,27 @@ class RelatedProductRepository extends EntityRepository
         foreach ($Children as $Child) {
             $em->remove($Child);
         }
+    }
+
+    /**
+     * 関連商品の配列を取得する (削除フラグを考慮)
+     *
+     * @param \Eccube\Entity\Product $Product
+     * @return array
+     */
+    public function getChildProducts($Product)
+    {
+        if (!$Product || is_null($Product->getId())) {
+            return array();
+        }
+        $qb = $this->createQueryBuilder('rp');
+        return $qb
+            ->innerJoin('Eccube\Entity\Product', 'cp', Join::WITH, 'rp.ChildProduct = cp')
+            ->andWhere('cp.del_flg = 0')
+            ->andWhere('rp.Product = :Product')
+            ->setParameter('Product', $Product)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

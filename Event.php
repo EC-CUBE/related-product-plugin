@@ -31,7 +31,7 @@ class Event
 
         $id = $app['request']->attributes->get('id');
         $Product = $app['eccube.repository.product']->find($id);
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(array('Product' => $Product));
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->getChildProducts($Product);
 
         if (count($RelatedProducts) > 0) {
             $twig = $app->renderView(
@@ -145,10 +145,7 @@ class Event
             $Product = new \Eccube\Entity\Product();
         }
 
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
-            array(
-                'Product' => $Product,
-            ));
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->getChildProducts($Product);
 
         $loop = 5 - count($RelatedProducts);
         for ($i = 0; $i < $loop; $i++) {

@@ -11,6 +11,8 @@
 
 namespace Plugin\RelatedProduct\Entity;
 
+use Eccube\Util\EntityUtil;
+
 class RelatedProduct
 {
     private $id;
@@ -44,6 +46,9 @@ class RelatedProduct
 
     public function getProduct()
     {
+        if (EntityUtil::isEmpty($this->Product)) {
+            return null;
+        }
         return $this->Product;
     }
 
@@ -68,6 +73,9 @@ class RelatedProduct
 
     public function getChildProduct()
     {
+        if (EntityUtil::isEmpty($this->ChildProduct)) {
+            return null;
+        }
         return $this->ChildProduct;
     }
 
