@@ -34,11 +34,14 @@ class RelatedProductRepository extends EntityRepository
     /**
      * 関連商品の配列を取得する (削除フラグを考慮)
      *
-     * @param $Product
+     * @param \Eccube\Entity\Product $Product
      * @return array
      */
     public function getChildProducts($Product)
     {
+        if (!$Product || is_null($Product->getId())) {
+            return array();
+        }
         $qb = $this->createQueryBuilder('rp');
         return $qb
             ->innerJoin('Eccube\Entity\Product', 'cp', Join::WITH, 'rp.ChildProduct = cp')
