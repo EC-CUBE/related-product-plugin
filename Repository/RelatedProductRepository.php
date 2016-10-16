@@ -29,4 +29,19 @@ class RelatedProductRepository extends EntityRepository
             $em->remove($Child);
         }
     }
+
+    public function getChildProducts($Product) {
+        $relatedProduct = $this->findBy(array('Product' => $Product));
+        $relatedProductForDisplay = array();
+        foreach ($relatedProduct as $Child) {
+            dump($Child);
+            if ($Child->getChildProduct()->isEnable()) {
+                $relatedProductForDisplay[] = $Child;
+            }
+        }
+
+        return $relatedProductForDisplay;
+    }
+
+
 }
