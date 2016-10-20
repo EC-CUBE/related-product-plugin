@@ -192,14 +192,14 @@ class EventLegacy
             ->getForm();
 
         $twig = $app->renderView(
-            'RelatedProduct/Resource/template/Admin/related_product.twig',
+            'RelatedProduct/Resource/template/admin/related_product.twig',
             array(
                 'form' => $form->createView(),
                 'RelatedProducts' => $RelatedProducts
             )
         );
         $modal = $app->renderView(
-            'RelatedProduct/Resource/template/Admin/modal.twig',
+            'RelatedProduct/Resource/template/admin/modal.twig',
             array(
                 'searchForm' => $searchForm->createView(),
                 'Product' => $Product,
