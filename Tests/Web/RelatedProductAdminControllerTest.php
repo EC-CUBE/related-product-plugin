@@ -261,3 +261,5 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
 }
+
+
