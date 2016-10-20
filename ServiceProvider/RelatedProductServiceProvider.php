@@ -66,7 +66,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
             return $translator;
         }));
 
-        // メニュー登録
+        // Add config file
         $app['config'] = $app->share($app->extend('config', function ($config) {
             // Update path
             $pathFile = __DIR__.'/../Resource/config/path.yml';

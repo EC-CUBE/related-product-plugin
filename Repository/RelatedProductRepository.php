@@ -33,4 +33,24 @@ class RelatedProductRepository extends EntityRepository
             $em->remove($Child);
         }
     }
+
+    /**
+     *show related product with status is display
+     * @param $Product
+     * @param $Disp
+     * @return array
+     */
+    public function showRelatedProduct($Product, $Disp)
+    {
+        $query = $this->createQueryBuilder('rp')
+            ->innerJoin('Eccube\Entity\Product', 'p', 'WITH', 'p.id = rp.ChildProduct')
+            ->andWhere('rp.Product = :Product')
+            ->andWhere('p.Status = :Disp')
+            ->setParameter('Product', $Product)
+            ->setParameter('Disp', $Disp)
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
 }

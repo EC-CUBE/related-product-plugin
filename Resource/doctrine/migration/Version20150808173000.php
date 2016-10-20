@@ -26,7 +26,7 @@ class Version20150808173000 extends AbstractMigration
     const NAME = 'plg_related_product';
 
     protected $entities = array(
-        'Plugin\Recommend\Entity\RelatedProduct',
+        'Plugin\RelatedProduct\Entity\RelatedProduct',
     );
 
     /**
@@ -70,7 +70,7 @@ class Version20150808173000 extends AbstractMigration
         } else {
             // this down() migration is auto-generated, please modify it to your needs
             $schema->dropTable(self::NAME);
-            $schema->dropSequence('plg_related_product_related_product_id_seq');
+            $schema->dropSequence('plg_related_product_id_seq');
         }
     }
 

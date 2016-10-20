@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Eccube\Entity\Master\Disp;
 
 class EventLegacy
 {
@@ -39,12 +40,13 @@ class EventLegacy
         $app = $this->app;
 
         $id = $app['request']->attributes->get('id');
+        $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
         $Product = $app['eccube.repository.product']->find($id);
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(array('Product' => $Product));
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->showRelatedProduct($Product, $Disp);
 
         if (count($RelatedProducts) > 0) {
             $twig = $app->renderView(
-                'RelatedProduct/Resource/template/Front/related_product.twig',
+                'RelatedProduct/Resource/template/front/related_product.twig',
                 array(
                     'RelatedProducts' => $RelatedProducts,
                 )

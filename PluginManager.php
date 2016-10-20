@@ -59,9 +59,9 @@ class PluginManager extends AbstractPluginManager
      */
     public function uninstall($config, $app)
     {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
         // リソースファイルの削除
         $this->removeAssets($app);
+        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
     }
 
     /**
