@@ -95,7 +95,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -118,7 +118,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -141,7 +141,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -158,7 +158,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => 'パーコレーター', 'category_id' => 1, '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => 'パーコレーター', 'category_id' => 1, '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -175,7 +175,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => 'cafe-01', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => 'cafe-01', 'category_id' => '', '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -192,7 +192,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => 1, 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => 1, 'category_id' => '', '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -209,7 +209,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_recommend_search_product', array( 'id' => '', 'category_id' => 6, '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => 6, '_token' => 'dummy', )),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')

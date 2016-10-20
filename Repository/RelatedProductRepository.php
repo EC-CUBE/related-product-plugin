@@ -48,6 +48,7 @@ class RelatedProductRepository extends EntityRepository
             ->andWhere('p.Status = :Disp')
             ->setParameter('Product', $Product)
             ->setParameter('Disp', $Disp)
+            ->orderBy('rp.id')
             ->getQuery();
 
         return $query->getResult();
