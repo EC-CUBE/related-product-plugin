@@ -18,24 +18,10 @@ class PluginManager extends AbstractPluginManager
 {
 
     /**
-     * @var string コピー元リソースディレクトリ
-     */
-    private $origin;
-
-    /**
-     * @var string コピー先リソースディレクトリ
-     */
-    private $target;
-
-    /**
      * PluginManager constructor.
      */
     public function __construct()
     {
-        // コピー元のディレクトリ
-        $this->origin = __DIR__.'/Resource/assets';
-        // コピー先のディレクトリ
-        $this->target = __DIR__ . '/../../../html/plugin/relatedproduct';
     }
 
     /**
@@ -47,8 +33,6 @@ class PluginManager extends AbstractPluginManager
      */
     public function install($config, $app)
     {
-        // リソースファイルのコピー
-        $this->copyAssets($app);
     }
 
     /**
@@ -59,8 +43,6 @@ class PluginManager extends AbstractPluginManager
      */
     public function uninstall($config, $app)
     {
-        // リソースファイルの削除
-        $this->removeAssets($app);
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
     }
 
@@ -96,25 +78,5 @@ class PluginManager extends AbstractPluginManager
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
     }
 
-    /**
-     * リソースファイル等をコピー
-     *
-     * @param $app
-     */
-    private function copyAssets($app)
-    {
-        $file = new Filesystem();
-        $file->mirror($this->origin, $this->target.'/assets');
-    }
-
-    /**
-     * コピーしたリソースファイルなどを削除
-     *
-     * @param $app
-     */
-    private function removeAssets($app)
-    {
-        $file = new Filesystem();
-        $file->remove($this->target);
-    }
 }
+
