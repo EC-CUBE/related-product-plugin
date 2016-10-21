@@ -38,7 +38,6 @@ class EventLegacy
     public function showRelatedProduct(FilterResponseEvent $event)
     {
         $app = $this->app;
-
         $id = $app['request']->attributes->get('id');
         $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
         $Product = $app['eccube.repository.product']->find($id);
@@ -83,8 +82,9 @@ class EventLegacy
         if (!$app->isGranted('ROLE_ADMIN')) {
             return;
         }
+        $request = $event->getRequest();
 
-        if ('POST' === $app['request']->getMethod()) {
+        if ('POST' === $request->getMethod()) {
             // ProductControllerの登録成功時のみ処理を通す
             // RedirectResponseかどうかで判定する.
             $response = $event->getResponse();
@@ -100,7 +100,7 @@ class EventLegacy
             }
 
             $form = $builder->getForm();
-            $form->handleRequest($app['request']);
+            $form->handleRequest($request);
 
             if ($form->isValid()) {
                 $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
