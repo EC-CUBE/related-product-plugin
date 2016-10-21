@@ -6,3 +6,14 @@ eccube.event.render.admin_product_product_edit.before:
     - [registerRelatedProduct, NORMAL]
 eccube.event.render.product_detail.before:
     - [showRelatedProduct, NORMAL]
+
+# New hookpoint on version >= 3.0.9
+#eccube.event.route.shopping.response:
+eccube.event.route.admin_product_product_new.response:
+    - [onProductEditRender, NORMAL]
+    - [onProductEditRegister, NORMAL]
+eccube.event.route.admin_product_product_edit.response:
+    - [onProductEditRender, NORMAL]
+    - [onProductEditRegister, NORMAL]
+eccube.event.route.product_detail.response:
+    - [onProductDetailRender, NORMAL]

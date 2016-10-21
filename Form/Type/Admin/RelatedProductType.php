@@ -11,16 +11,36 @@
 
 namespace Plugin\RelatedProduct\Form\Type\Admin;
 
-use \Symfony\Component\Form\AbstractType;
-use \Symfony\Component\Form\Extension\Core\Type;
-use \Symfony\Component\Form\FormBuilderInterface;
-use \Symfony\Component\Validator\Constraints as Assert;
-use \Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 class RelatedProductType extends AbstractType
 {
+    /**
+     * @var \Eccube\Application
+     */
+    private $app;
+
+    /**
+     * RelatedProductType constructor.
+     * @param $app
+     */
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * RelatedProduct form builder
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $app = $this->app;
         $builder
             ->add('Product', 'entity', array(
                 'class' => 'Eccube\Entity\Product',
@@ -35,14 +55,24 @@ class RelatedProductType extends AbstractType
             ->add('content', 'textarea', array(
                 'label' => '説明文',
                 'required' => false,
+                'trim' => true,
+                'constraints' => array(
+                    new Assert\Length(array(
+                        'max' => $app['config']['text_area_len'],
+                    )),
+                ),
+                'attr' => array(
+                    'maxlength' => $app['config']['text_area_len'],
+                    'placeholder' => $app->trans('plugin.related_product.type.comment.placeholder')),
             ))
         ;
     }
 
     /**
      * {@inheritdoc}
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Plugin\RelatedProduct\Entity\RelatedProduct',
@@ -50,6 +80,10 @@ class RelatedProductType extends AbstractType
 
     }
 
+    /**
+     * form name
+     * @return string
+     */
     public function getName()
     {
         return 'admin_related_product';

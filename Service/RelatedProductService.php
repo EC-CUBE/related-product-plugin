@@ -25,11 +25,20 @@ class RelatedProductService
 
     private $unit;
 
+    /**
+     * RelatedProductService constructor.
+     * @param $app
+     */
     public function __construct($app)
     {
         $this->app = $app;
     }
 
+
+    /**
+     * @param $reportType
+     * @return $this
+     */
     public function setReportType($reportType)
     {
         $this->reportType = $reportType;
@@ -37,6 +46,11 @@ class RelatedProductService
         return $this;
     }
 
+    /**
+     * @param $termType
+     * @param $request
+     * @return $this
+     */
     public function setTerm($termType, $request)
     {
         // termStart <= X < termEnd となるように整形する
@@ -70,6 +84,10 @@ class RelatedProductService
         return $this;
     }
 
+    /**
+     * @param $term
+     * @return $this
+     */
     private function setTermStart($term)
     {
         $this->termStart = $term;
@@ -77,6 +95,10 @@ class RelatedProductService
         return $this;
     }
 
+    /**
+     * @param $term
+     * @return $this
+     */
     private function setTermEnd($term)
     {
         $this->termEnd = $term;
@@ -84,6 +106,9 @@ class RelatedProductService
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
         $app = $this->app;
@@ -116,6 +141,10 @@ class RelatedProductService
         return $this->convert($result);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convert($data)
     {
         $result = array();
@@ -134,6 +163,10 @@ class RelatedProductService
         return $result;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByTerm($data)
     {
         $start = new \DateTime($this->termStart);
@@ -183,6 +216,9 @@ class RelatedProductService
         );
     }
 
+    /**
+     * @return mixed
+     */
     private function formatUnit()
     {
         $unit = array(
@@ -194,6 +230,10 @@ class RelatedProductService
         return $unit[$this->unit];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByProduct($data)
     {
         $products = array();
@@ -237,6 +277,11 @@ class RelatedProductService
         );
     }
 
+    /**
+     * @param $i
+     * @param string $type
+     * @return mixed
+     */
     private function getColor($i, $type = 'color')
     {
         $map = array(
@@ -259,6 +304,10 @@ class RelatedProductService
         return $map[$no][$type];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByAge($data)
     {
         $raw = array();
