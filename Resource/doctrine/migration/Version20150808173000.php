@@ -18,6 +18,10 @@ use Eccube\Application;
 use Eccube\Common\Constant;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class Version20150808173000
+ * @package DoctrineMigrations
+ */
 class Version20150808173000 extends AbstractMigration
 {
     /**
@@ -25,13 +29,15 @@ class Version20150808173000 extends AbstractMigration
      */
     const NAME = 'plg_related_product';
 
+    /**
+     * @var array table eitity
+     */
     protected $entities = array(
         'Plugin\RelatedProduct\Entity\RelatedProduct',
     );
 
     /**
      * Setup table
-     *
      * @param Schema $schema
      */
     public function up(Schema $schema)
@@ -45,7 +51,6 @@ class Version20150808173000 extends AbstractMigration
 
     /**
      * remove table
-     *
      * @param Schema $schema
      */
     public function down(Schema $schema)
@@ -76,7 +81,6 @@ class Version20150808173000 extends AbstractMigration
 
     /**
      * create related product table for version < 3.0.9
-     *
      * @param Schema $schema
      */
     protected function createRelatedProductTableForOldVersion(Schema $schema)
@@ -87,8 +91,7 @@ class Version20150808173000 extends AbstractMigration
         $table->addColumn('child_product_id', 'integer');
         $table->addColumn('content', 'text', array(
                 'notnull' => false,
-            ))
-        ;
+        ));
         $table->setPrimaryKey(array('id'));
     }
 

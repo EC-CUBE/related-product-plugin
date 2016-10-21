@@ -18,6 +18,10 @@ use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
 
+/**
+ * Class EventLegacy
+ * @package Plugin\RelatedProduct
+ */
 class EventLegacy
 {
     private $app;
@@ -235,6 +239,7 @@ class EventLegacy
             $domElement->ownerDocument->formatOutput = true;
             $html .= $domElement->ownerDocument->saveHTML();
         }
+
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 

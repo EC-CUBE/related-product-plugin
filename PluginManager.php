@@ -12,8 +12,11 @@
 namespace Plugin\RelatedProduct;
 
 use Eccube\Plugin\AbstractPluginManager;
-use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Class PluginManager
+ * @package Plugin\RelatedProduct
+ */
 class PluginManager extends AbstractPluginManager
 {
 

@@ -14,6 +14,10 @@ namespace Plugin\RelatedProduct;
 use Eccube\Common\Constant;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
+/**
+ * Class Event
+ * @package Plugin\RelatedProduct
+ */
 class Event
 {
     /**
@@ -28,7 +32,7 @@ class Event
 
     /**
      * Event constructor.
-     * @param $app
+     * @param \Eccube\Application $app
      */
     public function __construct($app)
     {
@@ -36,8 +40,8 @@ class Event
         $this->legacyEvent = new EventLegacy($app);
     }
 
-    // フロント：商品詳細画面に関連商品を表示
     /**
+     * フロント：商品詳細画面に関連商品を表示
      * @param FilterResponseEvent $event
      */
     public function showRelatedProduct(FilterResponseEvent $event)
@@ -72,8 +76,8 @@ class Event
         $this->legacyEvent->addContentOnProductEdit($event);
     }
 
-    // フロント：商品詳細画面に関連商品を表示
     /**
+     * フロント：商品詳細画面に関連商品を表示
      * @param FilterResponseEvent $event
      */
     public function onProductDetailRender(FilterResponseEvent $event)
@@ -101,7 +105,6 @@ class Event
 
     /**
      * v3.0.9以降のフックポイントに対応しているのか
-     *
      * @return bool
      */
     private function supportNewHookPoint()

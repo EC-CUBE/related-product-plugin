@@ -23,8 +23,17 @@ use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Plugin\RelatedProduct\Service\RelatedProductService;
 use Silex\Application;
 
+/**
+ * Class RelatedProductServiceProvider
+ * @package Plugin\RelatedProduct\ServiceProvider
+ */
 class RelatedProductServiceProvider implements ServiceProviderInterface
 {
+
+    /**
+     * register
+     * @param Application $app
+     */
     public function register(BaseApplication $app)
     {
         $app->post('/related_product/search_product', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
@@ -50,11 +59,6 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         $app['eccube.plugin.repository.related_product'] = function () use ($app) {
             return $app['orm.em']->getRepository('\Plugin\RelatedProduct\Entity\RelatedProduct');
         };
-
-        // Service
-        $app['eccube.plugin.service.related_product'] = $app->share(function () use ($app) {
-            return new RelatedProductService($app);
-        });
 
         // メッセージ登録
         $app['translator'] = $app->share($app->extend('translator', function ($translator, Application $app) {
@@ -90,31 +94,11 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
 
             return $config;
         }));
-
-        // ログファイル設定
-        $app['monolog.RelatedProduct'] = $app->share(function ($app) {
-            $loggerClass = $app['monolog.logger.class'];
-            $loggerName = 'plugin.RelatedProduct';
-            $logger = new $loggerClass($loggerName);
-
-            $file = $app['config']['root_dir'].'/app/log/RelatedProduct.log';
-            $rotateHandler = new RotatingFileHandler($file, $app['config']['log']['max_files'], Logger::INFO);
-            $rotateHandler->setFilenameFormat(
-                'RelatedProduct_{date}',
-                'Y-m-d'
-            );
-
-            $logger->pushHandler(
-                new FingersCrossedHandler(
-                    $rotateHandler,
-                    new ErrorLevelActivationStrategy(Logger::INFO)
-                )
-            );
-
-            return $logger;
-        });
     }
 
+    /**
+     * @param Application $app
+     */
     public function boot(BaseApplication $app)
     {
     }

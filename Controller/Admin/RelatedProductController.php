@@ -16,12 +16,16 @@ use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception as HttpException;
 
+/**
+ * Class RelatedProductController
+ * @package Plugin\RelatedProduct\Controller\Admin
+ */
 class RelatedProductController
 {
     /**
      * @param Application $app
      * @param Request $request
-     * @param integer     $page_no
+     * @param integer $page_no
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searchProduct(Application $app, Request $request, $page_no = null)
@@ -30,7 +34,6 @@ class RelatedProductController
             return null;
         }
 
-        $app['monolog']->addDebug('search product start.');
         $pageCount = $app['config']['default_page_count'];
         $session = $app['session'];
         if ('POST' === $request->getMethod()) {
@@ -65,16 +68,12 @@ class RelatedProductController
         /** @var ArrayCollection */
         $arrProduct = $pagination->getItems();
 
-        if (count($arrProduct) == 0) {
-            $app['monolog']->addDebug('search product not found.');
-        }
-
         $paths = array();
         $paths[] = $app['config']['template_admin_realdir'];
         $app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($paths));
 
         return $app->render('RelatedProduct/Resource/template/admin/modal_result.twig', array(
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ));
     }
 }

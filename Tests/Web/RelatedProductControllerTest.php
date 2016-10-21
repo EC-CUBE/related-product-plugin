@@ -14,6 +14,10 @@ namespace Plugin\RelatedProduct\Tests\Web;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
 
+/**
+ * Class RelatedProductControllerTest
+ * @package Plugin\RelatedProduct\Tests\Web
+ */
 class RelatedProductControllerTest extends AbstractWebTestCase
 {
 

@@ -16,7 +16,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
+/**
+ * Class RelatedProductType
+ * @package Plugin\RelatedProduct\Form\Type\Admin
+ */
 class RelatedProductType extends AbstractType
 {
     /**
@@ -26,7 +29,7 @@ class RelatedProductType extends AbstractType
 
     /**
      * RelatedProductType constructor.
-     * @param $app
+     * @param \Eccube\Application $app
      */
     public function __construct($app)
     {
@@ -58,14 +61,14 @@ class RelatedProductType extends AbstractType
                 'trim' => true,
                 'constraints' => array(
                     new Assert\Length(array(
-                        'max' => $app['config']['text_area_len'],
+                        'max' => $app['config']['related_product_text_area_len'],
                     )),
                 ),
                 'attr' => array(
-                    'maxlength' => $app['config']['text_area_len'],
-                    'placeholder' => $app->trans('plugin.related_product.type.comment.placeholder')),
-            ))
-        ;
+                    'maxlength' => $app['config']['related_product_text_area_len'],
+                    'placeholder' => $app->trans('plugin.related_product.type.comment.placeholder'),
+                ),
+            ));
     }
 
     /**
@@ -77,7 +80,6 @@ class RelatedProductType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'Plugin\RelatedProduct\Entity\RelatedProduct',
         ));
-
     }
 
     /**

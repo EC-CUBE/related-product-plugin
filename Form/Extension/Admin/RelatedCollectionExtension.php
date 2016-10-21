@@ -16,6 +16,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+/**
+ * Class RelatedCollectionExtension
+ * @package Plugin\RelatedProduct\Form\Extension\Admin
+ */
 class RelatedCollectionExtension extends AbstractTypeExtension
 {
     /**

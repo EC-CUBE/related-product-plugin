@@ -23,7 +23,7 @@ class RelatedProductRepository extends EntityRepository
 {
     /**
      * 子商品の削除
-     * @param $Product
+     * @param \Eccube\Entity\Product $Product
      */
     public function removeChildProduct($Product)
     {
@@ -35,9 +35,9 @@ class RelatedProductRepository extends EntityRepository
     }
 
     /**
-     *show related product with status is display
-     * @param $Product
-     * @param $Disp
+     * show related product with status is display
+     * @param \Eccube\Entity\Product $Product
+     * @param \Eccube\Entity\Master\Disp $Disp
      * @return array
      */
     public function showRelatedProduct($Product, $Disp)
