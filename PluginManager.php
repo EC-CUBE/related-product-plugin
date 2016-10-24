@@ -14,12 +14,10 @@ namespace Plugin\RelatedProduct;
 use Eccube\Plugin\AbstractPluginManager;
 
 /**
- * Class PluginManager
- * @package Plugin\RelatedProduct
+ * Class PluginManager.
  */
 class PluginManager extends AbstractPluginManager
 {
-
     /**
      * PluginManager constructor.
      */
@@ -28,10 +26,11 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * プラグインインストール時の処理
+     * プラグインインストール時の処理.
      *
      * @param $config
      * @param $app
+     *
      * @throws \Exception
      */
     public function install($config, $app)
@@ -39,7 +38,7 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * プラグイン削除時の処理
+     * プラグイン削除時の処理.
      *
      * @param $config
      * @param $app
@@ -50,10 +49,11 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * プラグイン有効時の処理
+     * プラグイン有効時の処理.
      *
      * @param $config
      * @param $app
+     *
      * @throws \Exception
      */
     public function enable($config, $app)
@@ -62,7 +62,7 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * プラグイン無効時の処理
+     * プラグイン無効時の処理.
      *
      * @param $config
      * @param $app
@@ -72,7 +72,8 @@ class PluginManager extends AbstractPluginManager
     }
 
     /**
-     * プラグイン更新時の処理
+     * プラグイン更新時の処理.
+     *
      * @param $config
      * @param $app
      */
@@ -80,6 +81,4 @@ class PluginManager extends AbstractPluginManager
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
     }
-
 }
-

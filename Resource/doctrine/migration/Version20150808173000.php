@@ -1,13 +1,12 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace DoctrineMigrations;
 
@@ -19,8 +18,7 @@ use Eccube\Common\Constant;
 use Doctrine\ORM\EntityManager;
 
 /**
- * Class Version20150808173000
- * @package DoctrineMigrations
+ * Class Version20150808173000.
  */
 class Version20150808173000 extends AbstractMigration
 {
@@ -37,7 +35,8 @@ class Version20150808173000 extends AbstractMigration
     );
 
     /**
-     * Setup table
+     * Setup table.
+     *
      * @param Schema $schema
      */
     public function up(Schema $schema)
@@ -50,7 +49,8 @@ class Version20150808173000 extends AbstractMigration
     }
 
     /**
-     * remove table
+     * remove table.
+     *
      * @param Schema $schema
      */
     public function down(Schema $schema)
@@ -80,12 +80,13 @@ class Version20150808173000 extends AbstractMigration
     }
 
     /**
-     * create related product table for version < 3.0.9
+     * create related product table for version < 3.0.9 .
+     *
      * @param Schema $schema
      */
     protected function createRelatedProductTableForOldVersion(Schema $schema)
     {
-        $table = $schema->createTable("plg_related_product");
+        $table = $schema->createTable('plg_related_product');
         $table->addColumn('id', 'integer', array('autoincrement' => true));
         $table->addColumn('product_id', 'integer');
         $table->addColumn('child_product_id', 'integer');
@@ -96,9 +97,10 @@ class Version20150808173000 extends AbstractMigration
     }
 
     /**
-     * create related product table for version > 3.0.9
+     * create related product table for version > 3.0.9 .
      *
      * @param Schema $schema
+     *
      * @return true
      */
     protected function createRelatedProductTable(Schema $schema)
@@ -119,9 +121,10 @@ class Version20150808173000 extends AbstractMigration
     }
 
     /**
-     * Get metadata
+     * Get metadata.
      *
      * @param EntityManager $em
+     *
      * @return array
      */
     protected function getMetadata(EntityManager $em)

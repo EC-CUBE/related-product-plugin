@@ -1,13 +1,12 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\RelatedProduct\Tests\Web;
 
@@ -15,14 +14,12 @@ use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
 
 /**
- * Class RelatedProductAdminControllerTest
- * @package Plugin\RelatedProduct\Tests\Web
+ * Class RelatedProductAdminControllerTest.
  */
 class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 {
-
     /**
-     * call parent setUp
+     * call parent setUp.
      */
     public function setUp()
     {
@@ -30,7 +27,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * test route product edit page
+     * test route product edit page.
      */
     public function testRoutingAdminProductRegistration()
     {
@@ -42,7 +39,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * test create related product
+     * test create related product.
      */
     public function testCreateRelatedProduct()
     {
@@ -67,7 +64,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * test update related product
+     * test update related product.
      */
     public function testUpdateRelatedProduct()
     {
@@ -78,7 +75,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_edit',array('id' => 2)),
+            $this->app->url('admin_product_product_edit', array('id' => 2)),
             array('admin_product' => $formData)
         );
 
@@ -93,13 +90,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search with none condition
+     * search with none condition.
      */
     public function testAjaxSearchProductEmpty()
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -110,7 +107,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     *  test display public product
+     *  test display public product.
      */
     public function testAjaxSearchPublicProduct()
     {
@@ -122,7 +119,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -133,7 +130,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * test display unpublic product
+     * test display unpublic product.
      */
     public function testAjaxSearchUnpublicProduct()
     {
@@ -145,7 +142,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -156,13 +153,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search product name
+     * search product name.
      */
     public function testAjaxSearchProductName()
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => 'パーコレーター', 'category_id' => 1, '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => 'パーコレーター', 'category_id' => 1, '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -173,13 +170,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search by product code
+     * search by product code.
      */
     public function testAjaxSearchProductValueCode()
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => 'cafe-01', 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => 'cafe-01', 'category_id' => '', '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -190,13 +187,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search by product id
+     * search by product id.
      */
     public function testAjaxSearchProductValueId()
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => 1, 'category_id' => '', '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => 1, 'category_id' => '', '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -207,13 +204,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * search by category
+     * search by category.
      */
     public function testAjaxSearchProductCategory()
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array( 'id' => '', 'category_id' => 6, '_token' => 'dummy', )),
+            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => 6, '_token' => 'dummy')),
             array(),
             array(),
             array('HTTP_X-Requested-With' => 'XMLHttpRequest')
@@ -225,7 +222,8 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
-     * create form data for save related product
+     * create form data for save related product.
+     *
      * @return $form
      */
     public function createFormData()
@@ -238,16 +236,18 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'description_detail' => $faker->word,
             'Status' => 1,
             'related_collection' => array(
-                0 => array('ChildProduct' => 1, 'content' => $faker->word)
-            )
+                0 => array('ChildProduct' => 1, 'content' => $faker->word),
+            ),
         );
 
         return $form;
     }
 
     /**
-     * insert related product in DB
+     * insert related product in DB.
+     *
      * @param $id
+     *
      * @return RelatedProduct
      */
     private function initRelatedProduct($id)
@@ -263,7 +263,4 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         return $RelatedProduct;
     }
-
 }
-
-

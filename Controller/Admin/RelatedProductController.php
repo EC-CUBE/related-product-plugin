@@ -1,31 +1,29 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\RelatedProduct\Controller\Admin;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception as HttpException;
 
 /**
- * Class RelatedProductController
- * @package Plugin\RelatedProduct\Controller\Admin
+ * Class RelatedProductController.
  */
 class RelatedProductController
 {
     /**
+     * search product modal.
      * @param Application $app
-     * @param Request $request
-     * @param integer $page_no
+     * @param Request     $request
+     * @param int         $page_no
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searchProduct(Application $app, Request $request, $page_no = null)
@@ -48,7 +46,7 @@ class RelatedProductController
             $session->set('eccube.plugin.related_product.product.search', $searchData);
             $session->set('eccube.plugin.related_product.product.search.page_no', $page_no);
         } else {
-            $searchData = (array)$session->get('eccube.plugin.related_product.product.search');
+            $searchData = (array) $session->get('eccube.plugin.related_product.product.search');
             if (is_null($page_no)) {
                 $page_no = intval($session->get('eccube.plugin.related_product.product.search.page_no'));
             } else {
@@ -65,8 +63,6 @@ class RelatedProductController
             $pageCount,
             array('wrap-queries' => true)
         );
-        /** @var ArrayCollection */
-        $arrProduct = $pagination->getItems();
 
         $paths = array();
         $paths[] = $app['config']['template_admin_realdir'];

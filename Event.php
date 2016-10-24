@@ -15,23 +15,23 @@ use Eccube\Common\Constant;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
- * Class Event
- * @package Plugin\RelatedProduct
+ * Class Event.
  */
 class Event
 {
     /**
-     * @var $app
+     * @var
      */
     private $app;
 
     /**
-     * @var $legacyEvent
+     * @var
      */
     private $legacyEvent;
 
     /**
      * Event constructor.
+     *
      * @param \Eccube\Application $app
      */
     public function __construct($app)
@@ -41,7 +41,8 @@ class Event
     }
 
     /**
-     * フロント：商品詳細画面に関連商品を表示
+     * フロント：商品詳細画面に関連商品を表示.
+     *
      * @param FilterResponseEvent $event
      */
     public function showRelatedProduct(FilterResponseEvent $event)
@@ -53,19 +54,8 @@ class Event
     }
 
     /**
-     * new hookpoint for save related product
-     * @param FilterResponseEvent $event
-     */
-    public function registerRelatedProduct(FilterResponseEvent $event)
-    {
-        if ($this->supportNewHookPoint()) {
-            return;
-        }
-        $this->legacyEvent->registerRelatedProduct($event);
-    }
-
-    /**
-     * new hookpoint for add RelatedProduct to product edit
+     * new hookpoint for add RelatedProduct to product edit.
+     *
      * @param FilterResponseEvent $event
      */
     public function addContentOnProductEdit(FilterResponseEvent $event)
@@ -77,7 +67,8 @@ class Event
     }
 
     /**
-     * フロント：商品詳細画面に関連商品を表示
+     * フロント：商品詳細画面に関連商品を表示.
+     *
      * @param FilterResponseEvent $event
      */
     public function onProductDetailRender(FilterResponseEvent $event)
@@ -86,7 +77,8 @@ class Event
     }
 
     /**
-     * new hookpoint for add RelatedProduct to product edit
+     * new hookpoint for add RelatedProduct to product edit.
+     *
      * @param FilterResponseEvent $event
      */
     public function onProductEditRender(FilterResponseEvent $event)
@@ -95,21 +87,12 @@ class Event
     }
 
     /**
-     * new hookpoint for save related product
-     * @param FilterResponseEvent $event
-     */
-    public function onProductEditRegister(FilterResponseEvent $event)
-    {
-        $this->legacyEvent->registerRelatedProduct($event);
-    }
-
-    /**
-     * v3.0.9以降のフックポイントに対応しているのか
+     * v3.0.9以降のフックポイントに対応しているのか.
+     *
      * @return bool
      */
     private function supportNewHookPoint()
     {
         return version_compare('3.0.9', Constant::VERSION, '<=');
     }
-
 }

@@ -1,37 +1,30 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\RelatedProduct\ServiceProvider;
 
-use Monolog\Handler\FingersCrossed\ErrorLevelActivationStrategy;
-use Monolog\Handler\FingersCrossedHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\Yaml\Yaml;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
-use Plugin\RelatedProduct\Service\RelatedProductService;
 use Silex\Application;
 
 /**
- * Class RelatedProductServiceProvider
- * @package Plugin\RelatedProduct\ServiceProvider
+ * Class RelatedProductServiceProvider.
  */
 class RelatedProductServiceProvider implements ServiceProviderInterface
 {
-
     /**
-     * register
+     * register.
+     *
      * @param Application $app
      */
     public function register(BaseApplication $app)
@@ -39,7 +32,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         $app->post('/related_product/search_product', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
             ->bind('admin_related_product_search');
 
-        $app->match('/'.$app["config"]["admin_route"].'/related_product/search/product/page/{page_no}', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
+        $app->match('/'.$app['config']['admin_route'].'/related_product/search/product/page/{page_no}', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
             ->assert('page_no', '\d+')
             ->bind('admin_related_product_search_product_page');
 
@@ -70,18 +63,8 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
             return $translator;
         }));
 
-        // Add config file
+        // Add config file.
         $app['config'] = $app->share($app->extend('config', function ($config) {
-            // Update path
-            $pathFile = __DIR__.'/../Resource/config/path.yml';
-            if (file_exists($pathFile)) {
-                $path = Yaml::parse(file_get_contents($pathFile));
-                if (!empty($path)) {
-                    // Replace path
-                    $config = array_replace_recursive($config, $path);
-                }
-            }
-
             // Update constants
             $constantFile = __DIR__.'/../Resource/config/constant.yml';
             if (file_exists($constantFile)) {
@@ -97,6 +80,8 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
     }
 
     /**
+     * boot.
+     *
      * @param Application $app
      */
     public function boot(BaseApplication $app)

@@ -1,13 +1,12 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\RelatedProduct\Form\Type\Admin;
 
@@ -17,8 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class RelatedProductType
- * @package Plugin\RelatedProduct\Form\Type\Admin
+ * Class RelatedProductType.
  */
 class RelatedProductType extends AbstractType
 {
@@ -29,6 +27,7 @@ class RelatedProductType extends AbstractType
 
     /**
      * RelatedProductType constructor.
+     *
      * @param \Eccube\Application $app
      */
     public function __construct($app)
@@ -37,9 +36,10 @@ class RelatedProductType extends AbstractType
     }
 
     /**
-     * RelatedProduct form builder
+     * RelatedProduct form builder.
+     *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -72,7 +72,9 @@ class RelatedProductType extends AbstractType
     }
 
     /**
+     * configureOptions.
      * {@inheritdoc}
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -83,12 +85,12 @@ class RelatedProductType extends AbstractType
     }
 
     /**
-     * form name
+     * form name.
+     *
      * @return string
      */
     public function getName()
     {
         return 'admin_related_product';
     }
-
 }

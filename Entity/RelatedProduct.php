@@ -1,39 +1,54 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\RelatedProduct\Entity;
 
 use Eccube\Entity\Product;
 
 /**
- * Class RelatedProduct
- * @package Plugin\RelatedProduct\Entity
+ * Class RelatedProduct.
  */
 class RelatedProduct
 {
-
+    /**
+     * @var int
+     */
     private $id;
 
+    /**
+     * @var string
+     */
     private $content;
 
+    /**
+     * @var Product
+     */
     private $Product;
 
+    /**
+     * @var int
+     */
     private $productId;
 
+    /**
+     * @var Product
+     */
     private $ChildProduct;
 
+    /**
+     * @var int
+     */
     private $childProdcutId;
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -41,6 +56,8 @@ class RelatedProduct
     }
 
     /**
+     * getContent.
+     *
      * @return string
      */
     public function getContent()
@@ -49,8 +66,10 @@ class RelatedProduct
     }
 
     /**
-     * set related product content
+     * set related product content.
+     *
      * @param $content
+     *
      * @return $this
      */
     public function setContent($content)
@@ -61,8 +80,9 @@ class RelatedProduct
     }
 
     /**
-     * get related product content
-     * @return $Product
+     * get related product content.
+     *
+     * @return Product
      */
     public function getProduct()
     {
@@ -70,8 +90,10 @@ class RelatedProduct
     }
 
     /**
-     * set related product product
-     * @param \Eccube\Entity\Product $Product
+     * set related product product.
+     *
+     * @param Product
+     *
      * @return $this
      */
     public function setProduct(Product $Product)
@@ -82,8 +104,9 @@ class RelatedProduct
     }
 
     /**
-     * get product id
-     * @return integer
+     * get product id.
+     *
+     * @return int
      */
     public function getProductId()
     {
@@ -91,8 +114,10 @@ class RelatedProduct
     }
 
     /**
-     * set product id
+     * set product id.
+     *
      * @param $productId
+     *
      * @return $this
      */
     public function setProductId($productId)
@@ -103,7 +128,8 @@ class RelatedProduct
     }
 
     /**
-     * getChildProduct
+     * getChildProduct.
+     *
      * @return Product
      */
     public function getChildProduct()
@@ -112,8 +138,10 @@ class RelatedProduct
     }
 
     /**
-     * setChildProduct
-     * @param \Eccube\Entity\Product|null $Product
+     * setChildProduct.
+     *
+     * @param Product|null $Product
+     *
      * @return $this
      */
     public function setChildProduct(Product $Product = null)
@@ -124,8 +152,9 @@ class RelatedProduct
     }
 
     /**
-     * getChildProductId
-     * @return integer
+     * getChildProductId.
+     *
+     * @return int
      */
     public function getChildProductId()
     {
@@ -133,8 +162,10 @@ class RelatedProduct
     }
 
     /**
-     * setChildProductId
+     * setChildProductId.
+     *
      * @param $productId
+     *
      * @return $this
      */
     public function setChildProductId($productId)
