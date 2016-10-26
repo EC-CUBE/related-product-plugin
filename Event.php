@@ -79,12 +79,7 @@ class Event
             return;
         }
         // twigコードを挿入
-        $snipet = $app->renderView(
-            'RelatedProduct/Resource/template/front/related_product.twig',
-            array(
-                'RelatedProducts' => $RelatedProducts,
-            )
-        );
+        $snipet =   $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
         $search = self::RELATED_PRODUCT_TAG;
         $source = $event->getSource();
         //find related product mark
@@ -94,6 +89,8 @@ class Event
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
+        $parameters['RelatedProducts'] = $RelatedProducts;
+        $event->setParameters($parameters);
     }
 
     /**
@@ -133,22 +130,18 @@ class Event
         $searchForm = $parameters['searchForm'];
         $RelatedProducts = $this->createRelatedProductData($Product);
 
-        $snipet = $app->renderView(
-            'RelatedProduct/Resource/template/admin/related_product.twig',
-            array(
-                'form' => $form,
-                'RelatedProducts' => $RelatedProducts,
-                'searchForm' => $searchForm,
-                'Product' => $Product,
-            )
-        );
-
+        // twigコードを挿入
+        $snipet =   $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
         $modal = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/modal.twig');
+
+        //add related product to product edit
         $search = '<div id="detail_box__footer" class="row hidden-xs hidden-sm">';
         $source = $event->getSource();
         $replaceMain = $search.$snipet;
         $source = str_replace($search, $replaceMain, $source);
         $event->setSource($source.$modal);
+        $parameters['form'] = $form;
+        $parameters['RelatedProducts'] = $RelatedProducts;
         $parameters['searchForm'] = $searchForm;
         $parameters['Product'] = $Product;
         $event->setParameters($parameters);
