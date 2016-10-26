@@ -42,13 +42,15 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
 
             return $types;
         }));
+
+        //form extensions
         $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
             $extensions[] = new RelatedCollectionExtension();
 
             return $extensions;
         }));
 
-        // Repositoy
+        // Repository
         $app['eccube.plugin.repository.related_product'] = function () use ($app) {
             return $app['orm.em']->getRepository('\Plugin\RelatedProduct\Entity\RelatedProduct');
         };

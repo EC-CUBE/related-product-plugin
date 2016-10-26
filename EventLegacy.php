@@ -1,12 +1,11 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 namespace Plugin\RelatedProduct;
@@ -28,6 +27,13 @@ class EventLegacy
      * @var Application
      */
     private $app;
+
+    /**
+     * maximum product related.
+     *
+     * @var int
+     */
+    const MAXIMUM_PRODUCT_RELATED = 5;
 
     /**
      * Event constructor.
@@ -163,7 +169,7 @@ class EventLegacy
                     'Product' => $Product,
                 ));
 
-            $loop = 5 - count($RelatedProducts);
+            $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
             for ($i = 0; $i < $loop; ++$i) {
                 $RelatedProduct = new RelatedProduct();
                 $RelatedProduct

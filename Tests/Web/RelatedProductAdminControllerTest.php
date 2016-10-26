@@ -31,9 +31,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testRoutingAdminProductRegistration()
     {
-        $crawler = $this->client->request('GET',
-            $this->app->url('admin_product_product_new')
-        );
+        $crawler = $this->client->request('GET', $this->app->url('admin_product_product_new'));
 
         $this->assertContains('関連商品', $crawler->html());
     }

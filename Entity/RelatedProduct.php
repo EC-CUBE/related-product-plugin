@@ -68,7 +68,7 @@ class RelatedProduct
     /**
      * set related product content.
      *
-     * @param $content
+     * @param string $content
      *
      * @return $this
      */
@@ -92,7 +92,7 @@ class RelatedProduct
     /**
      * set related product product.
      *
-     * @param Product
+     * @param Product $Product
      *
      * @return $this
      */
@@ -116,7 +116,7 @@ class RelatedProduct
     /**
      * set product id.
      *
-     * @param $productId
+     * @param int $productId
      *
      * @return $this
      */
@@ -164,7 +164,7 @@ class RelatedProduct
     /**
      * setChildProductId.
      *
-     * @param $productId
+     * @param int $productId
      *
      * @return $this
      */
