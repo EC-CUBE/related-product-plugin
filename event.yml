@@ -1,14 +1,19 @@
-eccube.event.render.admin_product_product_new.before:
-    - [addContentOnProductEdit, NORMAL]
-eccube.event.render.admin_product_product_edit.before:
-    - [addContentOnProductEdit, NORMAL]
-eccube.event.render.product_detail.before:
-    - [showRelatedProduct, NORMAL]
+# front page event
+Product/detail.twig:
+    - [onRenderProductDetail, NORMAL]
 
-# New hookpoint on version >= 3.0.9
-eccube.event.route.admin_product_product_new.response:
-    - [onProductEditRender, NORMAL]
-eccube.event.route.admin_product_product_edit.response:
-    - [onProductEditRender, NORMAL]
-eccube.event.route.product_detail.response:
-    - [onProductDetailRender, NORMAL]
+# admin page event
+admin.product.edit.initialize:
+    - [onRenderAdminProductInit, NORMAL]
+admin.product.edit.complete:
+    - [onRenderAdminProductComplete, NORMAL]
+Admin/Product/product.twig:
+    - [onRenderAdminProduct, NORMAL]
+
+# deprecated event (for v3.0.0 - 3.0.8)
+eccube.event.render.admin_product_product_new.before:
+    - [onRenderAdminProductEditBefore, NORMAL]
+eccube.event.render.admin_product_product_edit.before:
+    - [onRenderAdminProductEditBefore, NORMAL]
+eccube.event.render.product_detail.before:
+    - [onRenderProductDetailBefore, NORMAL]

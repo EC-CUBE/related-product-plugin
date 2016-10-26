@@ -11,6 +11,8 @@
 {% block javascript %}
 <script>
 $(function() {
+    var dataId = null;
+
     $(document).on('click', '.delete', function() {
         var data = $(this).data();
         $('.related-view' + data.id ).addClass('hidden');
@@ -18,6 +20,38 @@ $(function() {
         $('#admin_product_related_collection_' + data.id + '_content' ).val('');
         $('#searchResult').children().remove();
     });
+
+    $("a[id^='search_']").on("click", function () {
+        dataId = $(this).attr("data-id");
+        $("#relatedDataId").val(dataId);
+        $("#searchResult").children().remove();
+        $('div.box-footer a').remove();
+    });
+
+    $("#searchButton").on("click", function () {
+        var formIdVal = $("#{{ searchForm.id.vars.id }}").val();
+        var formCatIdVal = $("#{{ searchForm.category_id.vars.id }}").val();
+        var data = {
+            id: formIdVal,
+            category_id: formCatIdVal,
+            product_id: {{ Product.id ? Product.id : 0 }}
+        };
+        $("#searchResult")
+                .children()
+                .remove();
+        $.ajax({
+            type: "POST",
+            url: "{{ url('admin_related_product_search') }}",
+            data: data,
+            success: function(data){
+                $("#searchResult").append(data);
+            },
+            error: function() {
+                alert('product search failed.');
+            }
+        });
+    });
+
 });
 </script>
 {% endblock javascript %}
@@ -39,7 +73,9 @@ $(function() {
 
         {% for child in form.related_collection %}
             <div class="form-group">
-                {{ form_label(child.ChildProduct) }}
+                <label class="col-sm-2 control-label">
+                    {{ child.ChildProduct.vars.label }}
+                </label>
                 {% set ChildProduct = RelatedProducts[loop.index0].ChildProduct %}
                 <div class="col-sm-9 col-lg-9">
                     {% if ChildProduct %}
@@ -75,9 +111,11 @@ $(function() {
                 </div>
             </div>
             <div class="form-group">
-                {{ form_label(child.content) }}
-                <div class="col-sm-9 col-lg-9 related-content{{ loop.index0 }}">
-                    {{ form_widget(child.content) }}
+                <label class="col-sm-2 control-label">
+                    {{ child.content.vars.label }}
+                </label>
+                <div class="col-sm-9 col-lg-10 related-content{{ loop.index0 }}">
+                    {{ form_widget(child.content, { attr : { class : 'col-sm-9 col-lg-10 form-control' } } ) }}
                 </div>
             </div>
         {% endfor %}

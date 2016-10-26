@@ -20,6 +20,7 @@ class RelatedProductController
 {
     /**
      * search product modal.
+     *
      * @param Application $app
      * @param Request     $request
      * @param int         $page_no

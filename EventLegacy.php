@@ -32,7 +32,7 @@ class EventLegacy
     /**
      * Event constructor.
      *
-     * @param $app
+     * @param Application\ $app
      */
     public function __construct($app)
     {
@@ -44,7 +44,7 @@ class EventLegacy
      *
      * @param FilterResponseEvent $event
      */
-    public function showRelatedProduct(FilterResponseEvent $event)
+    public function onRenderProductDetailBefore(FilterResponseEvent $event)
     {
         $app = $this->app;
         $id = $app['request']->attributes->get('id');
@@ -111,7 +111,7 @@ class EventLegacy
      *
      * @param FilterResponseEvent $event
      */
-    public function addContentOnProductEdit(FilterResponseEvent $event)
+    public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
     {
         $app = $this->app;
         if (!$app->isGranted('ROLE_ADMIN')) {

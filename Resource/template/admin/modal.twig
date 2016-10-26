@@ -10,41 +10,8 @@
 
 {% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 
-<script>
-    var dataId = null;
-    $(function () {
-        $("a[id^='search_']").on("click", function () {
-            dataId = $(this).attr("data-id");
-            $("#relatedDataId").val(dataId);
-            $("#searchResult").children().remove();
-            $('div.box-footer a').remove();
-        });
+{% block modal %}
 
-        $("#searchButton").on("click", function () {
-            var formIdVal = $("#{{ searchForm.id.vars.id }}").val();
-            var formCatIdVal = $("#{{ searchForm.category_id.vars.id }}").val();
-            var data = {
-                id: formIdVal,
-                category_id: formCatIdVal,
-                product_id: {{ Product.id ? Product.id : 0 }}
-            };
-            $("#searchResult")
-                    .children()
-                    .remove();
-            $.ajax({
-                    type: "POST",
-                    url: "{{ url('admin_related_product_search') }}",
-                    data: data,
-                    success: function(data){
-                        $("#searchResult").append(data);
-                    },
-                    error: function() {
-                        alert('product search failed.');
-                    }
-            });
-        });
-    });
-</script>
 <div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -70,3 +37,5 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
