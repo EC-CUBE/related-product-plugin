@@ -89,6 +89,8 @@ class Event
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
+
+        //set parameter for twig files
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
     }
@@ -140,6 +142,8 @@ class Event
         $replaceMain = $search.$snipet;
         $source = str_replace($search, $replaceMain, $source);
         $event->setSource($source.$modal);
+
+        //set parameter for twig files
         $parameters['form'] = $form;
         $parameters['RelatedProducts'] = $RelatedProducts;
         $parameters['searchForm'] = $searchForm;
