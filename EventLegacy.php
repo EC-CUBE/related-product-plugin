@@ -185,6 +185,8 @@ class EventLegacy
                 array(
                     'form' => $form->createView(),
                     'RelatedProducts' => $RelatedProducts,
+                    'searchForm' => $searchForm->createView(),
+                    'Product' => $Product,
                 )
             );
             $modal = $app->renderView(
