@@ -153,7 +153,7 @@ class Event
         //add related product to product edit
         $search = '<div id="detail_box__footer" class="row hidden-xs hidden-sm">';
         $source = $event->getSource();
-        $replaceMain = $search.$snipet;
+        $replaceMain = $snipet.$search;
         $source = str_replace($search, $replaceMain, $source);
         $event->setSource($source.$modal);
 
