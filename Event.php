@@ -91,13 +91,14 @@ class Event
         //find related product mark
         if (strpos($source, self::RELATED_PRODUCT_TAG)) {
             $search = self::RELATED_PRODUCT_TAG;
+            $replace = $search.$snipet;
         } else {
             //regular expression for get free area div
             $pattern = '/({% if Product.freearea %})(.*?(\n))+.*?({% endif %})/';
             preg_match($pattern, $source, $matches);
             $search = $matches[0];
+            $replace = $search.$snipet;
         }
-        $replace = $snipet.$search;
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
 
