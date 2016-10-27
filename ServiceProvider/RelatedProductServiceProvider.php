@@ -16,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
+use Eccube\Common\Constant;
 
 /**
  * Class RelatedProductServiceProvider.
@@ -43,12 +44,20 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
             return $types;
         }));
 
-        //form extensions
-        $app['form.type.extensions'] = $app->share($app->extend('form.type.extensions', function ($extensions) use ($app) {
-            $extensions[] = new RelatedCollectionExtension();
+        // @deprecated for since v3.0.0, to be removed in 3.1.
+        if (version_compare(Constant::VERSION, '3.0.9', '<')) {
+            // Form/Extension
+            $app['form.type.extensions'] = $app->share(
+                $app->extend(
+                    'form.type.extensions',
+                    function ($extensions) {
+                        $extensions[] = new RelatedCollectionExtension();
 
-            return $extensions;
-        }));
+                        return $extensions;
+                    }
+                )
+            );
+        }
 
         // Repository
         $app['eccube.plugin.repository.related_product'] = function () use ($app) {

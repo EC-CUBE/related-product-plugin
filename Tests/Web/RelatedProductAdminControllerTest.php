@@ -12,6 +12,7 @@ namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Symfony\Component\Form\Form;
 
 /**
  * Class RelatedProductAdminControllerTest.
@@ -24,6 +25,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->deleteAllRows(array('plg_related_product'));
     }
 
     /**
@@ -41,9 +43,10 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testCreateRelatedProduct()
     {
-        $formData = $this->createFormData();
-        $content = $formData['related_collection'][0]['content'];
-        $childProductId = $formData['related_collection'][0]['ChildProduct'];
+        $faker = $this->getFaker();
+        $content = $faker->word;
+        $childProductId = 1;
+        $formData = $this->createFormData($content, $childProductId);
 
         $this->client->request(
             'POST',
@@ -88,6 +91,104 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     }
 
     /**
+     * test create related product with no child product.
+     */
+    public function testCreateRelatedProductNoChildProduct()
+    {
+        $faker = $this->getFaker();
+        $content = $faker->word;
+        $childProductId = null;
+        $formData = $this->createFormData($content, $childProductId);
+
+        $this->client->request(
+            'POST',
+            $this->app->url('admin_product_product_new'),
+            array('admin_product' => $formData)
+        );
+
+        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
+            array('content' => $content)
+        );
+
+        $this->expected = 0;
+        $this->actual = count($RelatedProduct);
+        $this->verify();
+    }
+    /**
+     * test create related product with no content.
+     */
+    public function testCreateRelatedProductNoContent()
+    {
+        $content = null;
+        $childProductId = 1;
+        $formData = $this->createFormData($content, $childProductId);
+
+        $this->client->request(
+            'POST',
+            $this->app->url('admin_product_product_new'),
+            array('admin_product' => $formData)
+        );
+
+        $ChildProduct = $this->app['eccube.repository.product']->find($childProductId);
+        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
+            array('ChildProduct' => $ChildProduct)
+        );
+
+        $this->expected = $childProductId;
+        $this->actual = $RelatedProduct->getChildProduct()->getId();
+        $this->verify();
+    }
+
+    /**
+     * test create related product with content over 4000 character.
+     */
+    public function testCreateRelatedProductNoMaxLengthContent()
+    {
+        $faker = $this->getFaker();
+        $content = $faker->text(9999);
+        $childProductId = 1;
+        $formData = $this->createFormData($content, $childProductId);
+
+        $crawler = $this->client->request(
+            'POST',
+            $this->app->url('admin_product_product_new'),
+            array('admin_product' => $formData)
+        );
+
+        $this->assertContains('値が長すぎます。4000文字以内でなければなりません。', $crawler->html());
+    }
+
+    /**
+     * test related product maximum 5 items.
+     */
+    public function testRelatedProductMaximum5()
+    {
+        for ($i = 1; $i < 6; ++$i) {
+            $this->initRelatedProduct(2);
+        }
+        $this->client->request(
+            'GET',
+            $this->app->url('admin_product_product_edit', array('id' => 2))
+        );
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+    }
+
+    /**
+     * test related product over maximum 5 items.
+     */
+    public function testRelatedProductOverMaximum5()
+    {
+        for ($i = 1; $i < 10; ++$i) {
+            $this->initRelatedProduct(2);
+        }
+        $this->client->request(
+            'GET',
+            $this->app->url('admin_product_product_edit', array('id' => 2))
+        );
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+    }
+
+    /**
      * search with none condition.
      */
     public function testAjaxSearchProductEmpty()
@@ -102,6 +203,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $productList = $crawler->html();
         $this->assertContains('ディナーフォーク', $productList);
+        $this->assertContains('パーコレーター', $productList);
     }
 
     /**
@@ -125,6 +227,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $productList = $crawler->html();
         $this->assertContains('ディナーフォーク', $productList);
+        $this->assertContains('パーコレーター', $productList);
     }
 
     /**
@@ -148,6 +251,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $productList = $crawler->html();
         $this->assertContains('ディナーフォーク', $productList);
+        $this->assertContains('パーコレーター', $productList);
     }
 
     /**
@@ -222,9 +326,12 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * create form data for save related product.
      *
-     * @return $form
+     * @param string $content
+     * @param int    $childId
+     *
+     * @return Form $form
      */
-    public function createFormData()
+    public function createFormData($content = null, $childId = 1)
     {
         $faker = $this->getFaker();
         $form = array(
@@ -234,7 +341,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'description_detail' => $faker->word,
             'Status' => 1,
             'related_collection' => array(
-                0 => array('ChildProduct' => 1, 'content' => $faker->word),
+                0 => array('ChildProduct' => $childId, 'content' => $content),
             ),
         );
 

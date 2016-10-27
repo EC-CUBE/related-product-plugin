@@ -38,7 +38,7 @@ class EventLegacy
     /**
      * Event constructor.
      *
-     * @param Application\ $app
+     * @param Application $app
      */
     public function __construct($app)
     {
@@ -90,9 +90,9 @@ class EventLegacy
     /**
      * getTargetProduct.
      *
-     * @param $event
+     * @param FilterResponseEvent $event
      *
-     * @return $Product
+     * @return Product $Product
      */
     private function getTargetProduct($event)
     {

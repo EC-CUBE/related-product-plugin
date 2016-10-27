@@ -24,9 +24,7 @@ class RelatedProductControllerTest extends AbstractWebTestCase
     public function testShowRelatedProduct()
     {
         $this->initRelatedProduct(2);
-        $crawler = $this->client->request('GET',
-            $this->app->url('product_detail', array('id' => 2))
-        );
+        $crawler = $this->client->request('GET', $this->app->url('product_detail', array('id' => 2)));
 
         $this->assertContains('関連商品', $crawler->html());
     }

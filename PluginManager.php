@@ -18,7 +18,6 @@ use Eccube\Plugin\AbstractPluginManager;
  */
 class PluginManager extends AbstractPluginManager
 {
-
     /**
      * プラグインインストール時の処理.
      *
@@ -34,7 +33,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグイン削除時の処理.
      *
-     *  @param array       $config
+     * @param array       $config
      * @param Application $app
      */
     public function uninstall($config, $app)
@@ -45,7 +44,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグイン有効時の処理.
      *
-     *  @param array       $config
+     * @param array       $config
      * @param Application $app
      *
      * @throws \Exception
@@ -58,7 +57,7 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグイン無効時の処理.
      *
-     *  @param array       $config
+     * @param array       $config
      * @param Application $app
      */
     public function disable($config, $app)

@@ -84,13 +84,18 @@ class Event
         if (count($RelatedProducts) == 0) {
             return;
         }
+
         // twigコードを挿入
-        $snipet =   $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
-        $search = self::RELATED_PRODUCT_TAG;
+        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
         $source = $event->getSource();
         //find related product mark
-        if (!strpos($source, $search)) {
-            $search = '{% if Product.freearea %}';
+        if (strpos($source, self::RELATED_PRODUCT_TAG)) {
+            $search = self::RELATED_PRODUCT_TAG;
+        } else {
+            //regular expression for get free area div
+            $pattern = '/({% if Product.freearea %})(.*?(\n))+.*?({% endif %})/';
+            preg_match($pattern, $source, $matches);
+            $search = $matches[0];
         }
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $source);
@@ -102,22 +107,28 @@ class Event
     }
 
     /**
-     * new hookpoint for imit product edit.
+     * new hookpoint for init product edit.
      *
      * @param EventArgs $event
      */
     public function onRenderAdminProductInit(EventArgs $event)
     {
-        $app = $this->app;
-        if (!$app->isGranted('ROLE_ADMIN')) {
-            return;
-        }
         $Product = $event->getArgument('Product');
         $RelatedProducts = $this->createRelatedProductData($Product);
 
         // フォームの追加
         /** @var FormBuilder $builder */
         $builder = $event->getArgument('builder');
+        $builder
+            ->add('related_collection', 'collection', array(
+                'label' => '関連商品',
+                'type' => 'admin_related_product',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'mapped' => false,
+            ))
+        ;
         $builder->get('related_collection')->setData($RelatedProducts);
     }
 
@@ -129,9 +140,6 @@ class Event
     public function onRenderAdminProduct(TemplateEvent $event)
     {
         $app = $this->app;
-        if (!$app->isGranted('ROLE_ADMIN')) {
-            return;
-        }
         $parameters = $event->getParameters();
         $Product = $parameters['Product'];
         $form = $parameters['form'];
@@ -139,7 +147,7 @@ class Event
         $RelatedProducts = $this->createRelatedProductData($Product);
 
         // twigコードを挿入
-        $snipet =   $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
+        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
         $modal = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/modal.twig');
 
         //add related product to product edit
@@ -165,21 +173,16 @@ class Event
     public function onRenderAdminProductComplete(EventArgs  $event)
     {
         $app = $this->app;
-        if (!$app->isGranted('ROLE_ADMIN')) {
-            return;
-        }
         $Product = $event->getArgument('Product');
         $form = $event->getArgument('form');
-        if ($form->isValid()) {
-            $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
-            $RelatedProducts = $form->get('related_collection')->getData();
-            foreach ($RelatedProducts as $RelatedProduct) {
-                /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
-                if ($RelatedProduct->getChildProduct() instanceof Product) {
-                    $RelatedProduct->setProduct($Product);
-                    $app['orm.em']->persist($RelatedProduct);
-                    $app['orm.em']->flush($RelatedProduct);
-                }
+        $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
+        $RelatedProducts = $form->get('related_collection')->getData();
+        foreach ($RelatedProducts as $RelatedProduct) {
+            /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
+            if ($RelatedProduct->getChildProduct() instanceof Product) {
+                $RelatedProduct->setProduct($Product);
+                $app['orm.em']->persist($RelatedProduct);
+                $app['orm.em']->flush($RelatedProduct);
             }
         }
     }
@@ -232,6 +235,7 @@ class Event
     private function createRelatedProductData($Product)
     {
         $app = $this->app;
+        $RelatedProducts = null;
         if ($Product) {
             $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
                 array(

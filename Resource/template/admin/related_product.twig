@@ -56,7 +56,6 @@ $(function() {
 
 </div>
 <div class="box accordion">
-
 <div id="related_proto"
      data-prototype="{{ form_widget(form.related_collection.vars.prototype)|e }}">
 </div>
@@ -114,6 +113,7 @@ $(function() {
                 </label>
                 <div class="col-sm-9 col-lg-10 related-content{{ loop.index0 }}">
                     {{ form_widget(child.content, { attr : { class : 'col-sm-9 col-lg-10 form-control' } } ) }}
+                    {{ form_errors(child.content) }}
                 </div>
             </div>
         {% endfor %}
