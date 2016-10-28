@@ -203,21 +203,14 @@ class EventLegacy
                     'Product' => $Product,
                 )
             );
-            $oldElement = $crawler
-                ->filter('.accordion')
-                ->last();
-            if ($oldElement->count() > 0) {
-                //fix bug input html tag or special character code
-                $oldHtml = html_entity_decode($oldElement->html(), ENT_NOQUOTES, 'UTF-8');
-                $newHtml = $oldHtml.$twig;
-
-                $html = $this->getHtml($crawler);
-                $html = $html.$modal;
-                $html = str_replace($oldHtml, $newHtml, $html);
-
-                $response->setContent($html);
-                $event->setResponse($response);
-            }
+            $html = $response->getContent();
+            $html = $html.$modal;
+            // For old and new version
+            $search = '/(<div class="row hidden-xs hidden-sm")|(<div id="detail_box__footer")/';
+            $newHtml = $twig.'<div id="detail_box__footer" class="row hidden-xs hidden-sm"';
+            $html = preg_replace($search, $newHtml, $html);
+            $response->setContent($html);
+            $event->setResponse($response);
         }
     }
 
