@@ -45,7 +45,7 @@ class RelatedProduct
     /**
      * @var int
      */
-    private $childProdcutId;
+    private $childProductId;
 
     /**
      * @return int
@@ -158,7 +158,7 @@ class RelatedProduct
      */
     public function getChildProductId()
     {
-        return $this->childProdcutId;
+        return $this->childProductId;
     }
 
     /**
@@ -170,7 +170,7 @@ class RelatedProduct
      */
     public function setChildProductId($productId)
     {
-        $this->childProdcutId = $productId;
+        $this->childProductId = $productId;
 
         return $this;
     }
