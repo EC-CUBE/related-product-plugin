@@ -54,19 +54,16 @@ $(function() {
 });
 </script>
 
-<div class="box accordion">
-<div id="related_proto"
-     data-prototype="{{ form_widget(form.related_collection.vars.prototype)|e }}">
-</div>
 <div class="box accordion form-horizontal">
+
     <div class="box-header toggle">
         <h3 class="box-title">
             {{ form.related_collection.vars.label }}
             <svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg>
         </h3>
     </div><!-- /.box-header -->
-    <div class="box-body accpanel">
 
+    <div class="box-body accpanel">
         {% for child in form.related_collection %}
             <div class="form-group">
                 <label class="col-sm-2 control-label">
@@ -116,7 +113,6 @@ $(function() {
                 </div>
             </div>
         {% endfor %}
-
     </div>
 </div>
-</div>
+

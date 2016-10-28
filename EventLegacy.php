@@ -139,8 +139,10 @@ class EventLegacy
 
             if ($Product->hasProductClass()) {
                 $builder->remove('class');
+                //get new form from builder.
+                $form = $builder->getForm();
+                $form->handleRequest($request);
             }
-
             if ($form->isValid()) {
                 $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
                 $RelatedProducts = $form->get('related_collection')->getData();
@@ -178,7 +180,6 @@ class EventLegacy
                 $RelatedProducts[] = $RelatedProduct;
             }
             $form->get('related_collection')->setData($RelatedProducts);
-
             $form->handleRequest($request);
 
             // 商品検索フォーム
