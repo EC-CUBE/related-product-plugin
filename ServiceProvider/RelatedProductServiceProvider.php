@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
-use Eccube\Common\Constant;
+use Plugin\RelatedProduct\Util;
 
 /**
  * Class RelatedProductServiceProvider.
@@ -45,7 +45,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         }));
 
         // @deprecated for since v3.0.0, to be removed in 3.1.
-        if (version_compare(Constant::VERSION, '3.0.9', '<')) {
+        if (!Util::isSupportNewHookpoint()) {
             // Form/Extension
             $app['form.type.extensions'] = $app->share(
                 $app->extend(

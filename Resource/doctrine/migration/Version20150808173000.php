@@ -14,8 +14,8 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\Tools\SchemaTool;
 use Eccube\Application;
-use Eccube\Common\Constant;
 use Doctrine\ORM\EntityManager;
+use Plugin\RelatedProduct\Util;
 
 /**
  * Class Version20150808173000.
@@ -41,7 +41,7 @@ class Version20150808173000 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        if (version_compare(Constant::VERSION, '3.0.9', '>=')) {
+        if (Util::isSupportNewHookpoint()) {
             $this->createRelatedProductTable($schema);
         } else {
             $this->createRelatedProductTableForOldVersion($schema);
@@ -55,7 +55,8 @@ class Version20150808173000 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        if (version_compare(Constant::VERSION, '3.0.9', '>=')) {
+        //current version >= 3.0.9
+        if (Util::isSupportNewHookpoint()) {
             $app = Application::getInstance();
             $meta = $this->getMetadata($app['orm.em']);
             $tool = new SchemaTool($app['orm.em']);
@@ -71,6 +72,10 @@ class Version20150808173000 extends AbstractMigration
                 if ($schema->hasSequence($sequence->getName())) {
                     $schema->dropSequence($sequence->getName());
                 }
+            }
+            //for delete sequence in postgresql
+            if ($this->connection->getDatabasePlatform()->getName() == 'postgresql') {
+                $schema->dropSequence('plg_related_product_id_seq');
             }
         } else {
             // this down() migration is auto-generated, please modify it to your needs

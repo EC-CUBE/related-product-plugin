@@ -11,7 +11,6 @@
 namespace Plugin\RelatedProduct;
 
 use Doctrine\Common\Collections\Collection;
-use Eccube\Common\Constant;
 use Eccube\Application;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -154,8 +153,8 @@ class Event
         //add related product to product edit
         $search = '<div id="detail_box__footer" class="row hidden-xs hidden-sm">';
         $source = $event->getSource();
-        $replaceMain = $snipet.$search;
-        $source = str_replace($search, $replaceMain, $source);
+        $replace = $snipet.$search;
+        $source = str_replace($search, $replace, $source);
         $event->setSource($source.$modal);
 
         //set parameter for twig files
@@ -197,7 +196,8 @@ class Event
      */
     public function onRenderProductDetailBefore(FilterResponseEvent $event)
     {
-        if ($this->supportNewHookPoint()) {
+        //current version >= 3.0.9
+        if (Util::isSupportNewHookpoint()) {
             return;
         }
         $this->legacyEvent->onRenderProductDetailBefore($event);
@@ -212,20 +212,11 @@ class Event
      */
     public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
     {
-        if ($this->supportNewHookPoint()) {
+        //current version >= 3.0.9
+        if (Util::isSupportNewHookpoint()) {
             return;
         }
         $this->legacyEvent->onRenderAdminProductEditBefore($event);
-    }
-
-    /**
-     * v3.0.9以降のフックポイントに対応しているのか.
-     *
-     * @return bool
-     */
-    private function supportNewHookPoint()
-    {
-        return version_compare('3.0.9', Constant::VERSION, '<=');
     }
 
     /**
