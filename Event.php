@@ -19,6 +19,7 @@ use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
+use Plugin\RelatedProduct\Util\Util;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.

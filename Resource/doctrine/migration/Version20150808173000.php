@@ -15,7 +15,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\Tools\SchemaTool;
 use Eccube\Application;
 use Doctrine\ORM\EntityManager;
-use Plugin\RelatedProduct\Util;
+use Plugin\RelatedProduct\Util\Util;
 
 /**
  * Class Version20150808173000.

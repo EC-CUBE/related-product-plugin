@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
 */
 
-namespace Plugin\RelatedProduct;
+namespace Plugin\RelatedProduct\Util;
 
 use Eccube\Common\Constant;
 

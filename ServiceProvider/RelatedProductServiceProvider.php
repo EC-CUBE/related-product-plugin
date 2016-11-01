@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
-use Plugin\RelatedProduct\Util;
+use Plugin\RelatedProduct\Util\Util;
 
 /**
  * Class RelatedProductServiceProvider.
