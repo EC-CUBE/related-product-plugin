@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class EventLegacy.
@@ -125,9 +127,14 @@ class EventLegacy
         }
         $request = $event->getRequest();
         $response = $event->getResponse();
+        $html = $this->addRelatedProductToAdminProduct($request, $response);
+        $response->setContent($html);
+        $event->setResponse($response);
+
         $builder = $app['form.factory']->createBuilder('admin_product');
         $form = $builder->getForm();
         $form->handleRequest($request);
+
         if ($form->isSubmitted()) {
             // ProductControllerの登録成功時のみ処理を通す
             // RedirectResponseかどうかで判定する.
@@ -155,62 +162,6 @@ class EventLegacy
                     }
                 }
             }
-        } else {
-            $id = $request->attributes->get('id');
-            $html = $response->getContent();
-            $crawler = new Crawler($html);
-
-            if ($id) {
-                $Product = $app['eccube.repository.product']->find($id);
-            } else {
-                $Product = new Product();
-            }
-
-            $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
-                array(
-                    'Product' => $Product,
-                ));
-
-            $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
-            for ($i = 0; $i < $loop; ++$i) {
-                $RelatedProduct = new RelatedProduct();
-                $RelatedProduct
-                    ->setProductId($id)
-                    ->setProduct($Product);
-                $RelatedProducts[] = $RelatedProduct;
-            }
-            $form->get('related_collection')->setData($RelatedProducts);
-            $form->handleRequest($request);
-
-            // 商品検索フォーム
-            $searchForm = $app['form.factory']
-                ->createBuilder('admin_search_product')
-                ->getForm();
-
-            $twig = $app->renderView(
-                'RelatedProduct/Resource/template/admin/related_product.twig',
-                array(
-                    'form' => $form->createView(),
-                    'RelatedProducts' => $RelatedProducts,
-                    'searchForm' => $searchForm->createView(),
-                    'Product' => $Product,
-                )
-            );
-            $modal = $app->renderView(
-                'RelatedProduct/Resource/template/admin/modal.twig',
-                array(
-                    'searchForm' => $searchForm->createView(),
-                    'Product' => $Product,
-                )
-            );
-            $html = $response->getContent();
-            $html = $html.$modal;
-            // For old and new version
-            $search = '/(<div class="row hidden-xs hidden-sm")|(<div id="detail_box__footer")/';
-            $newHtml = $twig.'<div id="detail_box__footer" class="row hidden-xs hidden-sm"';
-            $html = preg_replace($search, $newHtml, $html);
-            $response->setContent($html);
-            $event->setResponse($response);
         }
     }
 
@@ -230,5 +181,76 @@ class EventLegacy
         }
 
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
+    }
+
+
+    /**
+     * add related product form to admin product.
+     *
+     * @param Request $request
+     *
+     * @param Response $response
+     *
+     * @return string $html
+     */
+    private function addRelatedProductToAdminProduct(Request $request, Response $response)
+    {
+        $app = $this->app;
+        $id = $request->attributes->get('id');
+
+        if ($id) {
+            $Product = $app['eccube.repository.product']->find($id);
+        } else {
+            $Product = new Product();
+        }
+
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
+            array(
+                'Product' => $Product,
+            ));
+
+        $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
+        for ($i = 0; $i < $loop; ++$i) {
+            $RelatedProduct = new RelatedProduct();
+            $RelatedProduct
+                ->setProductId($id)
+                ->setProduct($Product);
+            $RelatedProducts[] = $RelatedProduct;
+        }
+        $builder = $app['form.factory']->createBuilder('admin_product');
+        $form = $builder->getForm();
+        $form->get('related_collection')->setData($RelatedProducts);
+        $form->handleRequest($request);
+
+        // 商品検索フォーム
+        $searchForm = $app['form.factory']
+            ->createBuilder('admin_search_product')
+            ->getForm();
+
+        $twig = $app->renderView(
+            'RelatedProduct/Resource/template/admin/related_product.twig',
+            array(
+                'form' => $form->createView(),
+                'RelatedProducts' => $RelatedProducts,
+                'searchForm' => $searchForm->createView(),
+                'Product' => $Product,
+            )
+        );
+        $modal = $app->renderView(
+            'RelatedProduct/Resource/template/admin/modal.twig',
+            array(
+                'searchForm' => $searchForm->createView(),
+                'Product' => $Product,
+            )
+        );
+        $html = $response->getContent();
+        $html = $html.$modal;
+
+        // For old and new version
+        $search = '/(<div class="row hidden-xs hidden-sm")|(<div id="detail_box__footer")/';
+        $newHtml = $twig.'<div id="detail_box__footer" class="row hidden-xs hidden-sm"';
+        $html = preg_replace($search, $newHtml, $html);
+
+        return $html;
     }
 }
