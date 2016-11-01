@@ -143,8 +143,6 @@ class Event
         $app = $this->app;
         $parameters = $event->getParameters();
         $Product = $parameters['Product'];
-        $form = $parameters['form'];
-        $searchForm = $parameters['searchForm'];
         $RelatedProducts = $this->createRelatedProductData($Product);
 
         // twigコードを挿入
@@ -159,10 +157,7 @@ class Event
         $event->setSource($source.$modal);
 
         //set parameter for twig files
-        $parameters['form'] = $form;
         $parameters['RelatedProducts'] = $RelatedProducts;
-        $parameters['searchForm'] = $searchForm;
-        $parameters['Product'] = $Product;
         $event->setParameters($parameters);
     }
 
