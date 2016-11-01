@@ -14,6 +14,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
  * Class RelatedProductType.
@@ -49,11 +51,13 @@ class RelatedProductType extends AbstractType
                 'class' => 'Eccube\Entity\Product',
                 'required' => false,
                 'mapped' => false,
+                'property' => 'id',
             ))
             ->add('ChildProduct', 'entity', array(
                 'label' => '関連商品',
                 'class' => 'Eccube\Entity\Product',
                 'required' => false,
+                'property' => 'id',
             ))
             ->add('content', 'textarea', array(
                 'label' => '説明文',
