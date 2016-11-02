@@ -90,31 +90,6 @@ class EventLegacy
     }
 
     /**
-     * getTargetProduct.
-     *
-     * @param FilterResponseEvent $event
-     *
-     * @return Product $Product
-     */
-    private function getTargetProduct($event)
-    {
-        $request = $event->getRequest();
-        $response = $event->getResponse();
-        if ($request->attributes->get('id')) {
-            $id = $request->attributes->get('id');
-        } else {
-            $location = explode('/', $response->headers->get('location'));
-            $url = explode('/', $this->app->url('admin_product_product_edit', array('id' => '0')));
-            $diffs = array_values(array_diff($location, $url));
-            $id = $diffs[0];
-        }
-
-        $Product = $this->app['eccube.repository.product']->find($id);
-
-        return $Product;
-    }
-
-    /**
      * add RelatedProduct to product edit.
      *
      * @param FilterResponseEvent $event
@@ -127,13 +102,13 @@ class EventLegacy
         }
         $request = $event->getRequest();
         $response = $event->getResponse();
-        $html = $this->addRelatedProductToAdminProduct($request, $response);
-        $response->setContent($html);
-        $event->setResponse($response);
 
         $builder = $app['form.factory']->createBuilder('admin_product');
         $form = $builder->getForm();
         $form->handleRequest($request);
+        $html = $this->addRelatedProductToAdminProduct($request, $response);
+        $response->setContent($html);
+        $event->setResponse($response);
 
         if ($form->isSubmitted()) {
             // ProductControllerの登録成功時のみ処理を通す
@@ -166,6 +141,31 @@ class EventLegacy
     }
 
     /**
+     * getTargetProduct.
+     *
+     * @param FilterResponseEvent $event
+     *
+     * @return Product $Product
+     */
+    private function getTargetProduct($event)
+    {
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+        if ($request->attributes->get('id')) {
+            $id = $request->attributes->get('id');
+        } else {
+            $location = explode('/', $response->headers->get('location'));
+            $url = explode('/', $this->app->url('admin_product_product_edit', array('id' => '0')));
+            $diffs = array_values(array_diff($location, $url));
+            $id = $diffs[0];
+        }
+
+        $Product = $this->app['eccube.repository.product']->find($id);
+
+        return $Product;
+    }
+
+    /**
      * 解析用HTMLを取得.
      *
      * @param Crawler $crawler
@@ -183,12 +183,10 @@ class EventLegacy
         return html_entity_decode($html, ENT_NOQUOTES, 'UTF-8');
     }
 
-
     /**
      * add related product form to admin product.
      *
-     * @param Request $request
-     *
+     * @param Request  $request
      * @param Response $response
      *
      * @return string $html
@@ -220,8 +218,6 @@ class EventLegacy
         $builder = $app['form.factory']->createBuilder('admin_product');
         $form = $builder->getForm();
         $form->get('related_collection')->setData($RelatedProducts);
-        $form->handleRequest($request);
-
         // 商品検索フォーム
         $searchForm = $app['form.factory']
             ->createBuilder('admin_search_product')
