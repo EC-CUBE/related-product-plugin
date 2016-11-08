@@ -18,6 +18,9 @@ use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
 use Plugin\RelatedProduct\Util\Util;
 
+// include log functions (for 3.0.0 - 3.0.11)
+require_once(__DIR__.'/../log.php');
+
 /**
  * Class RelatedProductServiceProvider.
  */
@@ -88,6 +91,11 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
 
             return $config;
         }));
+
+        // initialize logger (for 3.0.0 - 3.0.8)
+        if (!Util::isSupportNewHookpoint()) {
+            eccube_log_init($app);
+        }
     }
 
     /**

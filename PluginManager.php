@@ -28,6 +28,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function install($config, $app)
     {
+        log_info('install related product plugin');
     }
 
     /**
@@ -39,6 +40,7 @@ class PluginManager extends AbstractPluginManager
     public function uninstall($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
+        log_info('uninstall related product plugin');
     }
 
     /**
@@ -52,6 +54,7 @@ class PluginManager extends AbstractPluginManager
     public function enable($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
+        log_info('enable related product plugin');
     }
 
     /**
@@ -62,6 +65,7 @@ class PluginManager extends AbstractPluginManager
      */
     public function disable($config, $app)
     {
+        log_info('disable related product plugin');
     }
 
     /**
@@ -73,5 +77,6 @@ class PluginManager extends AbstractPluginManager
     public function update($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
+        log_info('update related product plugin');
     }
 }
