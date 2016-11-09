@@ -20,8 +20,34 @@ $(function() {
         $('#searchResult').children().remove();
     });
 
-    $("a[id^='search_']").on("click", function () {
+    $("select.child-product").each(function () {
+        var html = $(this).clone();
+        var productId = $(this).val();
+        var index = $(this).parent().find('button').attr('data-id');
+        var productCode = $('#product-code' + index).text();
+        var parentDiv =  $('#related-div-' + index);
+        if (productId && !productCode) {
+            $.ajax({
+                type: "POST",
+                url: "{{ url('admin_related_product_get_product') }}",
+                data: {
+                    product_id : productId,
+                    index : index
+                },
+                success: function(data){
+                    parentDiv.empty().append(data);
+                    parentDiv.append(html);
+                },
+                error: function() {
+                    alert('get product info failed.');
+                }
+            });
+        }
+    });
+
+    $(document).on("click", 'a[id^="search_"]', function () {
         dataId = $(this).attr("data-id");
+        console.log('aaa');
         $("#relatedDataId").val(dataId);
         $("#searchResult").children().remove();
         $('div.box-footer a').remove();
@@ -50,7 +76,6 @@ $(function() {
             }
         });
     });
-
 });
 </script>
 
@@ -70,7 +95,7 @@ $(function() {
                     {{ child.ChildProduct.vars.label }}
                 </label>
                 {% set ChildProduct = RelatedProducts[loop.index0].ChildProduct %}
-                <div class="col-sm-9 col-lg-9">
+                <div class="col-sm-9 col-lg-9" id="related-div-{{ loop.index0 }}">
                     {% if ChildProduct %}
                         <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
                             <img src="{{ app.config.image_save_urlpath }}/{{ ChildProduct.mainFileName|no_image_product }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
@@ -80,7 +105,7 @@ $(function() {
                             商品を選択
                         </a>
                         <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">削除</button>
-                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' } }) }}
+                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
                         <br>
                         <span class="related-view{{ loop.index0 }}" id="product-code{{ loop.index0 }}">
                             {{ ChildProduct.code_min }}
@@ -96,12 +121,12 @@ $(function() {
                             商品を選択
                         </a>
                         <button  type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }} hidden" data-id="{{ loop.index0 }}">削除</button>
-                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' } }) }}
+                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' , class: 'child-product' } }) }}
                         <br>
                         <span id="product-code{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden"></span>
                     {% endif %}
 
-                    <input type="hidden" id="relatedDataId" value="">
+
                 </div>
             </div>
             <div class="form-group">
@@ -114,6 +139,7 @@ $(function() {
                 </div>
             </div>
         {% endfor %}
+        <input type="hidden" id="relatedDataId" value="">
     </div>
 </div>
 

@@ -13,9 +13,6 @@ namespace Plugin\RelatedProduct\Controller\Admin;
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 
-// include log functions (for 3.0.0 - 3.0.11)
-require_once(__DIR__.'/../../log.php');
-
 /**
  * Class RelatedProductController.
  */
@@ -32,10 +29,7 @@ class RelatedProductController
      */
     public function searchProduct(Application $app, Request $request, $page_no = null)
     {
-        log_info('searchProduct start');
         if (!$request->isXmlHttpRequest()) {
-            log_debug('request is not ajax call.');
-
             return null;
         }
 
@@ -54,7 +48,6 @@ class RelatedProductController
             $session->set('eccube.plugin.related_product.product.search', $searchData);
             $session->set('eccube.plugin.related_product.product.search.page_no', $page_no);
         } else {
-            log_info('get and set search data to session.');
             $searchData = (array) $session->get('eccube.plugin.related_product.product.search');
             if (is_null($page_no)) {
                 $page_no = intval($session->get('eccube.plugin.related_product.product.search.page_no'));
@@ -64,7 +57,6 @@ class RelatedProductController
         }
 
         $qb = $app['eccube.repository.product']->getQueryBuilderBySearchDataForAdmin($searchData);
-        log_info('get product admin query data.');
 
         /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
         $pagination = $app['paginator']()->paginate(
@@ -78,10 +70,32 @@ class RelatedProductController
         $paths[] = $app['config']['template_admin_realdir'];
         $app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($paths));
 
-        log_info('searchProduct finish');
-
         return $app->render('RelatedProduct/Resource/template/admin/modal_result.twig', array(
             'pagination' => $pagination,
+        ));
+    }
+
+    /**
+     * get product information.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getProduct(Application $app, Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return null;
+        }
+
+        $productId = $request->get('product_id');
+        $index = $request->get('index');
+        $Product = $app['eccube.repository.product']->find($productId);
+
+        return $app->render('RelatedProduct/Resource/template/admin/product.twig', array(
+            'Product' => $Product,
+            'index' => $index,
         ));
     }
 }

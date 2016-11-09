@@ -54,6 +54,7 @@ class EventLegacy
      */
     public function onRenderProductDetailBefore(FilterResponseEvent $event)
     {
+        log_info('RelatedProduct trigger onRenderProductDetailBefore start');
         $app = $this->app;
         $id = $app['request']->attributes->get('id');
         $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
@@ -86,6 +87,7 @@ class EventLegacy
 
             $response->setContent($html);
             $event->setResponse($response);
+            log_info('RelatedProduct trigger onRenderProductDetailBefore finish');
         }
     }
 
@@ -96,6 +98,7 @@ class EventLegacy
      */
     public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
     {
+        log_info('RelatedProduct trigger onRenderAdminProductEditBefore start');
         $app = $this->app;
         if (!$app->isGranted('ROLE_ADMIN')) {
             return;
@@ -127,6 +130,7 @@ class EventLegacy
             }
             if ($form->isValid()) {
                 $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
+                log_info('remove all now related product data of ', array('Product id' => $Product->getId()));
                 $RelatedProducts = $form->get('related_collection')->getData();
                 foreach ($RelatedProducts as $RelatedProduct) {
                     /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
@@ -134,10 +138,12 @@ class EventLegacy
                         $RelatedProduct->setProduct($Product);
                         $app['orm.em']->persist($RelatedProduct);
                         $app['orm.em']->flush($RelatedProduct);
+                        log_info('save new related product data to DB ', array('Related Product id' => $RelatedProduct->getId()));
                     }
                 }
             }
         }
+        log_info('RelatedProduct trigger onRenderAdminProductEditBefore finish');
     }
 
     /**

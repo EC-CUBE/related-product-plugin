@@ -19,7 +19,7 @@ use Silex\Application;
 use Plugin\RelatedProduct\Util\Util;
 
 // include log functions (for 3.0.0 - 3.0.11)
-require_once(__DIR__.'/../log.php');
+require_once __DIR__.'/../log.php';
 
 /**
  * Class RelatedProductServiceProvider.
@@ -35,6 +35,9 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
     {
         $app->post('/related_product/search_product', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
             ->bind('admin_related_product_search');
+
+        $app->post('/related_product/get_product', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::getProduct')
+            ->bind('admin_related_product_get_product');
 
         $app->match('/'.$app['config']['admin_route'].'/related_product/search/product/page/{page_no}', '\Plugin\RelatedProduct\Controller\Admin\RelatedProductController::searchProduct')
             ->assert('page_no', '\d+')
