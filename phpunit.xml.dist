@@ -26,6 +26,7 @@
                 <directory suffix=".php">./Resource</directory>
                 <directory suffix=".php">./Tests</directory>
                 <file>./PluginManager.php</file>
+                <file>./log.php</file>
             </exclude>
         </whitelist>
     </filter>

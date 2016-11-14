@@ -87,8 +87,8 @@ class EventLegacy
 
             $response->setContent($html);
             $event->setResponse($response);
-            log_info('RelatedProduct trigger onRenderProductDetailBefore finish');
         }
+        log_info('RelatedProduct trigger onRenderProductDetailBefore finish');
     }
 
     /**

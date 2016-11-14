@@ -20,34 +20,35 @@ $(function() {
         $('#searchResult').children().remove();
     });
 
-    $("select.child-product").each(function () {
-        var html = $(this).clone();
-        var productId = $(this).val();
-        var index = $(this).parent().find('button').attr('data-id');
-        var productCode = $('#product-code' + index).text();
-        var parentDiv =  $('#related-div-' + index);
-        if (productId && !productCode) {
-            $.ajax({
-                type: "POST",
-                url: "{{ url('admin_related_product_get_product') }}",
-                data: {
-                    product_id : productId,
-                    index : index
-                },
-                success: function(data){
-                    parentDiv.empty().append(data);
-                    parentDiv.append(html);
-                },
-                error: function() {
-                    alert('get product info failed.');
-                }
-            });
-        }
-    });
+    window.onload = function () {
+        $("select.child-product").each(function () {
+            var html = $(this).clone();
+            var productId = $(this).val();
+            var index = $(this).parent().find('button').attr('data-id');
+            var productCode = $('#product-code' + index).text();
+            var parentDiv =  $('#related-div-' + index);
+            if (productId && !productCode) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('admin_related_product_get_product') }}",
+                    data: {
+                        product_id : productId,
+                        index : index
+                    },
+                    success: function(data){
+                        parentDiv.empty().append(data);
+                        parentDiv.append(html);
+                    },
+                    error: function() {
+                        alert('get product info failed.');
+                    }
+                });
+            }
+        });
+    };
 
     $(document).on("click", 'a[id^="search_"]', function () {
         dataId = $(this).attr("data-id");
-        console.log('aaa');
         $("#relatedDataId").val(dataId);
         $("#searchResult").children().remove();
         $('div.box-footer a').remove();
