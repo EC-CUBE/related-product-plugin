@@ -31,4 +31,14 @@ class Util
             return false;
         }
     }
+
+    /**
+     * Check version to support new log function.
+     *
+     * @return bool|int|mixed|void
+     */
+    public static function isSupportLogFunction()
+    {
+        return version_compare(Constant::VERSION, '3.0.12', '>=');
+    }
 }
