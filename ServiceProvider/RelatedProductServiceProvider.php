@@ -43,6 +43,14 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
             ->assert('page_no', '\d+')
             ->bind('admin_related_product_search_product_page');
 
+        // イベントの追加
+        $app['eccube.plugin.relatedproduct.event'] = $app->share(function () use ($app) {
+            return new \Plugin\RelatedProduct\Event\Event($app);
+        });
+        $app['eccube.plugin.relatedproduct.event.legacy'] = $app->share(function () use ($app) {
+            return new \Plugin\RelatedProduct\Event\EventLegacy($app);
+        });
+
         // Formの定義
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
             $types[] = new RelatedProductType($app);
