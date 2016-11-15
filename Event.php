@@ -89,7 +89,7 @@ class Event
         if (Version::isSupportGetInstanceFunction()) {
             return;
         }
-        $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderProductDetail($event);
+        $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderProductDetailBefore($event);
     }
 
     /**
