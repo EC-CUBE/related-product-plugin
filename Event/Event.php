@@ -8,17 +8,15 @@
  * file that was distributed with this source code.
 */
 
-namespace Plugin\RelatedProduct;
+namespace Plugin\RelatedProduct\Event;
 
 use Eccube\Application;
 use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
-use Plugin\RelatedProduct\Util\Util;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.
@@ -61,7 +59,44 @@ class Event
      */
     public function onRenderProductDetail(TemplateEvent $event)
     {
-        $this->app['eccube.plugin.relatedproduct.event']->onRenderProductDetail($event);
+        log_info('RelatedProduct trigger onRenderProductDetail start');
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        // ProductIDがない場合、レンダリングしない
+        if (is_null($parameters['Product'])) {
+            return;
+        }
+
+        // 登録がない、レンダリングをしない
+        $Product = $parameters['Product'];
+        $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->showRelatedProduct($Product, $Disp);
+        if (count($RelatedProducts) == 0) {
+            return;
+        }
+
+        // twigコードを挿入
+        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
+        $source = $event->getSource();
+        //find related product mark
+        if (strpos($source, self::RELATED_PRODUCT_TAG)) {
+            log_info('Render related product with ', array('RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG));
+            $search = self::RELATED_PRODUCT_TAG;
+            $replace = $search.$snipet;
+        } else {
+            //regular expression for get free area div
+            $pattern = '/({% if Product.freearea %})(.*?(\n))+.*?({% endif %})/';
+            preg_match($pattern, $source, $matches);
+            $search = $matches[0];
+            $replace = $search.$snipet;
+        }
+        $source = str_replace($search, $replace, $source);
+        $event->setSource($source);
+
+        //set parameter for twig files
+        $parameters['RelatedProducts'] = $RelatedProducts;
+        $event->setParameters($parameters);
+        log_info('RelatedProduct trigger onRenderProductDetail finish');
     }
 
     /**
@@ -145,38 +180,6 @@ class Event
             }
         }
         log_info('RelatedProduct trigger onRenderAdminProductComplete finish');
-    }
-
-    /**
-     * for v3.0.0 - 3.0.8.
-     *
-     * @deprecated for since v3.0.0, to be removed in 3.1
-     *
-     * @param FilterResponseEvent $event
-     */
-    public function onRenderProductDetailBefore(FilterResponseEvent $event)
-    {
-        //current version >= 3.0.9
-        if (Util::isSupportNewHookpoint()) {
-            return;
-        }
-        $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderProductDetail($event);
-    }
-
-    /**
-     * for v3.0.0 - 3.0.8.
-     *
-     * @deprecated for since v3.0.0, to be removed in 3.1
-     *
-     * @param FilterResponseEvent $event
-     */
-    public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
-    {
-        //current version >= 3.0.9
-        if (Util::isSupportNewHookpoint()) {
-            return;
-        }
-        $this->legacyEvent->onRenderAdminProductEditBefore($event);
     }
 
     /**
