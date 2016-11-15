@@ -153,7 +153,7 @@ class EventLegacy
      *
      * @return Product $Product
      */
-    private function getTargetProduct($event)
+    private function getTargetProduct(FilterResponseEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();

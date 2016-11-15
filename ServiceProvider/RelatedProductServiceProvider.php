@@ -19,6 +19,7 @@ use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
 use Plugin\RelatedProduct\Event\Event;
 use Plugin\RelatedProduct\Event\EventLegacy;
+use Symfony\Component\Translation\Translator;
 
 // include log functions (for 3.0.0 - 3.0.11)
 require_once __DIR__.'/../log.php';
@@ -81,7 +82,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         };
 
         // メッセージ登録
-        $app['translator'] = $app->share($app->extend('translator', function ($translator, Application $app) {
+        $app['translator'] = $app->share($app->extend('translator', function (Translator $translator, Application $app) {
             $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
             if (file_exists($file)) {
                 $translator->addResource('yaml', $file, $app['locale']);
