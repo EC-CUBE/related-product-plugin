@@ -17,6 +17,8 @@ use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
 use Plugin\RelatedProduct\Util\Util;
+use Plugin\RelatedProduct\Event\Event;
+use Plugin\RelatedProduct\Event\EventLegacy;
 
 // include log functions (for 3.0.0 - 3.0.11)
 require_once __DIR__.'/../log.php';
@@ -45,10 +47,12 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
 
         // イベントの追加
         $app['eccube.plugin.relatedproduct.event'] = $app->share(function () use ($app) {
-            return new \Plugin\RelatedProduct\Event\Event($app);
+
+            return new Event($app);
         });
         $app['eccube.plugin.relatedproduct.event.legacy'] = $app->share(function () use ($app) {
-            return new \Plugin\RelatedProduct\Event\EventLegacy($app);
+
+            return new EventLegacy($app);
         });
 
         // Formの定義
