@@ -10,13 +10,13 @@
 
 namespace Plugin\RelatedProduct\ServiceProvider;
 
+use Plugin\RelatedProduct\Utils\Version;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\Yaml\Yaml;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Plugin\RelatedProduct\Form\Extension\Admin\RelatedCollectionExtension;
 use Silex\Application;
-use Plugin\RelatedProduct\Util\Util;
 use Plugin\RelatedProduct\Event\Event;
 use Plugin\RelatedProduct\Event\EventLegacy;
 
@@ -47,11 +47,9 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
 
         // イベントの追加
         $app['eccube.plugin.relatedproduct.event'] = $app->share(function () use ($app) {
-
             return new Event($app);
         });
         $app['eccube.plugin.relatedproduct.event.legacy'] = $app->share(function () use ($app) {
-
             return new EventLegacy($app);
         });
 
@@ -63,7 +61,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         }));
 
         // @deprecated for since v3.0.0, to be removed in 3.1.
-        if (!Util::isSupportNewHookpoint()) {
+        if (!Version::isSupportGetInstanceFunction()) {
             // Form/Extension
             $app['form.type.extensions'] = $app->share(
                 $app->extend(
@@ -108,7 +106,7 @@ class RelatedProductServiceProvider implements ServiceProviderInterface
         }));
 
         // initialize logger (for 3.0.0 - 3.0.8)
-        if (!Util::isSupportNewHookpoint()) {
+        if (!Version::isSupportGetInstanceFunction()) {
             eccube_log_init($app);
         }
     }

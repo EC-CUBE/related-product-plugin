@@ -15,7 +15,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\ORM\Tools\SchemaTool;
 use Eccube\Application;
 use Doctrine\ORM\EntityManager;
-use Plugin\RelatedProduct\Util\Util;
+use Plugin\RelatedProduct\Utils\Version;
 
 /**
  * Class Version20150808173000.
@@ -41,7 +41,7 @@ class Version20150808173000 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        if (Util::isSupportNewHookpoint()) {
+        if (Version::isSupportGetInstanceFunction()) {
             $this->createRelatedProductTable($schema);
         } else {
             $this->createRelatedProductTableForOldVersion($schema);
@@ -56,7 +56,7 @@ class Version20150808173000 extends AbstractMigration
     public function down(Schema $schema)
     {
         //current version >= 3.0.9
-        if (Util::isSupportNewHookpoint()) {
+        if (Version::isSupportGetInstanceFunction()) {
             $app = Application::getInstance();
             $meta = $this->getMetadata($app['orm.em']);
             $tool = new SchemaTool($app['orm.em']);

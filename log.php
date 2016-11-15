@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-use Plugin\RelatedProduct\Util\Util;
+use Plugin\RelatedProduct\Utils\Version;
 
-if (Util::isSupportLogFunction()) {
+if (Version::isSupportLogFunction()) {
     return;
 }
 if (function_exists('log_emergency') === false) {

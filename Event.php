@@ -11,10 +11,10 @@
 namespace Plugin\RelatedProduct;
 
 use Eccube\Application;
+use Plugin\RelatedProduct\Utils\Version;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
-use Plugin\RelatedProduct\Util\Util;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.
@@ -86,7 +86,7 @@ class Event
     public function onRenderProductDetailBefore(FilterResponseEvent $event)
     {
         //current version >= 3.0.9
-        if (Util::isSupportNewHookpoint()) {
+        if (Version::isSupportGetInstanceFunction()) {
             return;
         }
         $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderProductDetail($event);
@@ -102,7 +102,7 @@ class Event
     public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
     {
         //current version >= 3.0.9
-        if (Util::isSupportNewHookpoint()) {
+        if (Version::isSupportGetInstanceFunction()) {
             return;
         }
         $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderAdminProductEditBefore($event);

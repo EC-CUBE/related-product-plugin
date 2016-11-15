@@ -1,37 +1,31 @@
 <?php
 /*
- * This file is part of the Related Product plugin
+ * This file is part of the Recommend plugin
  *
  * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
-
-namespace Plugin\RelatedProduct\Util;
+ */
+namespace Plugin\RelatedProduct\Utils;
 
 use Eccube\Common\Constant;
 
 /**
- * Class Util.
+ * Class Version.
+ * Util to check version
  */
-class Util
+class Version
 {
     /**
-     * Version compare util function.
+     * Check version to support get instance function. (monolog, new style, ...)
      *
-     * @return bool
+     * @return bool|int|mixed|void
      */
-    public static function isSupportNewHookpoint()
+    public static function isSupportGetInstanceFunction()
     {
-        //current version >= 3.0.9
-        if (version_compare(Constant::VERSION, '3.0.9', '>=')) {
-            return true;
-        } else {
-            return false;
-        }
+        return version_compare(Constant::VERSION, '3.0.9', '>=');
     }
-
     /**
      * Check version to support new log function.
      *
