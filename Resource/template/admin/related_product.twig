@@ -1,0 +1,146 @@
+{#
+ This file is part of the Related Product plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+
+<script>
+$(function() {
+    var dataId = null;
+
+    $(document).on('click', '.delete', function() {
+        var data = $(this).data();
+        $('.related-view' + data.id ).addClass('hidden');
+        $('#admin_product_related_collection_' + data.id + '_ChildProduct').val('');
+        $('#admin_product_related_collection_' + data.id + '_content' ).val('');
+        $('#searchResult').children().remove();
+    });
+
+    window.onload = function () {
+        $("select.child-product").each(function () {
+            var html = $(this).clone();
+            var productId = $(this).val();
+            var index = $(this).parent().find('button').attr('data-id');
+            var productCode = $('#product-code' + index).text();
+            var parentDiv =  $('#related-div-' + index);
+            if (productId && !productCode) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('admin_related_product_get_product') }}",
+                    data: {
+                        product_id : productId,
+                        index : index
+                    },
+                    success: function(data){
+                        parentDiv.empty().append(data);
+                        parentDiv.append(html);
+                    },
+                    error: function() {
+                        alert('get product info failed.');
+                    }
+                });
+            }
+        });
+    };
+
+    $(document).on("click", 'a[id^="search_"]', function () {
+        dataId = $(this).attr("data-id");
+        $("#relatedDataId").val(dataId);
+        $("#searchResult").children().remove();
+        $('div.box-footer a').remove();
+    });
+
+    $("#searchButton").on("click", function () {
+        var formIdVal = $("#{{ searchForm.id.vars.id }}").val();
+        var formCatIdVal = $("#{{ searchForm.category_id.vars.id }}").val();
+        var data = {
+            id: formIdVal,
+            category_id: formCatIdVal,
+            product_id: {{ Product.id ? Product.id : 0 }}
+        };
+        $("#searchResult")
+                .children()
+                .remove();
+        $.ajax({
+            type: "POST",
+            url: "{{ url('admin_related_product_search') }}",
+            data: data,
+            success: function(data){
+                $("#searchResult").append(data);
+            },
+            error: function() {
+                alert('product search failed.');
+            }
+        });
+    });
+});
+</script>
+
+<div class="box accordion form-horizontal">
+
+    <div class="box-header toggle">
+        <h3 class="box-title">
+            {{ form.related_collection.vars.label }}
+            <svg class="cb cb-angle-down icon_down"> <use xlink:href="#cb-angle-down" /></svg>
+        </h3>
+    </div><!-- /.box-header -->
+
+    <div class="box-body accpanel">
+        {% for child in form.related_collection %}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    {{ child.ChildProduct.vars.label }}
+                </label>
+                {% set ChildProduct = RelatedProducts[loop.index0].ChildProduct %}
+                <div class="col-sm-9 col-lg-9" id="related-div-{{ loop.index0 }}">
+                    {% if ChildProduct %}
+                        <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
+                            <img src="{{ app.config.image_save_urlpath }}/{{ ChildProduct.mainFileName|no_image_product }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                        </a>
+                        <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }}" style="margin-right: 10px;">{{ ChildProduct.name }}</span>
+                        <a id="search_{{ loop.index0 }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
+                            商品を選択
+                        </a>
+                        <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">削除</button>
+                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
+                        <br>
+                        <span class="related-view{{ loop.index0 }}" id="product-code{{ loop.index0 }}">
+                            {{ ChildProduct.code_min }}
+                            {% if ChildProduct.code_min != ChildProduct.code_max %} ～ {{ ChildProduct.code_max }}
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <a href="" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }} hidden" >
+                            <img src="" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                        </a>
+                        <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden" ></span>
+                        <a id="search_{{ loop.index0 }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
+                            商品を選択
+                        </a>
+                        <button  type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }} hidden" data-id="{{ loop.index0 }}">削除</button>
+                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' , class: 'child-product' } }) }}
+                        <br>
+                        <span id="product-code{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden"></span>
+                    {% endif %}
+
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    {{ child.content.vars.label }}
+                </label>
+                <div class="col-sm-9 col-lg-10 related-content{{ loop.index0 }}">
+                    {{ form_widget(child.content, { attr : { class : 'col-sm-9 col-lg-10 form-control' } } ) }}
+                    {{ form_errors(child.content) }}
+                </div>
+            </div>
+        {% endfor %}
+        <input type="hidden" id="relatedDataId" value="">
+    </div>
+</div>
+
