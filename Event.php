@@ -86,7 +86,7 @@ class Event
     public function onRenderProductDetailBefore(FilterResponseEvent $event)
     {
         //current version >= 3.0.9
-        if (Version::isSupportGetInstanceFunction()) {
+        if (Version::isSupportNewHookpoint()) {
             return;
         }
         $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderProductDetailBefore($event);
@@ -102,7 +102,7 @@ class Event
     public function onRenderAdminProductEditBefore(FilterResponseEvent $event)
     {
         //current version >= 3.0.9
-        if (Version::isSupportGetInstanceFunction()) {
+        if (Version::isSupportNewHookpoint()) {
             return;
         }
         $this->app['eccube.plugin.relatedproduct.event.legacy']->onRenderAdminProductEditBefore($event);

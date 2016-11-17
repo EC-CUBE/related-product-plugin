@@ -128,7 +128,7 @@ class EventLegacy
                 $form = $builder->getForm();
                 $form->handleRequest($request);
             }
-            if ($form->isValid()) {
+            if ($form['related_collection']->isValid()) {
                 $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
                 log_info('remove all now related product data of ', array('Product id' => $Product->getId()));
                 $RelatedProducts = $form->get('related_collection')->getData();

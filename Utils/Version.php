@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Recommend plugin
+ * This file is part of the Related Product plugin
  *
  * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
@@ -23,6 +23,15 @@ class Version
      * @return bool|int|mixed|void
      */
     public static function isSupportGetInstanceFunction()
+    {
+        return version_compare(Constant::VERSION, '3.0.9', '>=');
+    }
+    /**
+     * Check version to support get new hookpoint function. (monolog, new style, ...)
+     *
+     * @return bool|int|mixed|void
+     */
+    public static function isSupportNewHookpoint()
     {
         return version_compare(Constant::VERSION, '3.0.9', '>=');
     }
