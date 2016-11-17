@@ -17,13 +17,11 @@ Plugin\RelatedProduct\Entity\RelatedProduct:
     manyToOne:
         Product:
             targetEntity: Eccube\Entity\Product
-            inversedBy: RelatedProducts
             joinColumn:
                 name: product_id
                 referencedColumnName: product_id
         ChildProduct:
             targetEntity: Eccube\Entity\Product
-            inversedBy: RelatedChildProducts
             joinColumn:
                 name: child_product_id
                 referencedColumnName: product_id
