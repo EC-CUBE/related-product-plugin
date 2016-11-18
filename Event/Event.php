@@ -11,6 +11,7 @@
 namespace Plugin\RelatedProduct\Event;
 
 use Eccube\Application;
+use Eccube\Common\Constant;
 use Symfony\Component\Form\FormBuilder;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
@@ -192,10 +193,7 @@ class Event
         $app = $this->app;
         $RelatedProducts = null;
         if ($Product) {
-            $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
-                array(
-                    'Product' => $Product,
-                ));
+            $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
         } else {
             $Product = new Product();
         }

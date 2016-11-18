@@ -19,6 +19,7 @@ use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Eccube\Common\Constant;
 
 /**
  * Class EventLegacy.
@@ -208,10 +209,7 @@ class EventLegacy
             $Product = new Product();
         }
 
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->findBy(
-            array(
-                'Product' => $Product,
-            ));
+        $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
 
         $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
