@@ -39,6 +39,13 @@ class EventLegacy
     const MAXIMUM_PRODUCT_RELATED = 5;
 
     /**
+     * position for insert in twig file.
+     *
+     * @var string
+     */
+    const RELATED_PRODUCT_TAG = '<!--# RelatedProductPlugin-Tag #-->';
+
+    /**
      * Event constructor.
      *
      * @param Application $app
@@ -77,14 +84,22 @@ class EventLegacy
             }
 
             $html = $response->getContent();
-            $crawler = new Crawler($html);
-
-            $oldHtml = $crawler->filter('#main')->html();
-            $oldHtml = html_entity_decode($oldHtml, ENT_NOQUOTES, 'UTF-8');
-            $newHtml = $oldHtml.$twig;
-
-            $html = $this->getHtml($crawler);
-            $html = str_replace($oldHtml, $newHtml, $html);
+            $search = null;
+            //find related product mark
+            if (strpos($html, self::RELATED_PRODUCT_TAG)) {
+                log_info('Render related product with ', array('RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG));
+                $search = self::RELATED_PRODUCT_TAG;
+                $replace = $search.$twig;
+                $html = str_replace($search, $replace, $html);
+            } else {
+                // For old and new version
+                $crawler = new Crawler($html);
+                $oldHtml = $crawler->filter('#main')->html();
+                $oldHtml = html_entity_decode($oldHtml, ENT_NOQUOTES, 'UTF-8');
+                $newHtml = $oldHtml.$twig;
+                $html = $this->getHtml($crawler);
+                $html = str_replace($oldHtml, $newHtml, $html);
+            }
 
             $response->setContent($html);
             $event->setResponse($response);
@@ -245,7 +260,6 @@ class EventLegacy
         );
         $html = $response->getContent();
         $html = $html.$modal;
-
         // For old and new version
         $search = '/(<div class="row hidden-xs hidden-sm")|(<div id="detail_box__footer")/';
         $newHtml = $twig.'<div id="detail_box__footer" class="row hidden-xs hidden-sm"';
