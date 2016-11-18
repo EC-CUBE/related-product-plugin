@@ -34,7 +34,7 @@ class Event
      *
      * @var string
      */
-    const RELATED_PRODUCT_TAG = '<!--# RelatedProductPlugin-Tag #-->';
+    const RELATED_PRODUCT_TAG = '<!--# related-product-plugin-tag #-->';
 
     /**
      * maximum product related.
