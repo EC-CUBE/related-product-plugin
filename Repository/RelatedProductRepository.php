@@ -55,4 +55,26 @@ class RelatedProductRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * get related product with del flg disable.
+     *
+     * @param \Eccube\Entity\Product $Product
+     * @param bool                   $delFlg
+     *
+     * @return array
+     */
+    public function getRelatedProduct($Product, $delFlg)
+    {
+        $query = $this->createQueryBuilder('rp')
+            ->innerJoin('Eccube\Entity\Product', 'p', 'WITH', 'p.id = rp.ChildProduct')
+            ->andWhere('rp.Product = :Product')
+            ->andWhere('p.del_flg = :delFlg')
+            ->setParameter('Product', $Product)
+            ->setParameter('delFlg', $delFlg)
+            ->orderBy('rp.id')
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }
