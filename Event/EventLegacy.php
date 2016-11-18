@@ -202,14 +202,14 @@ class EventLegacy
     {
         $app = $this->app;
         $id = $request->attributes->get('id');
+        $RelatedProducts = null;
 
         if ($id) {
             $Product = $app['eccube.repository.product']->find($id);
+            $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
         } else {
             $Product = new Product();
         }
-
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
 
         $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {

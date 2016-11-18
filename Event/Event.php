@@ -192,7 +192,8 @@ class Event
     {
         $app = $this->app;
         $RelatedProducts = null;
-        if ($Product) {
+        $id = $Product->getId();
+        if ($id != null) {
             $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
         } else {
             $Product = new Product();
