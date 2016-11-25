@@ -13,24 +13,26 @@
         <div class="carousel">
             {% for RelatedProduct in RelatedProducts %}
                 <div class="product_item">
-                    <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}" class="item_photo">
-                        <div class="item_photo"><img src="{{ app.config.image_save_urlpath }}/{{ RelatedProduct.ChildProduct.main_list_image|no_image_product }}"></div>
-                        <dl style="text-align: left;">
-                            <dd class="item_comment">{{ RelatedProduct.content|raw }}</dd>
-                            <dt class="item_name">{{ RelatedProduct.ChildProduct.name }}</dt>
-                            <dd class="item_price">
-                                {% if RelatedProduct.ChildProduct.hasProductClass %}
-                                    {% if RelatedProduct.ChildProduct.getPrice02Min == RelatedProduct.ChildProduct.getPrice02Max %}
-                                        {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }}
-                                    {% else %}
-                                        {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }} ～ {{ RelatedProduct.ChildProduct.getPrice02IncTaxMax|price }}
-                                    {% endif %}
-                                {% else %}
+                    <div class="item_photo">
+                        <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}">
+                            <img src="{{ app.config.image_save_urlpath }}/{{ RelatedProduct.ChildProduct.main_list_image|no_image_product }}">
+                        </a>
+                    </div>
+                    <dl style="text-align: left;">
+                        <dd class="item_comment">{{ RelatedProduct.content|raw }}</dd>
+                        <dt class="item_name">{{ RelatedProduct.ChildProduct.name }}</dt>
+                        <dd class="item_price">
+                            {% if RelatedProduct.ChildProduct.hasProductClass %}
+                                {% if RelatedProduct.ChildProduct.getPrice02Min == RelatedProduct.ChildProduct.getPrice02Max %}
                                     {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }}
+                                {% else %}
+                                    {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }} ～ {{ RelatedProduct.ChildProduct.getPrice02IncTaxMax|price }}
                                 {% endif %}
-                            </dd>
-                        </dl>
-                    </a>
+                            {% else %}
+                                {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }}
+                            {% endif %}
+                        </dd>
+                    </dl>
                 </div>
             {% endfor %}
         </div>
