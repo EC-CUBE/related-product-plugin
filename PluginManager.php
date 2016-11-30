@@ -107,7 +107,7 @@ class PluginManager extends AbstractPluginManager
     private function copyAssets(Application $app)
     {
         $file = new Filesystem();
-        $file->mirror($this->origin, $app['config']['plugin_html_realdir'].$this->target.'/assets');
+        $file->mirror($this->origin, $app['config']['root_dir'].'/html/plugin'.$this->target.'/assets');
     }
 
     /**
@@ -118,6 +118,6 @@ class PluginManager extends AbstractPluginManager
     private function removeAssets(Application $app)
     {
         $file = new Filesystem();
-        $file->remove($app['config']['plugin_html_realdir'].$this->target);
+        $file->remove($app['config']['root_dir'].'/html/plugin'.$this->target);
     }
 }
