@@ -1,0 +1,135 @@
+/*
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+#related_product_area {
+    border-top: 1px solid #E8E8E8;
+}
+#related_product_area .related_product_carousel {
+    margin-left: -8px;
+    margin-right: -8px;
+}
+#related_product_area .related_product_carousel .product_item {
+    padding: 0 8px;
+}
+#related_product_area .related_product_carousel .product_item .btn_circle {
+    right: 16px;
+}
+#related_product_area .slick-prev,
+#related_product_area .slick-next {
+    border: 0 none;
+    background: 0 none;
+    padding: 0; margin: 0;
+    text-shadow: none;
+    box-shadow: none;
+
+    position: absolute;
+    font-size: 18px;
+    font-size: 1.8rem;
+    width: 36px; height: 36px;
+    line-height: 36px;
+    vertical-align: middle;
+    top: -2em;
+}
+
+#related_product_area .angle-circle {
+    display: inline-block;
+    background: #bfbfbf;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    margin-top: 3px;
+}
+#related_product_area .slick-prev .cb,
+#related_product_area .slick-next .cb {
+    fill: #fff;
+    position: relative;
+    top: -4px; right: -2px;
+    font-size: 25px;
+    font-size: 2.5rem;
+}
+#related_product_area .slick-prev .cb {
+    left: -2px;
+    -webkit-transform:rotate(-180deg);
+    -ms-transform:rotate(-180deg);
+    -o-transform:rotate(-180deg);
+    transform:rotate(-180deg)
+}
+
+#related_product_area .slick-prev:hover,
+#related_product_area .slick-next:hover {
+    opacity: 0.8;
+}
+
+#related_product_area .slick-disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+#related_product_area .slick-disabled:hover {
+    opacity: 0.4;
+}
+
+#related_product_area .slick-next {
+    right: 0;
+}
+#related_product_area .slick-prev {
+    right: 40px;
+    left: auto;
+}
+#related_product_area .item_name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#related_product_area .item_price + .item_comment {
+    margin-top: 8px;
+}
+
+@media only screen and (min-width: 767px) {
+    #related_product_area {
+        border: 0 none;
+    }
+    #related_product_area .heading03 {
+        border-top: 1px solid #E8E8E8;
+        margin-top: 0;
+        padding-top: 18px;
+    }
+    #related_product_area .related_product_carousel .product_item .btn_circle {
+        right: 24px;
+    }
+    #related_product_area .related_product_carousel {
+        margin-left: -16px;
+        margin-right: -16px;
+    }
+    #related_product_area .related_product_carousel .product_item {
+        padding: 0 16px;
+    }
+    #related_product_area .slick-next,
+    #related_product_area .slick-prev {
+        font-size: 37px;
+        font-size: 3.7rem;
+        top: -1.4em;
+    }
+    #related_product_area .slick-next {
+        right: 14px;
+    }
+    #related_product_area .slick-prev {
+        right: 74px;
+    }
+
+    #related_product_area .angle-circle {
+        width: 35px; height: 35px;
+        margin-top: 0;
+    }
+    #related_product_area .slick-prev .cb,
+    #related_product_area .slick-next .cb {
+        fill: #fff;
+        position: relative;
+        top: -4px; right: -2px;
+        font-size: 25px;
+        font-size: 2.5rem;
+    }
+}

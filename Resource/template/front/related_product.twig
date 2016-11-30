@@ -7,10 +7,10 @@
  For the full copyright and license information, please view the LICENSE
  file that was distributed with this source code.
 #}
-<div id="recommend_area" class="row">
+<div id="related_product_area" class="row">
     <div class="col-sm-12">
         <h2 class="heading03">関連商品</h2>
-        <div class="carousel">
+        <div class="related_product_carousel">
             {% for RelatedProduct in RelatedProducts %}
                 <div class="product_item">
                     <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}">
@@ -38,3 +38,5 @@
         </div>
     </div>
 </div>
+<script src="{{ app.config.root_urlpath }}/plugin/relatedproduct/assets/js/related_product_plugin.js"></script>
+<link rel="stylesheet" href="{{ app.config.root_urlpath }}/plugin/relatedproduct/assets/css/related_product_plugin.css">
