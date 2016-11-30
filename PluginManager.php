@@ -12,12 +12,31 @@ namespace Plugin\RelatedProduct;
 
 use Eccube\Application;
 use Eccube\Plugin\AbstractPluginManager;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class PluginManager.
  */
 class PluginManager extends AbstractPluginManager
 {
+    /**
+     * @var string コピー元リソースディレクトリ
+     */
+    private $origin;
+
+    /**
+     * @var string コピー先リソースディレクトリ
+     */
+    private $target;
+
+    public function __construct()
+    {
+        // コピー元のディレクトリ
+        $this->origin = __DIR__.'/Resource/assets';
+        // コピー先のディレクトリ
+        $this->target = '/relatedproduct';
+    }
+
     /**
      * プラグインインストール時の処理.
      *
@@ -28,6 +47,8 @@ class PluginManager extends AbstractPluginManager
      */
     public function install($config, $app)
     {
+        // リソースファイルのコピー
+        $this->copyAssets($app);
     }
 
     /**
@@ -39,6 +60,9 @@ class PluginManager extends AbstractPluginManager
     public function uninstall($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
+
+        // リソースファイルの削除
+        $this->removeAssets($app);
     }
 
     /**
@@ -68,10 +92,32 @@ class PluginManager extends AbstractPluginManager
      * プラグイン更新時の処理.
      *
      *  @param array       $config
-     * @param Application $app
+     *  @param Application $app
      */
     public function update($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
+    }
+
+    /**
+     * リソースファイル等をコピー
+     *
+     * @param Application $app
+     */
+    private function copyAssets(Application $app)
+    {
+        $file = new Filesystem();
+        $file->mirror($this->origin, $app['config']['root_dir'].'/html/plugin'.$this->target.'/assets');
+    }
+
+    /**
+     * コピーしたリソースファイルなどを削除.
+     *
+     * @param Application $app
+     */
+    private function removeAssets(Application $app)
+    {
+        $file = new Filesystem();
+        $file->remove($app['config']['root_dir'].'/html/plugin'.$this->target);
     }
 }
