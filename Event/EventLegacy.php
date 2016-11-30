@@ -32,13 +32,6 @@ class EventLegacy
     private $app;
 
     /**
-     * maximum product related.
-     *
-     * @var int
-     */
-    const MAXIMUM_PRODUCT_RELATED = 5;
-
-    /**
      * position for insert in twig file.
      *
      * @var string
@@ -226,7 +219,8 @@ class EventLegacy
             $Product = new Product();
         }
 
-        $loop = self::MAXIMUM_PRODUCT_RELATED - count($RelatedProducts);
+        $maxCount = $app['config']['related_product_max_item_count'];
+        $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
             $RelatedProduct = new RelatedProduct();
             $RelatedProduct
