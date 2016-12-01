@@ -1,0 +1,44 @@
+{#
+ This file is part of the Related Product plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+<div id="related_product_area" class="row">
+    <div class="col-sm-12">
+        <h2 class="heading03">関連商品</h2>
+        <div class="related_product_carousel">
+            {% for RelatedProduct in RelatedProducts %}
+                <div class="product_item">
+                    <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}">
+                        <div class="item_photo">
+                            <img src="{{ app.config.image_save_urlpath }}/{{ RelatedProduct.ChildProduct.main_list_image|no_image_product }}">
+                        </div>
+                        <dl>
+                            <dt class="item_name">{{ RelatedProduct.ChildProduct.name }}</dt>
+                            <dd class="item_price">
+                                {% if RelatedProduct.ChildProduct.hasProductClass %}
+                                    {% if RelatedProduct.ChildProduct.getPrice02Min == RelatedProduct.ChildProduct.getPrice02Max %}
+                                        {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }}
+                                    {% else %}
+                                        {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }} ～ {{ RelatedProduct.ChildProduct.getPrice02IncTaxMax|price }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ RelatedProduct.ChildProduct.getPrice02IncTaxMin|price }}
+                                {% endif %}
+                            </dd>
+                            <dd class="item_comment">{{ RelatedProduct.content|raw }}</dd>
+                        </dl>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# EC-CUBE 3.0.10以降のみをサポートする場合は、{{ app.config.plugin_urlpath }} を利用して簡潔に記述可能 #}
+<script src="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/js/related_product_plugin.js"></script>
+<link rel="stylesheet" href="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/css/related_product_plugin.css">

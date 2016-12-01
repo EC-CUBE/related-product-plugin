@@ -1,8 +1,19 @@
+# front page event
+Product/detail.twig:
+    - [onRenderProductDetail, NORMAL]
+
+# admin page event
+admin.product.edit.initialize:
+    - [onRenderAdminProductInit, NORMAL]
+admin.product.edit.complete:
+    - [onRenderAdminProductComplete, NORMAL]
+Admin/Product/product.twig:
+    - [onRenderAdminProduct, NORMAL]
+
+# deprecated event (for v3.0.0 - 3.0.8)
 eccube.event.render.admin_product_product_new.before:
-    - [addContentOnProductEdit, NORMAL]
-    - [registerRelatedProduct, NORMAL]
+    - [onRenderAdminProductEditBefore, NORMAL]
 eccube.event.render.admin_product_product_edit.before:
-    - [addContentOnProductEdit, NORMAL]
-    - [registerRelatedProduct, NORMAL]
+    - [onRenderAdminProductEditBefore, NORMAL]
 eccube.event.render.product_detail.before:
-    - [showRelatedProduct, NORMAL]
+    - [onRenderProductDetailBefore, NORMAL]
