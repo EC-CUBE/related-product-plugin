@@ -193,7 +193,7 @@ class Event
         }
         
         $maxCount = $app['config']['related_product_max_item_count'];
-        $loop = maxCount - count($RelatedProducts);
+        $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
             $RelatedProduct = new RelatedProduct();
             $RelatedProduct
