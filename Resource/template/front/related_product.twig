@@ -38,5 +38,7 @@
         </div>
     </div>
 </div>
-<script src="{{ app.config.root_urlpath }}/plugin/relatedproduct/assets/js/related_product_plugin.js"></script>
-<link rel="stylesheet" href="{{ app.config.root_urlpath }}/plugin/relatedproduct/assets/css/related_product_plugin.css">
+
+{# EC-CUBE 3.0.10以降のみをサポートする場合は、{{ app.config.plugin_urlpath }} を利用して簡潔に記述可能 #}
+<script src="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/js/related_product_plugin.js"></script>
+<link rel="stylesheet" href="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/css/related_product_plugin.css">
