@@ -97,6 +97,9 @@ class PluginManager extends AbstractPluginManager
     public function update($config, $app)
     {
         $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
+        
+        // リソースファイルのコピー
+        $this->copyAssets($app);
     }
 
     /**
