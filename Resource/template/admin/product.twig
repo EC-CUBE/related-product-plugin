@@ -1,0 +1,28 @@
+{#
+ This file is part of the Related Product plugin
+
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
+ http://www.lockon.co.jp/
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+#}
+<a href="{{ url('admin_product_product_edit', { id : Product.id }) }}" id="product-image-link{{ index }}"
+   class="flL related-view{{ index }}">
+    <img src="{{ app.config.image_save_urlpath }}/{{ Product.mainFileName|no_image_product }}" id="product-image-img{{ index }}" style="max-width: 100px;margin-right: 10px;"/>
+</a>
+<span id="product-name{{ index }}" class="related-view{{ index }}" style="margin-right: 10px;">{{ Product.name }}</span>
+<a id="search_{{ index }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal"
+   data-target="#searchProductModal" data-id="{{ index }}">
+    商品を選択
+</a>
+<button type="button" id="product-delete{{ index }}"
+        class="btn btn-default text-right delete related-view{{ index }}" data-id="{{ index }}">削除
+</button>
+<br>
+<span class="related-view{{ index }}" id="product-code{{ index }}">
+    {{ Product.code_min }}
+    {% if Product.code_min != Product.code_max %}
+        ～ {{ Product.code_max }}
+    {% endif %}
+</span>

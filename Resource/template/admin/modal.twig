@@ -1,7 +1,7 @@
 {#
- This file is part of EC-CUBE
+ This file is part of the Related Product plugin
 
- Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+ Copyright(c) 2000-2016 LOCKON CO.,LTD. All Rights Reserved.
  http://www.lockon.co.jp/
 
  For the full copyright and license information, please view the LICENSE
@@ -10,45 +10,8 @@
 
 {% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
 
-<script>
-    var searchId = null;
-    $(function () {
+{% block modal %}
 
-        $("a[id^='search_']").on("click", function () {
-            searchId = $(this)
-                .attr("id")
-                .replace("search_", "");
-        });
-
-        $("#searchButton").on("click", function () {
-            var formIdVal = $("#{{ searchForm.id.vars.id }}").val();
-            var formCatIdVal = $("#{{ searchForm.category_id.vars.id }}").val();
-            var data = {
-                id: formIdVal,
-                category_id: formCatIdVal,
-                product_id: {{ Product.id ? Product.id : 0 }}
-            };
-            $("#searchResult")
-                    .children()
-                    .remove();
-
-            $.ajax({
-                    type: "POST",
-                    url: "{{ url('admin_related_product_search') }}",
-                    data: data,
-                    success: function(data){
-                        $("#searchResult").append(data);
-                    }
-            });
-        });
-    });
-    function setProduct(id, name) {
-        $("#admin_product_related_collection_" + searchId + "_ChildProduct").val(id);
-        $("#view_" + searchId).text(name);
-        $("#searchResult").children().remove();
-        $("#searchProductModal").modal("hide");
-    };
-</script>
 <div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -74,3 +37,5 @@
         </div>
     </div>
 </div>
+
+{% endblock %}
