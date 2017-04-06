@@ -78,11 +78,14 @@ class Event
             $search = self::RELATED_PRODUCT_TAG;
             $replace = $search.$snipet;
         } else {
-            //regular expression for get free area div
-            $pattern = '/({% if Product.freearea %})(.*?(\n))+.*?({% endif %})/';
-            preg_match($pattern, $source, $matches);
-            $search = $matches[0];
-            $replace = $search.$snipet;
+            // As request, the related product area will append bellow free area section.
+            $freeAreaStart = '{% if Product.freearea %}';
+            $pos = strpos($source, $freeAreaStart);
+            $search = substr($source, $pos);
+            // End of free area
+            $freeAreaEnd = '{% endif %}';
+            $from = '/'.preg_quote($freeAreaEnd, '/').'/';
+            $replace = preg_replace($from, $freeAreaEnd.$snipet, $search, 1);
         }
         $source = str_replace($search, $replace, $source);
         $event->setSource($source);
