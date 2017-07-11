@@ -20,7 +20,7 @@ class Version
     /**
      * Check version to support get instance function. (monolog, new style, ...)
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportGetInstanceFunction()
     {
@@ -29,7 +29,7 @@ class Version
     /**
      * Check version to support get new hookpoint function. (monolog, new style, ...)
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportNewHookpoint()
     {
@@ -38,10 +38,20 @@ class Version
     /**
      * Check version to support new log function.
      *
-     * @return bool|int|mixed|void
+     * @return boo
      */
     public static function isSupportLogFunction()
     {
         return version_compare(Constant::VERSION, '3.0.12', '>=');
+    }
+
+    /**
+     * Check version to support new session function.
+     *
+     * @return bool
+     */
+    public static function isSupportNewSession()
+    {
+        return version_compare(Constant::VERSION, '3.0.15', '>=');
     }
 }

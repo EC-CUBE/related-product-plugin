@@ -11,6 +11,7 @@
 namespace Plugin\RelatedProduct\Controller\Admin;
 
 use Eccube\Application;
+use Plugin\RelatedProduct\Utils\Version;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,8 +43,12 @@ class RelatedProductController
                 'id' => $request->get('id'),
             );
             if ($categoryId = $request->get('category_id')) {
-                $Category = $app['eccube.repository.category']->find($categoryId);
-                $searchData['category_id'] = $Category;
+                $searchData['category_id'] = $app['eccube.repository.category']->find($categoryId);
+
+                // New rule for session
+                if (Version::isSupportNewSession()) {
+                    $searchData['category_id'] = $categoryId;
+                }
             }
             $session->set('eccube.plugin.related_product.product.search', $searchData);
             $session->set('eccube.plugin.related_product.product.search.page_no', $page_no);
@@ -54,6 +59,10 @@ class RelatedProductController
             } else {
                 $session->set('eccube.plugin.related_product.product.search.page_no', $page_no);
             }
+        }
+
+        if (!empty($searchData['category_id']) && Version::isSupportNewSession()) {
+            $searchData['category_id'] = $app['eccube.repository.category']->find($searchData['category_id']);
         }
 
         $qb = $app['eccube.repository.product']->getQueryBuilderBySearchDataForAdmin($searchData);
