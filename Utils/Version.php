@@ -38,20 +38,10 @@ class Version
     /**
      * Check version to support new log function.
      *
-     * @return boo
+     * @return bool
      */
     public static function isSupportLogFunction()
     {
         return version_compare(Constant::VERSION, '3.0.12', '>=');
-    }
-
-    /**
-     * Check version to support new session function.
-     *
-     * @return bool
-     */
-    public static function isSupportNewSession()
-    {
-        return version_compare(Constant::VERSION, '3.0.15', '>=');
     }
 }
