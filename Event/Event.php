@@ -148,6 +148,10 @@ class Event
         $event->setSource($source.$modal);
 
         //set parameter for twig files
+        $existsRelativeProducts = array_filter($RelatedProducts, function ($v) {
+            return !is_null($v->getChildProduct());
+        });
+        $parameters['toggleActive'] = (count($existsRelativeProducts) > 0);
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
         log_info('RelatedProduct trigger onRenderAdminProduct finish');
