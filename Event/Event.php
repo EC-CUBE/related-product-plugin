@@ -18,6 +18,7 @@ use Plugin\RelatedProduct\Entity\RelatedProduct;
 use Eccube\Entity\Master\Disp;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
+use Symfony\Component\Form\FormView;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.
@@ -135,6 +136,21 @@ class Event
         $parameters = $event->getParameters();
         $Product = $parameters['Product'];
         $RelatedProducts = $this->createRelatedProductData($Product);
+
+        $toggleActive = false;
+
+        if (isset($parameters['form']) && $parameters['form'] instanceof FormView) {
+            /** @var FormView $formView */
+            $formView = $parameters['form'];
+            if (isset($formView['related_collection'])) {
+                $ExistsRelatedProducts = array_filter($formView['related_collection']->vars['value'], function ($v) {
+                    return (bool)$v->getChildProduct();
+                });
+                $toggleActive = count($ExistsRelatedProducts) > 0;
+            }
+        }
+
+        $parameters['toggleActive'] = $toggleActive;
 
         // twigコードを挿入
         $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
