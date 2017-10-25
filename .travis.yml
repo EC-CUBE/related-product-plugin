@@ -80,7 +80,8 @@ before_script:
 
 script:
   # exec phpunit on ec-cube
-  - phpunit ./vendor/bin/phpunit
+  - phpunit app/Plugin/${PLUGIN_CODE}/Tests
+  - if [[ $PHP_SAPI != 'phpdbg' ]]; then ./vendor/bin/phpunit ; fi
   - if [[ $TRAVIS_PHP_VERSION =~ ^[7] ]]; then ./vendor/bin/phpunit -c app/Plugin/${PLUGIN_CODE}/phpunit.xml.dist --coverage-clover=coverage.clover ; fi
 
 after_script:
