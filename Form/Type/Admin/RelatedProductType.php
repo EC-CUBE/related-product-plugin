@@ -45,18 +45,22 @@ class RelatedProductType extends AbstractType
     {
         $app = $this->app;
         $builder
-            ->add('Product', 'entity', array(
-                'class' => 'Eccube\Entity\Product',
-                'required' => false,
-                'mapped' => false,
-                'property' => 'id',
-            ))
-            ->add('ChildProduct', 'entity', array(
-                'label' => '関連商品',
-                'class' => 'Eccube\Entity\Product',
-                'required' => false,
-                'property' => 'id',
-            ))
+            ->add(
+                $builder
+                    ->create('Product', 'hidden', array(
+                        'required' => false,
+                        'mapped' => false,
+                    ))
+                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
+            )
+            ->add(
+                $builder
+                    ->create('ChildProduct', 'hidden', array(
+                        'label' => '関連商品',
+                        'required' => false,
+                    ))
+                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
+            )
             ->add('content', 'textarea', array(
                 'label' => '説明文',
                 'required' => false,
