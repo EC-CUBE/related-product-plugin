@@ -231,6 +231,10 @@ class EventLegacy
         $builder = $app['form.factory']->createBuilder('admin_product');
         $form = $builder->getForm();
         $form->get('related_collection')->setData($RelatedProducts);
+
+        $ExistsRelativeProducts = array_filter($form['related_collection']->getData(), function ($v) {
+            return !is_null($v->getChildProduct());
+        });
         // 商品検索フォーム
         $searchForm = $app['form.factory']
             ->createBuilder('admin_search_product')
@@ -243,6 +247,7 @@ class EventLegacy
                 'RelatedProducts' => $RelatedProducts,
                 'searchForm' => $searchForm->createView(),
                 'Product' => $Product,
+                'toggleActive' => (count($ExistsRelativeProducts) > 0),
             )
         );
         $modal = $app->renderView(

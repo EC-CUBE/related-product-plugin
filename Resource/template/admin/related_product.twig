@@ -89,7 +89,7 @@ $(function() {
         </h3>
     </div><!-- /.box-header -->
 
-    <div class="box-body accpanel">
+    <div class="box-body accpanel" style="{% if toggleActive %}display: block;{% endif %}">
         {% for child in form.related_collection %}
             <div class="form-group">
                 <label class="col-sm-2 control-label">
