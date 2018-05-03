@@ -8,16 +8,17 @@
  file that was distributed with this source code.
 #}
 
-{% form_theme searchForm 'Form/bootstrap_3_horizontal_layout.html.twig' %}
+{% form_theme searchForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
-{% block modal %}
-
-<div class="modal" id="searchProductModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="searchProductModal" tabindex="-1" role="dialog"
+     aria-labelledby="searchProductModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="modal-close" aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">商品検索</h4>
+                <h5 class="modal-title">商品検索</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -37,5 +38,3 @@
         </div>
     </div>
 </div>
-
-{% endblock %}

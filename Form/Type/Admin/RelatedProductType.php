@@ -14,6 +14,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Eccube\Form\DataTransformer\EntityToIdTransformer;
+use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Entity\Product;
+use Eccube\Common\EccubeConfig;
+use Symfony\Component\Translation\TranslatorInterface;
+use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Class RelatedProductType.
@@ -21,18 +29,35 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RelatedProductType extends AbstractType
 {
     /**
-     * @var \Eccube\Application
+     * @var EntityManagerInterface
      */
-    private $app;
+    protected $entityManager;
+
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
 
     /**
      * RelatedProductType constructor.
      *
-     * @param \Eccube\Application $app
+     * @param EntityManagerInterface $entityManager
+     * @param EccubeConfig $eccubeConfig
+     * @param TranslatorInterface $translator
      */
-    public function __construct($app)
-    {
-        $this->app = $app;
+    public function __construct(
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager,
+        EccubeConfig $eccubeConfig
+    ) {
+        $this->entityManager = $entityManager;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->translator = $translator;
     }
 
     /**
@@ -43,36 +68,35 @@ class RelatedProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
         $builder
             ->add(
                 $builder
-                    ->create('Product', 'hidden', array(
+                    ->create('Product', HiddenType::class, array(
                         'required' => false,
                         'mapped' => false,
                     ))
-                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
+                    ->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
             )
             ->add(
                 $builder
-                    ->create('ChildProduct', 'hidden', array(
+                    ->create('ChildProduct', HiddenType::class, array(
                         'label' => '関連商品',
                         'required' => false,
                     ))
-                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
+                    ->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
             )
-            ->add('content', 'textarea', array(
+            ->add('content', TextareaType::class, array(
                 'label' => '説明文',
                 'required' => false,
                 'trim' => true,
                 'constraints' => array(
                     new Assert\Length(array(
-                        'max' => $app['config']['related_product_text_area_len'],
+                        'max' => $this->eccubeConfig['related_product_text_area_len'],
                     )),
                 ),
                 'attr' => array(
-                    'maxlength' => $app['config']['related_product_text_area_len'],
-                    'placeholder' => $app->trans('plugin.related_product.type.comment.placeholder'),
+                    'maxlength' => $this->eccubeConfig['related_product_text_area_len'],
+                    'placeholder' => $this->translator->trans('plugin.related_product.type.comment.placeholder'),
                 ),
             ));
     }
@@ -86,7 +110,7 @@ class RelatedProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plugin\RelatedProduct\Entity\RelatedProduct',
+            'data_class' => RelatedProduct::class,
         ));
     }
 

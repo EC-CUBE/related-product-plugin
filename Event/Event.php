@@ -10,25 +10,23 @@
 
 namespace Plugin\RelatedProduct\Event;
 
-use Eccube\Application;
-use Eccube\Common\Constant;
 use Symfony\Component\Form\FormBuilder;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
-use Eccube\Entity\Master\Disp;
+use Plugin\RelatedProduct\Repository\RelatedProductRepository;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
+use Eccube\Common\EccubeConfig;
+use Eccube\Repository\Master\ProductStatusRepository;
+use Eccube\Entity\Master\ProductStatus;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.
  */
 class Event
 {
-    /**
-     * @var Application
-     */
-    private $app;
-
     /**
      * position for insert in twig file.
      *
@@ -37,13 +35,40 @@ class Event
     const RELATED_PRODUCT_TAG = '<!--# related-product-plugin-tag #-->';
 
     /**
+     * @var RelatedProductRepository
+     */
+    protected $relatedProductRepository;
+
+    /**
+     * @var ProductStatusRepository
+     */
+    protected $productStatusRepository;
+
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var \Twig_Environment
+     */
+    protected $twigEnvironment;
+
+    /**
      * Event constructor.
      *
-     * @param Application $app
+     * @param RelatedProductRepository $relatedProductRepository
+     * @param EccubeConfig $eccubeConfig
+     * @param \Twig_Environment $twigEnvironment
      */
-    public function __construct($app)
-    {
-        $this->app = $app;
+    public function __construct(
+        RelatedProductRepository $relatedProductRepository,
+        EccubeConfig $eccubeConfig,
+        \Twig_Environment $twigEnvironment
+    ) {
+        $this->relatedProductRepository = $relatedProductRepository;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->twigEnvironment = $twigEnvironment;
     }
 
     /**
@@ -63,14 +88,19 @@ class Event
 
         // 登録がない、レンダリングをしない
         $Product = $parameters['Product'];
-        $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->showRelatedProduct($Product, $Disp);
+        $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
+        $RelatedProducts = $this->relatedProductRepository->showRelatedProduct($Product, $ProductStatus);
         if (count($RelatedProducts) == 0) {
             return;
         }
 
         // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
+        try {
+            $snipet = $this->twigEnvironment->render('RelatedProduct/Resource/template/front/related_product.twig');
+        } catch (\Exception $e) {
+            log_info('Event: related product render error.', [$e]);
+            $snipet = '';
+        }
         $source = $event->getSource();
         //find related product mark
         if (strpos($source, self::RELATED_PRODUCT_TAG)) {
@@ -101,7 +131,7 @@ class Event
      *
      * @param EventArgs $event
      */
-    public function onRenderAdminProductInit(EventArgs $event)
+    public function onAdminProductEditInitialize(EventArgs $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProductInit start');
         $Product = $event->getArgument('Product');
@@ -110,9 +140,9 @@ class Event
         /** @var FormBuilder $builder */
         $builder = $event->getArgument('builder');
         $builder
-            ->add('related_collection', 'collection', array(
+            ->add('related_collection', CollectionType::class, array(
                 'label' => '関連商品',
-                'type' => 'admin_related_product',
+                'entry_type' => RelatedProductType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
@@ -131,21 +161,29 @@ class Event
     public function onRenderAdminProduct(TemplateEvent $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProduct start');
-        $app = $this->app;
         $parameters = $event->getParameters();
         $Product = $parameters['Product'];
         $RelatedProducts = $this->createRelatedProductData($Product);
 
         // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
-        $modal = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/modal.twig');
+        try {
+            $snipet = $this->twigEnvironment->getLoader()->getSourceContext('RelatedProduct/Resource/template/admin/related_product.twig');
+            $snipet = $snipet->getCode();
+            $modal = $this->twigEnvironment->getLoader()->getSourceContext('RelatedProduct/Resource/template/admin/modal.twig');
+            $modal = $modal->getCode();
+        } catch (\Exception $e) {
+            $snipet = '';
+            $modal = '';
+        }
 
         //add related product to product edit
-        $search = '<div id="detail_box__footer" class="row hidden-xs hidden-sm">';
+        // TODO: should find a way better to insert/edit template
+        // TODO: @admin/Product/product.twig should have a anchor (id, or comment tag) to insert/edit template
+        $search = '<!-- layout.admin.product.primaryCol.footer -->';
         $source = $event->getSource();
-        $replace = $snipet.$search;
+        $replace = $search.$modal.$snipet;
         $source = str_replace($search, $replace, $source);
-        $event->setSource($source.$modal);
+        $event->setSource($source);
 
         //set parameter for twig files
         $existsRelativeProducts = array_filter($RelatedProducts, function ($v) {
@@ -162,7 +200,7 @@ class Event
      *
      * @param EventArgs $event
      */
-    public function onRenderAdminProductComplete(EventArgs  $event)
+    public function onAdminProductEditComplete(EventArgs  $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProductComplete start');
         $app = $this->app;
@@ -190,16 +228,15 @@ class Event
      */
     private function createRelatedProductData($Product)
     {
-        $app = $this->app;
         $RelatedProducts = null;
         $id = $Product->getId();
         if ($id) {
-            $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
+            $RelatedProducts = $this->relatedProductRepository->getRelatedProduct($Product);
         } else {
             $Product = new Product();
         }
         
-        $maxCount = $app['config']['related_product_max_item_count'];
+        $maxCount = $this->eccubeConfig['related_product_max_item_count'];
         $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
             $RelatedProduct = new RelatedProduct();

@@ -13,6 +13,7 @@ namespace Plugin\RelatedProduct;
 use Eccube\Application;
 use Eccube\Plugin\AbstractPluginManager;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class PluginManager.
@@ -29,6 +30,9 @@ class PluginManager extends AbstractPluginManager
      */
     private $target;
 
+    /**
+     * PluginManager constructor.
+     */
     public function __construct()
     {
         // コピー元のディレクトリ
@@ -40,12 +44,13 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグインインストール時の処理.
      *
-     * @param array       $config
+     * @param array $config
      * @param Application $app
+     * @param ContainerInterface $container
      *
      * @throws \Exception
      */
-    public function install($config, $app)
+    public function install($config, Application $app, ContainerInterface $container)
     {
         // リソースファイルのコピー
         $this->copyAssets($app);

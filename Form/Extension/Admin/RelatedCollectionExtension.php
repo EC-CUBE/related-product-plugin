@@ -14,6 +14,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
  * Class RelatedCollectionExtension.
@@ -29,7 +30,7 @@ class RelatedCollectionExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('related_collection', 'collection', array(
+            ->add('related_collection', CollectionType::class, array(
                 'label' => '関連商品',
                 'type' => 'admin_related_product',
                 'allow_add' => true,
