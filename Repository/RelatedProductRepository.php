@@ -43,7 +43,7 @@ class RelatedProductRepository extends AbstractRepository
     public function removeChildProduct($Product)
     {
         $em = $this->getEntityManager();
-        $Children = $this->findBy(array('Product' => $Product));
+        $Children = $this->findBy(['Product' => $Product]);
         foreach ($Children as $Child) {
             $em->remove($Child);
             $em->flush();

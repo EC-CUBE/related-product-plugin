@@ -21,6 +21,7 @@ use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Entity\Master\ProductStatus;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class Event for  new hook point on version >= 3.0.9.
@@ -55,20 +56,31 @@ class Event
     protected $twigEnvironment;
 
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * Event constructor.
      *
+     * @param ProductStatusRepository $productStatusRepository
      * @param RelatedProductRepository $relatedProductRepository
      * @param EccubeConfig $eccubeConfig
      * @param \Twig_Environment $twigEnvironment
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
+        ProductStatusRepository $productStatusRepository,
         RelatedProductRepository $relatedProductRepository,
         EccubeConfig $eccubeConfig,
-        \Twig_Environment $twigEnvironment
+        \Twig_Environment $twigEnvironment,
+        EntityManagerInterface $entityManager
     ) {
+        $this->productStatusRepository = $productStatusRepository;
         $this->relatedProductRepository = $relatedProductRepository;
         $this->eccubeConfig = $eccubeConfig;
         $this->twigEnvironment = $twigEnvironment;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -79,7 +91,6 @@ class Event
     public function onRenderProductDetail(TemplateEvent $event)
     {
         log_info('RelatedProduct trigger onRenderProductDetail start');
-        $app = $this->app;
         $parameters = $event->getParameters();
         // ProductIDがない場合、レンダリングしない
         if (is_null($parameters['Product'])) {
@@ -88,6 +99,7 @@ class Event
 
         // 登録がない、レンダリングをしない
         $Product = $parameters['Product'];
+        /** @var ProductStatus $ProductStatus */
         $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
         $RelatedProducts = $this->relatedProductRepository->showRelatedProduct($Product, $ProductStatus);
         if (count($RelatedProducts) == 0) {
@@ -96,7 +108,9 @@ class Event
 
         // twigコードを挿入
         try {
-            $snipet = $this->twigEnvironment->render('RelatedProduct/Resource/template/front/related_product.twig');
+            $snipet = $this->twigEnvironment->getLoader()
+                ->getSourceContext('RelatedProduct/Resource/template/front/related_product.twig')
+                ->getCode();
         } catch (\Exception $e) {
             log_info('Event: related product render error.', [$e]);
             $snipet = '';
@@ -104,7 +118,7 @@ class Event
         $source = $event->getSource();
         //find related product mark
         if (strpos($source, self::RELATED_PRODUCT_TAG)) {
-            log_info('Render related product with ', array('RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG));
+            log_info('Render related product with ', ['RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG]);
             $search = self::RELATED_PRODUCT_TAG;
             $replace = $search.$snipet;
         } else {
@@ -140,14 +154,14 @@ class Event
         /** @var FormBuilder $builder */
         $builder = $event->getArgument('builder');
         $builder
-            ->add('related_collection', CollectionType::class, array(
+            ->add('related_collection', CollectionType::class, [
                 'label' => '関連商品',
                 'entry_type' => RelatedProductType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
                 'mapped' => false,
-            ))
+            ])
         ;
         $builder->get('related_collection')->setData($RelatedProducts);
         log_info('RelatedProduct trigger onRenderAdminProductInit finish');
@@ -203,20 +217,23 @@ class Event
     public function onAdminProductEditComplete(EventArgs  $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProductComplete start');
-        $app = $this->app;
-        $Product = $event->getArgument('Product');
-        $form = $event->getArgument('form');
-        $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
-        log_info('remove all now related product data of ', array('Product id' => $Product->getId()));
-        $RelatedProducts = $form->get('related_collection')->getData();
-        foreach ($RelatedProducts as $RelatedProduct) {
-            /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
-            if ($RelatedProduct->getChildProduct() instanceof Product) {
-                $RelatedProduct->setProduct($Product);
-                $app['orm.em']->persist($RelatedProduct);
-                $app['orm.em']->flush($RelatedProduct);
-                log_info('save new related product data to DB ', array('Related Product id' => $RelatedProduct->getId()));
+        try {
+            $Product = $event->getArgument('Product');
+            $form = $event->getArgument('form');
+            $this->relatedProductRepository->removeChildProduct($Product);
+            log_info('remove all now related product data of ', ['Product id' => $Product->getId()]);
+            $RelatedProducts = $form->get('related_collection')->getData();
+            foreach ($RelatedProducts as $RelatedProduct) {
+                /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
+                if ($RelatedProduct->getChildProduct() instanceof Product) {
+                    $RelatedProduct->setProduct($Product);
+                    $this->entityManager->persist($RelatedProduct);
+                    $this->entityManager->flush();
+                    log_info('save new related product data to DB ', ['Related Product id' => $RelatedProduct->getId()]);
+                }
             }
+        } catch (\Exception $e) {
+            log_error('RelatedProduct trigger onRenderAdminProductComplete error', [$e]);
         }
         log_info('RelatedProduct trigger onRenderAdminProductComplete finish');
     }

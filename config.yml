@@ -5,4 +5,4 @@ service:
     - RelatedProductServiceProvider
 orm.path:
     - /Resource/doctrine
-event: Event
+event: EventSubscriber

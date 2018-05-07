@@ -47,7 +47,8 @@ class EventSubscriber implements EventSubscriberInterface
         return [
             'admin.product.edit.initialize' => [['onAdminProductEditInitialize', 10]],
             'Admin/@admin/Product/product.twig' => [['onRenderAdminProduct', 10]],
-//            'admin.product.edit.complete' => [['onAdminProductEditComplete', 10]],
+            'admin.product.edit.complete' => [['onAdminProductEditComplete', 10]],
+            'Product/detail.twig' => [['onRenderProductDetail', 10]],
         ];
     }
 
@@ -59,7 +60,7 @@ class EventSubscriber implements EventSubscriberInterface
      */
     public function onRenderProductDetail(TemplateEvent $event)
     {
-        $this->app['eccube.plugin.relatedproduct.event']->onRenderProductDetail($event);
+        $this->event->onRenderProductDetail($event);
     }
 
     /**

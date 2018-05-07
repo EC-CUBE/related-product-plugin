@@ -59,13 +59,17 @@ class RelatedProductController extends AbstractController
     /**
      * search product modal.
      *
-     * @param Request     $request
-     * @param int         $page_no
+     * @param Request $request
+     * @param int $page_no
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/related_product/search_product", name="admin_related_product_search")
-     * @Route("/%eccube_admin_route%/related_product/search/product/page/{page_no}", name="admin_related_product_search_product_page", requirements={"page_no":"\d+"})
+     * @Route(
+     *      path="/%eccube_admin_route%/related_product/search/product/page/{page_no}",
+     *      name="admin_related_product_search_product_page",
+     *      requirements={"page_no":"\d+"}
+     * )
      */
     public function searchProduct(Request $request, $page_no = null)
     {
@@ -76,11 +80,12 @@ class RelatedProductController extends AbstractController
         $pageCount = $this->eccubeConfig['eccube_default_page_count'];
         $session = $this->session;
         if ('POST' === $request->getMethod()) {
-            log_info('get search data with parameters ', array('id' => $request->get('id'), 'category_id' => $request->get('category_id')));
-            $page_no = 1;
-            $searchData = array(
+            log_info('get search data with parameters ', [
                 'id' => $request->get('id'),
-            );
+                'category_id' => $request->get('category_id')
+            ]);
+            $page_no = 1;
+            $searchData = ['id' => $request->get('id')];
             if ($categoryId = $request->get('category_id')) {
                 $searchData['category_id'] = $categoryId;
             }
@@ -106,38 +111,11 @@ class RelatedProductController extends AbstractController
             $qb,
             $page_no,
             $pageCount,
-            array('wrap-queries' => true)
+            ['wrap-queries' => true]
         );
 
-        return $this->render('RelatedProduct/Resource/template/admin/modal_result.twig', array(
+        return $this->render('RelatedProduct/Resource/template/admin/modal_result.twig', [
             'pagination' => $pagination,
-        ));
-    }
-
-    /**
-     * get product information.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @Method("POST")
-     * @Route("/%eccube_admin_route%/related_product/get_product", name="admin_related_product_get_product")
-     */
-    public function getProduct(Application $app, Request $request)
-    {
-        if (!$request->isXmlHttpRequest()) {
-            return null;
-        }
-
-        $productId = $request->get('product_id');
-        $index = $request->get('index');
-        $Product = $app['eccube.repository.product']->find($productId);
-
-        return $app->render('RelatedProduct/Resource/template/admin/product.twig', array(
-            'Product' => $Product,
-            'index' => $index,
-        ));
+        ]);
     }
 }

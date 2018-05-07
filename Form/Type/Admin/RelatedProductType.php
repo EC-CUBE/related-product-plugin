@@ -64,41 +64,34 @@ class RelatedProductType extends AbstractType
      * RelatedProduct form builder.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                $builder
-                    ->create('Product', HiddenType::class, array(
-                        'required' => false,
-                        'mapped' => false,
-                    ))
-                    ->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
-            )
-            ->add(
-                $builder
-                    ->create('ChildProduct', HiddenType::class, array(
-                        'label' => '関連商品',
-                        'required' => false,
-                    ))
-                    ->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
-            )
-            ->add('content', TextareaType::class, array(
-                'label' => '説明文',
+        $builder->add(
+            $builder->create('Product', HiddenType::class, [
                 'required' => false,
-                'trim' => true,
-                'constraints' => array(
-                    new Assert\Length(array(
-                        'max' => $this->eccubeConfig['related_product_text_area_len'],
-                    )),
-                ),
-                'attr' => array(
-                    'maxlength' => $this->eccubeConfig['related_product_text_area_len'],
-                    'placeholder' => $this->translator->trans('plugin.related_product.type.comment.placeholder'),
-                ),
-            ));
+                'mapped' => false,
+            ])->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
+        )->add(
+            $builder->create('ChildProduct', HiddenType::class, [
+                'label' => '関連商品',
+                'required' => false,
+            ])->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
+        )->add('content', TextareaType::class, [
+            'label' => '説明文',
+            'required' => false,
+            'trim' => true,
+            'constraints' => [
+                new Assert\Length([
+                    'max' => $this->eccubeConfig['related_product_text_area_len'],
+                ]),
+            ],
+            'attr' => [
+                'maxlength' => $this->eccubeConfig['related_product_text_area_len'],
+                'placeholder' => $this->translator->trans('plugin.related_product.type.comment.placeholder'),
+            ],
+        ]);
     }
 
     /**
@@ -109,9 +102,9 @@ class RelatedProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => RelatedProduct::class,
-        ));
+        ]);
     }
 
     /**

@@ -20,33 +20,6 @@ $(function() {
         $('#searchResult').children().remove();
     });
 
-    window.onload = function () {
-        $("select.child-product").each(function () {
-            var html = $(this).clone();
-            var productId = $(this).val();
-            var index = $(this).parent().find('button').attr('data-id');
-            var productCode = $('#product-code' + index).text();
-            var parentDiv =  $('#related-div-' + index);
-            if (productId && !productCode) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('admin_related_product_get_product') }}",
-                    data: {
-                        product_id : productId,
-                        index : index
-                    },
-                    success: function(data){
-                        parentDiv.empty().append(data);
-                        parentDiv.append(html);
-                    },
-                    error: function() {
-                        alert('get product info failed.');
-                    }
-                });
-            }
-        });
-    };
-
     $(document).on("click", 'button[id^="search_"]', function () {
         dataId = $(this).attr("data-id");
         $("#relatedDataId").val(dataId);
@@ -112,7 +85,7 @@ $(function() {
                             {% if ChildProduct %}
                                 <div>
                                     <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
-                                        <img src="{{ app.config.image_save_urlpath }}/{{ ChildProduct.mainFileName|no_image_product }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                                        <img src="'{{ asset(ChildProduct.mainFileName|no_image_product, 'save_image') }}'" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
                                     </a>
                                     <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }}" style="margin-right: 10px;">{{ ChildProduct.name }}</span>
                                     {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
@@ -125,9 +98,11 @@ $(function() {
                                 </div>
                                 <div>
                                     <button type="button" id="search_{{ loop.index0 }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
-                                        商品を選択
+                                        {{ 'plugin.related_product.select_product'|trans }}
                                     </button>
-                                    <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">削除</button>
+                                    <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">
+                                        {{ 'plugin.related_product.remove_product'|trans }}
+                                    </button>
                                 </div>
                             {% else %}
                                 <div>
@@ -141,9 +116,11 @@ $(function() {
                                 </div>
                                 <div>
                                     <button type="button" id="search_{{ loop.index0 }}" class="btn" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
-                                        商品を選択
+                                        {{ 'plugin.related_product.select_product'|trans }}
                                     </button>
-                                    <button  type="button" id="product-delete{{ loop.index0 }}" class="btn text-right delete related-view{{ loop.index0 }} d-none" data-id="{{ loop.index0 }}">削除</button>
+                                    <button  type="button" id="product-delete{{ loop.index0 }}" class="btn text-right delete related-view{{ loop.index0 }} d-none" data-id="{{ loop.index0 }}">
+                                        {{ 'plugin.related_product.remove_product'|trans }}
+                                    </button>
                                 </div>
                             {% endif %}
 
