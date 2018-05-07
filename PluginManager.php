@@ -93,7 +93,6 @@ class PluginManager extends AbstractPluginManager
     private function copyAssets(ContainerInterface $container)
     {
         $file = new Filesystem();
-        var_dump([$this->origin, $this->getAssetPath($container)]);
         $file->mirror($this->origin, $this->getAssetPath($container));
     }
 
