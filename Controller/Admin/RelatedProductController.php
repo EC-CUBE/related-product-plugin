@@ -10,14 +10,13 @@
 
 namespace Plugin\RelatedProduct\Controller\Admin;
 
-use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Eccube\Controller\AbstractController;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class RelatedProductController.
@@ -62,7 +61,7 @@ class RelatedProductController extends AbstractController
      * @param Request $request
      * @param int $page_no
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|array
      *
      * @Route("/related_product/search_product", name="admin_related_product_search")
      * @Route(
@@ -70,6 +69,8 @@ class RelatedProductController extends AbstractController
      *      name="admin_related_product_search_product_page",
      *      requirements={"page_no":"\d+"}
      * )
+     *
+     * @Template("@RelatedProduct/admin/modal_result.twig")
      */
     public function searchProduct(Request $request, $page_no = null)
     {
@@ -114,8 +115,8 @@ class RelatedProductController extends AbstractController
             ['wrap-queries' => true]
         );
 
-        return $this->render('RelatedProduct/Resource/template/admin/modal_result.twig', [
+        return [
             'pagination' => $pagination,
-        ]);
+        ];
     }
 }

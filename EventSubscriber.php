@@ -10,8 +10,6 @@
 
 namespace Plugin\RelatedProduct;
 
-use Eccube\Application;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -22,10 +20,6 @@ use Plugin\RelatedProduct\Event\Event;
  */
 class EventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Application
-     */
-    private $app;
 
     /**
      * @var Event

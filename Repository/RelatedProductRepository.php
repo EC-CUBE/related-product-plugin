@@ -46,7 +46,7 @@ class RelatedProductRepository extends AbstractRepository
         $Children = $this->findBy(['Product' => $Product]);
         foreach ($Children as $Child) {
             $em->remove($Child);
-            $em->flush();
+            $em->flush($Child);
         }
     }
 

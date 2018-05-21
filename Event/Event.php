@@ -23,9 +23,6 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Class Event for  new hook point on version >= 3.0.9.
- */
 class Event
 {
     /**
@@ -155,7 +152,7 @@ class Event
         $builder = $event->getArgument('builder');
         $builder
             ->add('related_collection', CollectionType::class, [
-                'label' => '関連商品',
+                'label' => 'plugin.related_product.block.title',
                 'entry_type' => RelatedProductType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -228,7 +225,7 @@ class Event
                 if ($RelatedProduct->getChildProduct() instanceof Product) {
                     $RelatedProduct->setProduct($Product);
                     $this->entityManager->persist($RelatedProduct);
-                    $this->entityManager->flush();
+                    $this->entityManager->flush($RelatedProduct);
                     log_info('save new related product data to DB ', ['Related Product id' => $RelatedProduct->getId()]);
                 }
             }
