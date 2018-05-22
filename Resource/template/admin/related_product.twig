@@ -85,7 +85,7 @@ $(function() {
                             {% if ChildProduct %}
                                 <div>
                                     <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
-                                        <img src="'{{ asset(ChildProduct.mainFileName|no_image_product, 'save_image') }}'" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                                        <img src="{{ asset(ChildProduct.mainFileName|no_image_product, 'save_image') }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
                                     </a>
                                     <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }}" style="margin-right: 10px;">{{ ChildProduct.name }}</span>
                                     {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
