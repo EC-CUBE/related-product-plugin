@@ -13,6 +13,9 @@ namespace Plugin\RelatedProduct;
 use Eccube\Application;
 use Eccube\Plugin\AbstractPluginManager;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Asset\Packages;
+use Symfony\Component\Asset\PathPackage;
 
 /**
  * Class PluginManager.
@@ -29,98 +32,96 @@ class PluginManager extends AbstractPluginManager
      */
     private $target;
 
+    /**
+     * PluginManager constructor.
+     */
     public function __construct()
     {
         // コピー元のディレクトリ
-        $this->origin = __DIR__.'/Resource/assets';
+        $this->origin = __DIR__.DIRECTORY_SEPARATOR.'Resource'.DIRECTORY_SEPARATOR.'assets';
         // コピー先のディレクトリ
-        $this->target = '/relatedproduct';
+        $this->target = 'relatedproduct';
     }
 
     /**
      * プラグインインストール時の処理.
      *
-     * @param array       $config
+     * @param array $config
      * @param Application $app
+     * @param ContainerInterface $container
      *
      * @throws \Exception
      */
-    public function install($config, $app)
+    public function install($config = [], Application $app = null, ContainerInterface $container)
     {
         // リソースファイルのコピー
-        $this->copyAssets($app);
+        $this->copyAssets($container);
     }
 
     /**
      * プラグイン削除時の処理.
      *
-     * @param array       $config
+     * @param array $config
      * @param Application $app
+     * @param ContainerInterface $container
      */
-    public function uninstall($config, $app)
+    public function uninstall($config = [], Application $app = null, ContainerInterface $container)
     {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code'], 0);
-
         // リソースファイルの削除
-        $this->removeAssets($app);
+        $this->removeAssets($container);
     }
 
-    /**
-     * プラグイン有効時の処理.
-     *
-     * @param array       $config
-     * @param Application $app
-     *
-     * @throws \Exception
-     */
-    public function enable($config, $app)
-    {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
-    }
-
-    /**
-     * プラグイン無効時の処理.
-     *
-     * @param array       $config
-     * @param Application $app
-     */
-    public function disable($config, $app)
-    {
-    }
 
     /**
      * プラグイン更新時の処理.
      *
-     *  @param array       $config
-     *  @param Application $app
+     * @param array $config
+     * @param Application $app
+     * @param ContainerInterface $container
      */
-    public function update($config, $app)
+    public function update($config = [], Application $app = null, ContainerInterface $container)
     {
-        $this->migrationSchema($app, __DIR__.'/Resource/doctrine/migration', $config['code']);
-        
         // リソースファイルのコピー
-        $this->copyAssets($app);
+        $this->copyAssets($container);
     }
 
     /**
      * リソースファイル等をコピー
      *
-     * @param Application $app
+     * @param ContainerInterface $container
      */
-    private function copyAssets(Application $app)
+    private function copyAssets(ContainerInterface $container)
     {
         $file = new Filesystem();
-        $file->mirror($this->origin, $app['config']['root_dir'].'/html/plugin'.$this->target.'/assets');
+        $file->mirror($this->origin, $this->getAssetPath($container));
     }
 
     /**
      * コピーしたリソースファイルなどを削除.
      *
-     * @param Application $app
+     * @param ContainerInterface $container
      */
-    private function removeAssets(Application $app)
+    private function removeAssets(ContainerInterface $container)
     {
         $file = new Filesystem();
-        $file->remove($app['config']['root_dir'].'/html/plugin'.$this->target);
+        $file->remove($this->getAssetPath($container));
+    }
+
+    /**
+     * Get asset path which need to copy to
+     *
+     * @param ContainerInterface $container
+     *
+     * @return string
+     */
+    public function getAssetPath(ContainerInterface $container)
+    {
+        $projectDir = $container->getParameter('kernel.project_dir');
+        /** @var Packages $packages */
+        $packages = $container->get('assets.packages');
+        /** @var PathPackage $package */
+        $package = $packages->getPackage('plugin');
+
+        return $projectDir.$package->getBasePath().$this->target.DIRECTORY_SEPARATOR.'assets';
     }
 }

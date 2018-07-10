@@ -9,13 +9,13 @@
 #}
 <div id="related_product_area" class="row">
     <div class="col-sm-12">
-        <h2 class="heading03">関連商品</h2>
+        <h2 class="heading03">{{ 'plugin.related_product.block.title'|trans }}</h2>
         <div class="related_product_carousel">
             {% for RelatedProduct in RelatedProducts %}
                 <div class="product_item">
                     <a href="{{ url('product_detail', {id : RelatedProduct.ChildProduct.id}) }}">
                         <div class="item_photo">
-                            <img src="{{ app.config.image_save_urlpath }}/{{ RelatedProduct.ChildProduct.main_list_image|no_image_product }}">
+                            <img src="{{ asset(RelatedProduct.ChildProduct.main_list_image|no_image_product, 'save_image') }}">
                         </div>
                         <dl>
                             <dt class="item_name">{{ RelatedProduct.ChildProduct.name }}</dt>
@@ -40,5 +40,5 @@
 </div>
 
 {# EC-CUBE 3.0.10以降のみをサポートする場合は、{{ app.config.plugin_urlpath }} を利用して簡潔に記述可能 #}
-<script src="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/js/related_product_plugin.js"></script>
-<link rel="stylesheet" href="{{ app.config.front_urlpath }}/../../plugin/relatedproduct/assets/css/related_product_plugin.css">
+<script src="{{ asset('relatedproduct/assets/js/related_product_plugin.js', 'plugin') }}"></script>
+<link rel="stylesheet" href="{{ asset('relatedproduct/assets/css/related_product_plugin.css', 'plugin') }}">

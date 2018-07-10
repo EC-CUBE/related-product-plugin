@@ -12,6 +12,8 @@ namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Eccube\Repository\ProductRepository;
+use Eccube\Entity\Product;
 
 /**
  * Class RelatedProductControllerTest.
@@ -19,12 +21,33 @@ use Plugin\RelatedProduct\Entity\RelatedProduct;
 class RelatedProductControllerTest extends AbstractWebTestCase
 {
     /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @var Product
+     */
+    protected $Product;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->productRepository = $this->container->get(ProductRepository::class);
+        $this->Product = $this->createProduct('ディナーフォーク');
+    }
+
+    /**
      * Test display related product in product detail page.
      */
     public function testShowRelatedProduct()
     {
-        $this->initRelatedProduct(2);
-        $crawler = $this->client->request('GET', $this->app->url('product_detail', array('id' => 2)));
+        $this->initRelatedProduct($this->Product->getId());
+        $crawler = $this->client->request('GET', $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
 
         $this->assertContains('関連商品', $crawler->html());
     }
@@ -39,13 +62,13 @@ class RelatedProductControllerTest extends AbstractWebTestCase
     private function initRelatedProduct($id)
     {
         $fake = $this->getFaker();
-        $Product = $this->app['eccube.repository.product']->find($id);
+        $Product = $this->productRepository->find($id);
         $RelatedProduct = new RelatedProduct();
         $RelatedProduct->setContent($fake->word);
         $RelatedProduct->setProduct($Product);
         $RelatedProduct->setChildProduct($Product);
-        $this->app['orm.em']->persist($RelatedProduct);
-        $this->app['orm.em']->flush($RelatedProduct);
+        $this->entityManager->persist($RelatedProduct);
+        $this->entityManager->flush();
 
         return $RelatedProduct;
     }

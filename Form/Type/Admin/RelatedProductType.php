@@ -14,6 +14,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Eccube\Form\DataTransformer\EntityToIdTransformer;
+use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Entity\Product;
+use Eccube\Common\EccubeConfig;
+use Symfony\Component\Translation\TranslatorInterface;
+use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Class RelatedProductType.
@@ -21,60 +29,69 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RelatedProductType extends AbstractType
 {
     /**
-     * @var \Eccube\Application
+     * @var EntityManagerInterface
      */
-    private $app;
+    protected $entityManager;
+
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
 
     /**
      * RelatedProductType constructor.
      *
-     * @param \Eccube\Application $app
+     * @param EntityManagerInterface $entityManager
+     * @param EccubeConfig $eccubeConfig
+     * @param TranslatorInterface $translator
      */
-    public function __construct($app)
-    {
-        $this->app = $app;
+    public function __construct(
+        TranslatorInterface $translator,
+        EntityManagerInterface $entityManager,
+        EccubeConfig $eccubeConfig
+    ) {
+        $this->entityManager = $entityManager;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->translator = $translator;
     }
 
     /**
      * RelatedProduct form builder.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $this->app;
-        $builder
-            ->add(
-                $builder
-                    ->create('Product', 'hidden', array(
-                        'required' => false,
-                        'mapped' => false,
-                    ))
-                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
-            )
-            ->add(
-                $builder
-                    ->create('ChildProduct', 'hidden', array(
-                        'label' => '関連商品',
-                        'required' => false,
-                    ))
-                    ->addModelTransformer(new \Eccube\Form\DataTransformer\EntityToIdTransformer($app['orm.em'], 'Eccube\Entity\Product'))
-            )
-            ->add('content', 'textarea', array(
-                'label' => '説明文',
+        $builder->add(
+            $builder->create('Product', HiddenType::class, [
                 'required' => false,
-                'trim' => true,
-                'constraints' => array(
-                    new Assert\Length(array(
-                        'max' => $app['config']['related_product_text_area_len'],
-                    )),
-                ),
-                'attr' => array(
-                    'maxlength' => $app['config']['related_product_text_area_len'],
-                    'placeholder' => $app->trans('plugin.related_product.type.comment.placeholder'),
-                ),
-            ));
+                'mapped' => false,
+            ])->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
+        )->add(
+            $builder->create('ChildProduct', HiddenType::class, [
+                'label' => '関連商品',
+                'required' => false,
+            ])->addModelTransformer(new EntityToIdTransformer($this->entityManager, Product::class))
+        )->add('content', TextareaType::class, [
+            'label' => '説明文',
+            'required' => false,
+            'trim' => true,
+            'constraints' => [
+                new Assert\Length([
+                    'max' => $this->eccubeConfig['related_product_text_area_len'],
+                ]),
+            ],
+            'attr' => [
+                'maxlength' => $this->eccubeConfig['related_product_text_area_len'],
+                'placeholder' => $this->translator->trans('plugin.related_product.type.comment.placeholder'),
+            ],
+        ]);
     }
 
     /**
@@ -85,9 +102,9 @@ class RelatedProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Plugin\RelatedProduct\Entity\RelatedProduct',
-        ));
+        $resolver->setDefaults([
+            'data_class' => RelatedProduct::class,
+        ]);
     }
 
     /**

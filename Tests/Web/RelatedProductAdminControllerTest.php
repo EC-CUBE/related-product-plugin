@@ -12,7 +12,13 @@ namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
-use Symfony\Component\Form\Form;
+use Eccube\Repository\ProductRepository;
+use Plugin\RelatedProduct\Repository\RelatedProductRepository;
+use Eccube\Entity\Master\ProductStatus;
+use Eccube\Repository\Master\ProductStatusRepository;
+use Eccube\Common\Constant;
+use Eccube\Entity\Product;
+use Eccube\Entity\ProductCategory;
 
 /**
  * Class RelatedProductAdminControllerTest.
@@ -20,12 +26,44 @@ use Symfony\Component\Form\Form;
 class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 {
     /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @var RelatedProductRepository
+     */
+    protected $relatedProductRepository;
+
+    /**
+     * @var ProductStatusRepository
+     */
+    protected $productStatusRepository;
+
+    /**
+     * @var Product
+     */
+    protected $Product;
+
+    /**
+     * @var ProductCategory
+     */
+    protected $Category;
+
+    /**
      * call parent setUp.
      */
     public function setUp()
     {
         parent::setUp();
         $this->deleteAllRows(array('plg_related_product'));
+
+        $this->productRepository = $this->container->get(ProductRepository::class);
+        $this->relatedProductRepository = $this->container->get(RelatedProductRepository::class);
+        $this->productStatusRepository = $this->container->get(ProductStatusRepository::class);
+
+        $this->Product = $this->createProduct('ディナーフォーク');
+        $this->Category = $this->Product->getProductCategories()->current();
     }
 
     /**
@@ -33,7 +71,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testRoutingAdminProductRegistration()
     {
-        $crawler = $this->client->request('GET', $this->app->url('admin_product_product_new'));
+        $crawler = $this->client->request('GET', $this->generateUrl('admin_product_product_new'));
 
         $this->assertContains('関連商品', $crawler->html());
     }
@@ -50,14 +88,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_new'),
-            array('admin_product' => $formData)
+            $this->generateUrl('admin_product_product_new'),
+            ['admin_product' => $formData]
         );
-
-        $ChildProduct = $this->app['eccube.repository.product']->find($childProductId);
-        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
-            array('content' => $content, 'ChildProduct' => $ChildProduct)
-        );
+        $ChildProduct = $this->productRepository->find($childProductId);
+        $RelatedProduct = $this->relatedProductRepository->findOneBy([
+            'content' => $content,
+            'ChildProduct' => $ChildProduct
+        ]);
 
         $this->expected = $childProductId;
         $this->actual = $RelatedProduct->getChildProduct()->getId();
@@ -76,14 +114,15 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_edit', array('id' => 2)),
+            $this->generateUrl('admin_product_product_edit', ['id' => 2]),
             array('admin_product' => $formData)
         );
 
-        $ChildProduct = $this->app['eccube.repository.product']->find($childProductId);
-        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
-            array('content' => $content, 'ChildProduct' => $ChildProduct)
-        );
+        $ChildProduct = $this->productRepository->find($childProductId);
+        $RelatedProduct = $this->relatedProductRepository->findOneBy([
+            'content' => $content,
+            'ChildProduct' => $ChildProduct
+        ]);
 
         $this->expected = $content;
         $this->actual = $RelatedProduct->getContent();
@@ -102,13 +141,11 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_new'),
-            array('admin_product' => $formData)
+            $this->generateUrl('admin_product_product_new'),
+            ['admin_product' => $formData]
         );
 
-        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
-            array('content' => $content)
-        );
+        $RelatedProduct = $this->relatedProductRepository->findOneBy(['content' => $content]);
 
         $this->expected = 0;
         $this->actual = count($RelatedProduct);
@@ -125,14 +162,12 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_new'),
-            array('admin_product' => $formData)
+            $this->generateUrl('admin_product_product_new'),
+            ['admin_product' => $formData]
         );
 
-        $ChildProduct = $this->app['eccube.repository.product']->find($childProductId);
-        $RelatedProduct = $this->app['eccube.plugin.repository.related_product']->findOneBy(
-            array('ChildProduct' => $ChildProduct)
-        );
+        $ChildProduct = $this->productRepository->find($childProductId);
+        $RelatedProduct = $this->relatedProductRepository->findOneBy(['ChildProduct' => $ChildProduct]);
 
         $this->expected = $childProductId;
         $this->actual = $RelatedProduct->getChildProduct()->getId();
@@ -151,8 +186,8 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_product_product_new'),
-            array('admin_product' => $formData)
+            $this->generateUrl('admin_product_product_new'),
+            ['admin_product' => $formData]
         );
 
         $this->assertContains('値が長すぎます。4000文字以内でなければなりません。', $crawler->html());
@@ -168,7 +203,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         }
         $this->client->request(
             'GET',
-            $this->app->url('admin_product_product_edit', array('id' => 2))
+            $this->generateUrl('admin_product_product_edit', ['id' => 2])
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -183,7 +218,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         }
         $this->client->request(
             'GET',
-            $this->app->url('admin_product_product_edit', array('id' => 2))
+            $this->generateUrl('admin_product_product_edit', ['id' => 2])
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
@@ -195,15 +230,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -211,23 +245,22 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testAjaxSearchPublicProduct()
     {
-        $Disp = $this->app['orm.em']->getRepository('Eccube\Entity\Master\Disp')->find(1);
-        $Product = $this->app['eccube.repository.product']->findOneBy(array('name' => 'ディナーフォーク'));
-        $Product->setStatus($Disp);
-        $this->app['orm.em']->persist($Product);
-        $this->app['orm.em']->flush($Product);
+        $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
+        $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
+        $Product->setStatus($ProductStatus);
+        $this->entityManager->persist($Product);
+        $this->entityManager->flush();
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -235,23 +268,22 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testAjaxSearchUnpublicProduct()
     {
-        $Disp = $this->app['orm.em']->getRepository('Eccube\Entity\Master\Disp')->find(2);
-        $Product = $this->app['eccube.repository.product']->findOneBy(array('name' => 'ディナーフォーク'));
-        $Product->setStatus($Disp);
-        $this->app['orm.em']->persist($Product);
-        $this->app['orm.em']->flush($Product);
+        $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_HIDE);
+        $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
+        $Product->setStatus($ProductStatus);
+        $this->entityManager->persist($Product);
+        $this->entityManager->flush();
 
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -261,14 +293,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => 'パーコレーター', 'category_id' => 1, '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getName(), 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -278,14 +310,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => 'cafe-01', 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getId(), 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -295,14 +327,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => 1, 'category_id' => '', '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getId(), 'category_id' => '', '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
@@ -312,39 +344,68 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request(
             'POST',
-            $this->app->url('admin_related_product_search', array('id' => '', 'category_id' => 6, '_token' => 'dummy')),
-            array(),
-            array(),
-            array('HTTP_X-Requested-With' => 'XMLHttpRequest')
+            $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => $this->Category->getCategoryId(), '_token' => 'dummy']),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
         $productList = $crawler->html();
-        $this->assertContains('ディナーフォーク', $productList);
-        $this->assertContains('パーコレーター', $productList);
+        $this->assertContains($this->Product->getName(), $productList);
     }
 
     /**
      * create form data for save related product.
      *
      * @param string $content
-     * @param int    $childId
+     * @param int $childId
      *
-     * @return Form $form
+     * @return array
      */
     public function createFormData($content = null, $childId = 1)
     {
         $faker = $this->getFaker();
-        $form = array(
-            '_token' => 'dummy',
-            'name' => $faker->word,
-            'class' => array('product_type' => 1, 'price02' => 50, 'stock_unlimited' => 1),
-            'description_detail' => $faker->word,
-            'Status' => 1,
-            'related_collection' => array(
-                0 => array('ChildProduct' => $childId, 'content' => $content),
-            ),
-        );
 
+        $price01 = $faker->randomNumber(5);
+        if (mt_rand(0, 1)) {
+            $price01 = number_format($price01);
+        }
+
+        $price02 = $faker->randomNumber(5);
+        if (mt_rand(0, 1)) {
+            $price02 = number_format($price02);
+        }
+
+        $form = [
+            'class' => [
+                'sale_type' => 1,
+                'price01' => $price01,
+                'price02' => $price02,
+                'stock' => $faker->randomNumber(3),
+                'stock_unlimited' => 0,
+                'code' => $faker->word,
+                'sale_limit' => null,
+                'delivery_duration' => ''
+            ],
+            'name' => $faker->word,
+            'product_image' => [],
+            'description_detail' => $faker->realText,
+            'description_list' => $faker->paragraph,
+            'Category' => 1,
+            'Tag' => 1,
+            'search_word' => $faker->word,
+            'free_area' => $faker->realText,
+            'Status' => 1,
+            'note' => $faker->realText,
+            'tags' => null,
+            'images' => null,
+            'add_images' => null,
+            'delete_images' => null,
+            'related_collection' => [
+                0 => ['ChildProduct' => $childId, 'content' => $content],
+            ],
+            Constant::TOKEN_NAME => 'dummy'
+        ];
         return $form;
     }
 
@@ -358,13 +419,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     private function initRelatedProduct($id)
     {
         $fake = $this->getFaker();
-        $Product = $this->app['eccube.repository.product']->find($id);
+        $Product = $this->productRepository->find($id);
         $RelatedProduct = new RelatedProduct();
         $RelatedProduct->setContent($fake->word);
         $RelatedProduct->setProduct($Product);
         $RelatedProduct->setChildProduct($Product);
-        $this->app['orm.em']->persist($RelatedProduct);
-        $this->app['orm.em']->flush($RelatedProduct);
+        $this->entityManager->persist($RelatedProduct);
+        $this->entityManager->flush();
 
         return $RelatedProduct;
     }
