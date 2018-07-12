@@ -14,7 +14,7 @@ php:
 env:
   # plugin code
   global:
-    PLUGIN_CODE=Coupon
+    PLUGIN_CODE=RelatedProduct
     BRANCH=experimental/sf
 
 before_install: &php_setup |
