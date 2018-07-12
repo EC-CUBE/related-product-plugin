@@ -15,14 +15,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ 'plugin.related_product.modal.product_search.title'|trans }}</h5>
+                <h5 class="modal-title">{{ 'related_product.modal.product_search.title'|trans }}</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    {{ form_widget(searchForm.id, { attr : { placeholder : 'plugin.related_product.modal.product_search.input_name' } } ) }}
+                    {{ form_widget(searchForm.id, { attr : { placeholder : 'related_product.modal.product_search.input_name' } } ) }}
                 </div>
                 <div class="form-group">
                     {{ form_widget(searchForm.category_id) }}

@@ -1,12 +1,15 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 namespace Plugin\RelatedProduct;
 
@@ -18,9 +21,8 @@ use Plugin\RelatedProduct\Event\Event;
 /**
  * Class Event for  new hook point on version >= 3.0.9.
  */
-class EventSubscriber implements EventSubscriberInterface
+class RelatedProductEvent implements EventSubscriberInterface
 {
-
     /**
      * @var Event
      */
@@ -40,12 +42,11 @@ class EventSubscriber implements EventSubscriberInterface
     {
         return [
             'admin.product.edit.initialize' => [['onAdminProductEditInitialize', 10]],
-            'Admin/@admin/Product/product.twig' => [['onRenderAdminProduct', 10]],
+            '@admin/Product/product.twig' => [['onRenderAdminProduct', 10]],
             'admin.product.edit.complete' => [['onAdminProductEditComplete', 10]],
             'Product/detail.twig' => [['onRenderProductDetail', 10]],
         ];
     }
-
 
     /**
      * フロント：商品詳細画面に関連商品を表示.

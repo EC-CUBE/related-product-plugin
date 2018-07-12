@@ -10,6 +10,9 @@
 
 <script>
 $(function() {
+    $('.c-contentsArea__primaryCol .card.rounded.border-0.mb-4:last-child').after($('#plugin_related_product_related_product > .card'));
+    $('#plugin_related_product_related_product').empty();
+
     var dataId = null;
 
     $(document).on('click', '.delete', function() {
@@ -52,96 +55,95 @@ $(function() {
 });
 </script>
 
-<div class="card rounded border-0 mb-4">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-8">
-                <div class="d-inline-block" data-toggle="tooltip" data-placement="top"
-                     title="Tooltip">
-                    <span class="card-title">{{ form.related_collection.vars.label|trans }}</span>
-                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+<div id="plugin_related_product_related_product" class="d-none">
+    <div class="card rounded border-0 mb-4">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-8">
+                    <div class="d-inline-block" data-toggle="tooltip" data-placement="top"
+                         title="Tooltip">
+                        <span class="card-title">{{ form.related_collection.vars.label|trans }}</span>
+                        <i class="fa fa-question-circle fa-lg ml-1"></i>
+                    </div>
+                </div>
+                <div class="col-4 text-right">
                 </div>
             </div>
-            <div class="col-4 text-right">
-                <a data-toggle="collapse" href="#freeArea" aria-expanded="false"
-                   aria-controls="freeArea">
-                    <i class="fa fa-angle-up fa-lg"></i>
-                </a>
-            </div>
         </div>
-    </div>
-    <div class="collapse show ec-cardCollapse" id="freeArea">
-        <div class="card-body">
-            <div class="row">
-                {% for child in form.related_collection %}
-                    <div class="col-3">
-                        <label>
-                            {{ child.ChildProduct.vars.label }}
-                        </label>
-                    </div>
-                    <div class="col-9 mb-2">
-                        {% set ChildProduct = RelatedProducts[loop.index0].ChildProduct %}
-                        <div class="col-sm-9 col-lg-9" id="related-div-{{ loop.index0 }}">
-                            {% if ChildProduct %}
-                                <div>
-                                    <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
-                                        <img src="{{ asset(ChildProduct.mainFileName|no_image_product, 'save_image') }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
-                                    </a>
-                                    <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }}" style="margin-right: 10px;">{{ ChildProduct.name }}</span>
-                                    {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
-                                    <br>
-                                    <span class="related-view{{ loop.index0 }}" id="product-code{{ loop.index0 }}">
+        <div class="collapse show ec-cardCollapse" id="freeArea">
+            <div class="card-body">
+                <div class="row">
+                    {% for child in form.related_collection %}
+                        <div class="col-3">
+                            <label>
+                                {{ child.ChildProduct.vars.label }}
+                            </label>
+                        </div>
+                        <div class="col-9 mb-2">
+                            {% set ChildProduct = RelatedProducts[loop.index0].ChildProduct %}
+                            <div class="col-sm-9 col-lg-9" id="related-div-{{ loop.index0 }}">
+                                {% if ChildProduct %}
+                                    <div>
+                                        <a href="{{ url('admin_product_product_edit', { id : ChildProduct.id }) }}" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }}" >
+                                            <img src="{{ asset(ChildProduct.mainFileName|no_image_product, 'save_image') }}" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                                        </a>
+                                        <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }}" style="margin-right: 10px;">{{ ChildProduct.name }}</span>
+                                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none', class: 'child-product' } }) }}
+                                        <br>
+                                        <span class="related-view{{ loop.index0 }}" id="product-code{{ loop.index0 }}">
                                     {{ ChildProduct.code_min }}
-                                        {% if ChildProduct.code_min != ChildProduct.code_max %} ～ {{ ChildProduct.code_max }}
-                                        {% endif %}
+                                            {% if ChildProduct.code_min != ChildProduct.code_max %} ～ {{ ChildProduct.code_max }}
+                                            {% endif %}
                                 </span>
-                                </div>
-                                <div>
-                                    <button type="button" id="search_{{ loop.index0 }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
-                                        {{ 'plugin.related_product.select_product'|trans }}
-                                    </button>
-                                    <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">
-                                        {{ 'plugin.related_product.remove_product'|trans }}
-                                    </button>
-                                </div>
-                            {% else %}
-                                <div>
-                                    <a href="" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }} hidden" >
-                                        <img src="" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
-                                    </a>
-                                    <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden" ></span>
-                                    {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' , class: 'child-product' } }) }}
-                                    <br>
-                                    <span id="product-code{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden"></span>
-                                </div>
-                                <div>
-                                    <button type="button" id="search_{{ loop.index0 }}" class="btn" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
-                                        {{ 'plugin.related_product.select_product'|trans }}
-                                    </button>
-                                    <button  type="button" id="product-delete{{ loop.index0 }}" class="btn text-right delete related-view{{ loop.index0 }} d-none" data-id="{{ loop.index0 }}">
-                                        {{ 'plugin.related_product.remove_product'|trans }}
-                                    </button>
-                                </div>
-                            {% endif %}
+                                    </div>
+                                    <div>
+                                        <button type="button" id="search_{{ loop.index0 }}" class="btn btn-default btn::after-block btn-sm" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
+                                            {{ 'related_product.select_product'|trans }}
+                                        </button>
+                                        <button type="button" id="product-delete{{ loop.index0 }}" class="btn btn-default text-right delete related-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">
+                                            {{ 'related_product.remove_product'|trans }}
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div>
+                                        <a href="" id="product-image-link{{ loop.index0 }}" class="flL related-view{{ loop.index0 }} hidden" >
+                                            <img src="" id="product-image-img{{ loop.index0 }}" style="max-width: 100px;margin-right: 10px;" />
+                                        </a>
+                                        <span id="product-name{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden" ></span>
+                                        {{ form_widget(child.ChildProduct, { attr: { style: 'display: none' , class: 'child-product' } }) }}
+                                        <br>
+                                        <span id="product-code{{ loop.index0 }}" class="related-view{{ loop.index0 }} hidden"></span>
+                                    </div>
+                                    <div>
+                                        <button type="button" id="search_{{ loop.index0 }}" class="btn" data-toggle="modal" data-target="#searchProductModal" data-id="{{ loop.index0 }}">
+                                            {{ 'related_product.select_product'|trans }}
+                                        </button>
+                                        <button  type="button" id="product-delete{{ loop.index0 }}" class="btn text-right delete related-view{{ loop.index0 }} d-none" data-id="{{ loop.index0 }}">
+                                            {{ 'related_product.remove_product'|trans }}
+                                        </button>
+                                    </div>
+                                {% endif %}
 
 
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-3">
-                        <label>
-                            {{ child.content.vars.label }}
-                        </label>
-                    </div>
-                    <div class="col-9 mb-2">
-                        <div class="col-sm-9 col-lg-10 related-content{{ loop.index0 }}">
-                            {{ form_widget(child.content, { attr : { class : 'col-sm-9 col-lg-10 form-control' } } ) }}
-                            {{ form_errors(child.content) }}
+                        <div class="col-3">
+                            <label>
+                                {{ child.content.vars.label }}
+                            </label>
                         </div>
-                    </div>
-                {% endfor %}
-                <input type="hidden" id="relatedDataId" value="">
+                        <div class="col-9 mb-2">
+                            <div class="col-sm-9 col-lg-10 related-content{{ loop.index0 }}">
+                                {{ form_widget(child.content, { attr : { class : 'col-sm-9 col-lg-10 form-control' } } ) }}
+                                {{ form_errors(child.content) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" id="relatedDataId" value="">
+                </div>
             </div>
         </div>
     </div>
 </div>
+{{ include('@RelatedProduct/admin/modal.twig') }}
 

@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -56,7 +59,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->deleteAllRows(array('plg_related_product'));
+        $this->deleteAllRows(['plg_related_product']);
 
         $this->productRepository = $this->container->get(ProductRepository::class);
         $this->relatedProductRepository = $this->container->get(RelatedProductRepository::class);
@@ -94,7 +97,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $ChildProduct = $this->productRepository->find($childProductId);
         $RelatedProduct = $this->relatedProductRepository->findOneBy([
             'content' => $content,
-            'ChildProduct' => $ChildProduct
+            'ChildProduct' => $ChildProduct,
         ]);
 
         $this->expected = $childProductId;
@@ -115,13 +118,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $this->client->request(
             'POST',
             $this->generateUrl('admin_product_product_edit', ['id' => 2]),
-            array('admin_product' => $formData)
+            ['admin_product' => $formData]
         );
 
         $ChildProduct = $this->productRepository->find($childProductId);
         $RelatedProduct = $this->relatedProductRepository->findOneBy([
             'content' => $content,
-            'ChildProduct' => $ChildProduct
+            'ChildProduct' => $ChildProduct,
         ]);
 
         $this->expected = $content;
@@ -151,6 +154,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $this->actual = count($RelatedProduct);
         $this->verify();
     }
+
     /**
      * test create related product with no content.
      */
@@ -385,7 +389,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
                 'stock_unlimited' => 0,
                 'code' => $faker->word,
                 'sale_limit' => null,
-                'delivery_duration' => ''
+                'delivery_duration' => '',
             ],
             'name' => $faker->word,
             'product_image' => [],
@@ -404,8 +408,9 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'related_collection' => [
                 0 => ['ChildProduct' => $childId, 'content' => $content],
             ],
-            Constant::TOKEN_NAME => 'dummy'
+            Constant::TOKEN_NAME => 'dummy',
         ];
+
         return $form;
     }
 

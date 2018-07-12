@@ -1,12 +1,15 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 namespace Plugin\RelatedProduct\Event;
 
@@ -19,8 +22,6 @@ use Eccube\Event\EventArgs;
 use Eccube\Common\EccubeConfig;
 use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Entity\Master\ProductStatus;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Event
@@ -103,37 +104,11 @@ class Event
             return;
         }
 
-        // twigコードを挿入
-        try {
-            $snipet = $this->twigEnvironment->getLoader()
-                ->getSourceContext('RelatedProduct/Resource/template/front/related_product.twig')
-                ->getCode();
-        } catch (\Exception $e) {
-            log_info('Event: related product render error.', [$e]);
-            $snipet = '';
-        }
-        $source = $event->getSource();
-        //find related product mark
-        if (strpos($source, self::RELATED_PRODUCT_TAG)) {
-            log_info('Render related product with ', ['RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG]);
-            $search = self::RELATED_PRODUCT_TAG;
-            $replace = $search.$snipet;
-        } else {
-            // As request, the related product area will append bellow free area section.
-            $freeAreaStart = '{% if Product.freearea %}';
-            $pos = strpos($source, $freeAreaStart);
-            $search = substr($source, $pos);
-            // End of free area
-            $freeAreaEnd = '{% endif %}';
-            $from = '/'.preg_quote($freeAreaEnd, '/').'/';
-            $replace = preg_replace($from, $freeAreaEnd.$snipet, $search, 1);
-        }
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source);
-
         //set parameter for twig files
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
+        $event->addSnippet('@RelatedProduct/front/related_product.twig');
+        $event->addAsset('@RelatedProduct/asset/asset.twig');
         log_info('RelatedProduct trigger onRenderProductDetail finish');
     }
 
@@ -150,16 +125,16 @@ class Event
         // フォームの追加
         /** @var FormBuilder $builder */
         $builder = $event->getArgument('builder');
-        $builder
-            ->add('related_collection', CollectionType::class, [
-                'label' => 'plugin.related_product.block.title',
-                'entry_type' => RelatedProductType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'mapped' => false,
-            ])
-        ;
+//        $builder
+//            ->add('related_collection', CollectionType::class, [
+//                'label' => 'related_product.block.title',
+//                'entry_type' => RelatedProductType::class,
+//                'allow_add' => true,
+//                'allow_delete' => true,
+//                'prototype' => true,
+//                'mapped' => false,
+//            ])
+//        ;
         $builder->get('related_collection')->setData($RelatedProducts);
         log_info('RelatedProduct trigger onRenderAdminProductInit finish');
     }
@@ -176,26 +151,6 @@ class Event
         $Product = $parameters['Product'];
         $RelatedProducts = $this->createRelatedProductData($Product);
 
-        // twigコードを挿入
-        try {
-            $snipet = $this->twigEnvironment->getLoader()->getSourceContext('RelatedProduct/Resource/template/admin/related_product.twig');
-            $snipet = $snipet->getCode();
-            $modal = $this->twigEnvironment->getLoader()->getSourceContext('RelatedProduct/Resource/template/admin/modal.twig');
-            $modal = $modal->getCode();
-        } catch (\Exception $e) {
-            $snipet = '';
-            $modal = '';
-        }
-
-        //add related product to product edit
-        // TODO: should find a way better to insert/edit template
-        // TODO: @admin/Product/product.twig should have a anchor (id, or comment tag) to insert/edit template
-        $search = '<!-- layout.admin.product.primaryCol.footer -->';
-        $source = $event->getSource();
-        $replace = $search.$modal.$snipet;
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source);
-
         //set parameter for twig files
         $existsRelativeProducts = array_filter($RelatedProducts, function ($v) {
             return !is_null($v->getChildProduct());
@@ -203,6 +158,7 @@ class Event
         $parameters['toggleActive'] = (count($existsRelativeProducts) > 0);
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
+        $event->addSnippet('@RelatedProduct/admin/related_product.twig');
         log_info('RelatedProduct trigger onRenderAdminProduct finish');
     }
 
@@ -249,8 +205,8 @@ class Event
         } else {
             $Product = new Product();
         }
-        
-        $maxCount = $this->eccubeConfig['related_product_max_item_count'];
+
+        $maxCount = $this->eccubeConfig['related_product.max_item_count'];
         $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
             $RelatedProduct = new RelatedProduct();

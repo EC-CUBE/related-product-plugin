@@ -71,7 +71,7 @@
     </table>
     {% if pagination.totalItemCount > 0 %}
         <div class="pagination">
-            {% include "@admin/styleguide_pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
+            {% include "@admin/pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
         </div>
     {% endif %}
 </div>

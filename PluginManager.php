@@ -1,12 +1,15 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 namespace Plugin\RelatedProduct;
 
@@ -70,7 +73,6 @@ class PluginManager extends AbstractPluginManager
         // リソースファイルの削除
         $this->removeAssets($container);
     }
-
 
     /**
      * プラグイン更新時の処理.

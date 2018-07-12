@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -84,12 +87,12 @@ class RelatedProductType extends AbstractType
             'trim' => true,
             'constraints' => [
                 new Assert\Length([
-                    'max' => $this->eccubeConfig['related_product_text_area_len'],
+                    'max' => $this->eccubeConfig['related_product.text_area_len'],
                 ]),
             ],
             'attr' => [
-                'maxlength' => $this->eccubeConfig['related_product_text_area_len'],
-                'placeholder' => $this->translator->trans('plugin.related_product.type.comment.placeholder'),
+                'maxlength' => $this->eccubeConfig['related_product.text_area_len'],
+                'placeholder' => $this->translator->trans('related_product.type.comment.placeholder'),
             ],
         ]);
     }
