@@ -1,4 +1,3 @@
 name: 関連商品プラグイン
 code: RelatedProduct
 version: 1.0.1
-event: EventSubscriber

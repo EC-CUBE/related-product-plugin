@@ -55,7 +55,7 @@ class PluginManager extends AbstractPluginManager
      *
      * @throws \Exception
      */
-    public function install($config = [], Application $app = null, ContainerInterface $container)
+    public function enable($config = [], Application $app = null, ContainerInterface $container)
     {
         // リソースファイルのコピー
         $this->copyAssets($container);
