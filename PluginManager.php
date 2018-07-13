@@ -118,10 +118,6 @@ class PluginManager extends AbstractPluginManager
      */
     public function getAssetPath(ContainerInterface $container)
     {
-        var_dump($container->getParameter('kernel.project_dir'));
-        var_dump(__DIR__);
-        var_dump($_ENV);
-        var_dump(getenv('kernel.project_dir'));
         $projectDir = $container->getParameter('kernel.project_dir');
         /** @var Packages $packages */
         $packages = $container->get('assets.packages');
