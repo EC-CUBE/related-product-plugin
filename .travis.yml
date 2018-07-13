@@ -36,8 +36,8 @@ eccube_setup: &eccube_setup |
   bin/console doctrine:database:create
   bin/console doctrine:schema:create
   bin/console eccube:fixtures:load
-  bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz
-  bin/console eccube:plugin:enable --code=${PLUGIN_CODE}
+  bin/console eccube:plugin:install --path=${HOME}/${PLUGIN_CODE}.tar.gz -vvv
+  bin/console eccube:plugin:enable --code=${PLUGIN_CODE} -vvv
 
 jobs:
   fast_finish: true
