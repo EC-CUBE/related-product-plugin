@@ -13,7 +13,6 @@
 
 namespace Plugin\RelatedProduct;
 
-use Eccube\Application;
 use Eccube\Plugin\AbstractPluginManager;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,13 +48,12 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグインインストール時の処理.
      *
-     * @param array $config
-     * @param Application $app
+     * @param array $meta
      * @param ContainerInterface $container
      *
      * @throws \Exception
      */
-    public function enable($config = [], Application $app = null, ContainerInterface $container)
+    public function enable(array $meta, ContainerInterface $container)
     {
         // リソースファイルのコピー
         $this->copyAssets($container);
@@ -64,11 +62,10 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグイン削除時の処理.
      *
-     * @param array $config
-     * @param Application $app
+     * @param array $meta
      * @param ContainerInterface $container
      */
-    public function uninstall($config = [], Application $app = null, ContainerInterface $container)
+    public function uninstall(array $meta, ContainerInterface $container)
     {
         // リソースファイルの削除
         $this->removeAssets($container);
@@ -77,11 +74,10 @@ class PluginManager extends AbstractPluginManager
     /**
      * プラグイン更新時の処理.
      *
-     * @param array $config
-     * @param Application $app
+     * @param array $meta
      * @param ContainerInterface $container
      */
-    public function update($config = [], Application $app = null, ContainerInterface $container)
+    public function update(array $meta, ContainerInterface $container)
     {
         // リソースファイルのコピー
         $this->copyAssets($container);
