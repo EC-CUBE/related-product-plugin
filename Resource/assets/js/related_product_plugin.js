@@ -10,8 +10,8 @@ $(function(){
     $('.related_product_carousel').slick({
         infinite: false,
         speed: 300,
-        prevArrow:'<button type="button" class="slick-prev"><span class="angle-circle"><svg class="cb cb-angle-right"><use xlink:href="#cb-angle-right" /></svg></span></button>',
-        nextArrow:'<button type="button" class="slick-next"><span class="angle-circle"><svg class="cb cb-angle-right"><use xlink:href="#cb-angle-right" /></svg></span></button>',
+        prevArrow:'<button type="button" class="slick-prev"><span class="angle-circle"><span class="glyphicon glyphicon-chevron-left"></span></span></button>',
+        nextArrow:'<button type="button" class="slick-next"><span class="angle-circle"><span class="glyphicon glyphicon-chevron-right"></span></span></button>',
         slidesToShow: 4,   // 一画面に表示する関連商品の数
         slidesToScroll: 4, // スクロール時に移動する関連商品の数
         responsive: [

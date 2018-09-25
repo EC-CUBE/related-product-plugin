@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,24 +14,39 @@
 namespace Plugin\RelatedProduct\Entity;
 
 use Eccube\Entity\Product;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class RelatedProduct.
+ *
+ * @ORM\Table(name="plg_related_product")
+ * @ORM\Entity(repositoryClass="Plugin\RelatedProduct\Repository\RelatedProductRepository")
  */
 class RelatedProduct
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="content", type="string", nullable=true)
      */
     private $content;
 
     /**
      * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product", inversedBy="RelatedProduct", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * })
      */
     private $Product;
 
@@ -39,6 +57,11 @@ class RelatedProduct
 
     /**
      * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product", inversedBy="RelatedProduct", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="child_product_id", referencedColumnName="id")
+     * })
      */
     private $ChildProduct;
 

@@ -1,34 +1,31 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 namespace Plugin\RelatedProduct\Event;
 
-use Eccube\Application;
-use Eccube\Common\Constant;
 use Symfony\Component\Form\FormBuilder;
 use Eccube\Entity\Product;
 use Plugin\RelatedProduct\Entity\RelatedProduct;
-use Eccube\Entity\Master\Disp;
+use Plugin\RelatedProduct\Repository\RelatedProductRepository;
 use Eccube\Event\TemplateEvent;
 use Eccube\Event\EventArgs;
+use Eccube\Common\EccubeConfig;
+use Eccube\Repository\Master\ProductStatusRepository;
+use Eccube\Entity\Master\ProductStatus;
+use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Class Event for  new hook point on version >= 3.0.9.
- */
 class Event
 {
-    /**
-     * @var Application
-     */
-    private $app;
-
     /**
      * position for insert in twig file.
      *
@@ -37,13 +34,51 @@ class Event
     const RELATED_PRODUCT_TAG = '<!--# related-product-plugin-tag #-->';
 
     /**
+     * @var RelatedProductRepository
+     */
+    protected $relatedProductRepository;
+
+    /**
+     * @var ProductStatusRepository
+     */
+    protected $productStatusRepository;
+
+    /**
+     * @var EccubeConfig
+     */
+    protected $eccubeConfig;
+
+    /**
+     * @var \Twig_Environment
+     */
+    protected $twigEnvironment;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * Event constructor.
      *
-     * @param Application $app
+     * @param ProductStatusRepository $productStatusRepository
+     * @param RelatedProductRepository $relatedProductRepository
+     * @param EccubeConfig $eccubeConfig
+     * @param \Twig_Environment $twigEnvironment
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct($app)
-    {
-        $this->app = $app;
+    public function __construct(
+        ProductStatusRepository $productStatusRepository,
+        RelatedProductRepository $relatedProductRepository,
+        EccubeConfig $eccubeConfig,
+        \Twig_Environment $twigEnvironment,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->productStatusRepository = $productStatusRepository;
+        $this->relatedProductRepository = $relatedProductRepository;
+        $this->eccubeConfig = $eccubeConfig;
+        $this->twigEnvironment = $twigEnvironment;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -54,7 +89,6 @@ class Event
     public function onRenderProductDetail(TemplateEvent $event)
     {
         log_info('RelatedProduct trigger onRenderProductDetail start');
-        $app = $this->app;
         $parameters = $event->getParameters();
         // ProductIDがない場合、レンダリングしない
         if (is_null($parameters['Product'])) {
@@ -63,36 +97,18 @@ class Event
 
         // 登録がない、レンダリングをしない
         $Product = $parameters['Product'];
-        $Disp = $app['eccube.repository.master.disp']->find(Disp::DISPLAY_SHOW);
-        $RelatedProducts = $app['eccube.plugin.repository.related_product']->showRelatedProduct($Product, $Disp);
+        /** @var ProductStatus $ProductStatus */
+        $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
+        $RelatedProducts = $this->relatedProductRepository->showRelatedProduct($Product, $ProductStatus);
         if (count($RelatedProducts) == 0) {
             return;
         }
 
-        // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/front/related_product.twig');
-        $source = $event->getSource();
-        //find related product mark
-        if (strpos($source, self::RELATED_PRODUCT_TAG)) {
-            log_info('Render related product with ', array('RELATED_PRODUCT_TAG' => self::RELATED_PRODUCT_TAG));
-            $search = self::RELATED_PRODUCT_TAG;
-            $replace = $search.$snipet;
-        } else {
-            // As request, the related product area will append bellow free area section.
-            $freeAreaStart = '{% if Product.freearea %}';
-            $pos = strpos($source, $freeAreaStart);
-            $search = substr($source, $pos);
-            // End of free area
-            $freeAreaEnd = '{% endif %}';
-            $from = '/'.preg_quote($freeAreaEnd, '/').'/';
-            $replace = preg_replace($from, $freeAreaEnd.$snipet, $search, 1);
-        }
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source);
-
         //set parameter for twig files
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
+        $event->addSnippet('@RelatedProduct/front/related_product.twig');
+        $event->addAsset('@RelatedProduct/asset/asset.twig');
         log_info('RelatedProduct trigger onRenderProductDetail finish');
     }
 
@@ -101,7 +117,7 @@ class Event
      *
      * @param EventArgs $event
      */
-    public function onRenderAdminProductInit(EventArgs $event)
+    public function onAdminProductEditInitialize(EventArgs $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProductInit start');
         $Product = $event->getArgument('Product');
@@ -109,16 +125,16 @@ class Event
         // フォームの追加
         /** @var FormBuilder $builder */
         $builder = $event->getArgument('builder');
-        $builder
-            ->add('related_collection', 'collection', array(
-                'label' => '関連商品',
-                'type' => 'admin_related_product',
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'mapped' => false,
-            ))
-        ;
+//        $builder
+//            ->add('related_collection', CollectionType::class, [
+//                'label' => 'related_product.block.title',
+//                'entry_type' => RelatedProductType::class,
+//                'allow_add' => true,
+//                'allow_delete' => true,
+//                'prototype' => true,
+//                'mapped' => false,
+//            ])
+//        ;
         $builder->get('related_collection')->setData($RelatedProducts);
         log_info('RelatedProduct trigger onRenderAdminProductInit finish');
     }
@@ -131,21 +147,9 @@ class Event
     public function onRenderAdminProduct(TemplateEvent $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProduct start');
-        $app = $this->app;
         $parameters = $event->getParameters();
         $Product = $parameters['Product'];
         $RelatedProducts = $this->createRelatedProductData($Product);
-
-        // twigコードを挿入
-        $snipet = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/related_product.twig');
-        $modal = $app['twig']->getLoader()->getSource('RelatedProduct/Resource/template/admin/modal.twig');
-
-        //add related product to product edit
-        $search = '<div id="detail_box__footer" class="row hidden-xs hidden-sm">';
-        $source = $event->getSource();
-        $replace = $snipet.$search;
-        $source = str_replace($search, $replace, $source);
-        $event->setSource($source.$modal);
 
         //set parameter for twig files
         $existsRelativeProducts = array_filter($RelatedProducts, function ($v) {
@@ -154,6 +158,7 @@ class Event
         $parameters['toggleActive'] = (count($existsRelativeProducts) > 0);
         $parameters['RelatedProducts'] = $RelatedProducts;
         $event->setParameters($parameters);
+        $event->addSnippet('@RelatedProduct/admin/related_product.twig');
         log_info('RelatedProduct trigger onRenderAdminProduct finish');
     }
 
@@ -162,23 +167,26 @@ class Event
      *
      * @param EventArgs $event
      */
-    public function onRenderAdminProductComplete(EventArgs  $event)
+    public function onAdminProductEditComplete(EventArgs  $event)
     {
         log_info('RelatedProduct trigger onRenderAdminProductComplete start');
-        $app = $this->app;
-        $Product = $event->getArgument('Product');
-        $form = $event->getArgument('form');
-        $app['eccube.plugin.repository.related_product']->removeChildProduct($Product);
-        log_info('remove all now related product data of ', array('Product id' => $Product->getId()));
-        $RelatedProducts = $form->get('related_collection')->getData();
-        foreach ($RelatedProducts as $RelatedProduct) {
-            /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
-            if ($RelatedProduct->getChildProduct() instanceof Product) {
-                $RelatedProduct->setProduct($Product);
-                $app['orm.em']->persist($RelatedProduct);
-                $app['orm.em']->flush($RelatedProduct);
-                log_info('save new related product data to DB ', array('Related Product id' => $RelatedProduct->getId()));
+        try {
+            $Product = $event->getArgument('Product');
+            $form = $event->getArgument('form');
+            $this->relatedProductRepository->removeChildProduct($Product);
+            log_info('remove all now related product data of ', ['Product id' => $Product->getId()]);
+            $RelatedProducts = $form->get('related_collection')->getData();
+            foreach ($RelatedProducts as $RelatedProduct) {
+                /* @var $RelatedProduct \Plugin\RelatedProduct\Entity\RelatedProduct */
+                if ($RelatedProduct->getChildProduct() instanceof Product) {
+                    $RelatedProduct->setProduct($Product);
+                    $this->entityManager->persist($RelatedProduct);
+                    $this->entityManager->flush($RelatedProduct);
+                    log_info('save new related product data to DB ', ['Related Product id' => $RelatedProduct->getId()]);
+                }
             }
+        } catch (\Exception $e) {
+            log_error('RelatedProduct trigger onRenderAdminProductComplete error', [$e]);
         }
         log_info('RelatedProduct trigger onRenderAdminProductComplete finish');
     }
@@ -190,16 +198,15 @@ class Event
      */
     private function createRelatedProductData($Product)
     {
-        $app = $this->app;
         $RelatedProducts = null;
         $id = $Product->getId();
         if ($id) {
-            $RelatedProducts = $app['eccube.plugin.repository.related_product']->getRelatedProduct($Product, Constant::DISABLED);
+            $RelatedProducts = $this->relatedProductRepository->getRelatedProduct($Product);
         } else {
             $Product = new Product();
         }
-        
-        $maxCount = $app['config']['related_product_max_item_count'];
+
+        $maxCount = $this->eccubeConfig['related_product.max_item_count'];
         $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
             $RelatedProduct = new RelatedProduct();

@@ -18,7 +18,7 @@
             product_code_min += ' ～ ' + product_code_max;
         $('#product-code' + data_id).text(product_code_min);
         // Display new product
-        $('.related-view' + data_id).removeClass('hidden');
+        $('.related-view' + data_id).removeClass('d-none');
         $("#admin_product_related_collection_" + data_id + "_ChildProduct").val(product_id);
         // モーダル閉じる.
         $("#searchResult").children().remove();
@@ -27,7 +27,7 @@
     }
 
     // 商品検索
-    $('div.box-footer a').on('click', function(event) {
+    $('#searchProductModal .pagination a').on('click', function(event) {
         var list = $('#searchResult');
         list.children().remove();
         $.ajax({
@@ -59,8 +59,9 @@
                         </span>
                     </td>
                     <td class="text-right">
-                        <button onclick="fnSelectProduct('{{ Product.id }}', '{{ Product.name|escape('js') }}', '{{ url('admin_product_product_edit', { id : Product.id }) }}', '{{ app.config.image_save_urlpath }}/{{ Product.mainFileName|no_image_product }}', '{{ Product.code_min|escape('js') }}', '{{ Product.code_max|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            決定
+                        <button onclick="fnSelectProduct('{{ Product.id }}', '{{ Product.name|escape('js') }}', '{{ url('admin_product_product_edit', { id : Product.id }) }}', '{{ asset(Product.mainFileName|no_image_product, 'save_image') }}', '{{ Product.code_min|escape('js') }}', '{{ Product.code_max|escape('js') }}')" type="button" class="btn btn-default btn-sm">
+
+                            <i class="fa fa-plus fa-lg font-weight-bold text-secondary"></i>
                         </button>
                     </td>
                 </tr>
@@ -70,6 +71,8 @@
         </tbody>
     </table>
     {% if pagination.totalItemCount > 0 %}
-        {% include "pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
+        <div class="pagination">
+            {% include "@admin/pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
+        </div>
     {% endif %}
 </div>

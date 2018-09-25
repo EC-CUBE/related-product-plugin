@@ -89,6 +89,12 @@
 }
 
 @media only screen and (min-width: 767px) {
+    .cb {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        vertical-align: middle;
+    }
     #related_product_area {
         border: 0 none;
     }
@@ -110,8 +116,8 @@
     #related_product_area .slick-next,
     #related_product_area .slick-prev {
         font-size: 37px;
-        font-size: 3.7rem;
-        top: -1.4em;
+        font-size: 2rem;
+        top: -2.4em;
     }
     #related_product_area .slick-next {
         right: 14px;

@@ -1,8 +1,11 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,37 +13,83 @@
 
 namespace Plugin\RelatedProduct\Controller\Admin;
 
-use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Eccube\Controller\AbstractController;
+use Eccube\Repository\CategoryRepository;
+use Eccube\Repository\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class RelatedProductController.
  */
-class RelatedProductController
+class RelatedProductController extends AbstractController
 {
+    /**
+     * @var CategoryRepository
+     */
+    protected $categoryRepository;
+
+    /**
+     * @var ProductRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @var PaginatorInterface
+     */
+    protected $paginator;
+
+    /**
+     * RelatedProductController constructor.
+     *
+     * @param CategoryRepository $categoryRepository
+     * @param ProductRepository $productRepository
+     * @param PaginatorInterface $paginator
+     */
+    public function __construct(
+        CategoryRepository $categoryRepository,
+        ProductRepository $productRepository,
+        PaginatorInterface $paginator
+    ) {
+        $this->categoryRepository = $categoryRepository;
+        $this->productRepository = $productRepository;
+        $this->paginator = $paginator;
+    }
+
     /**
      * search product modal.
      *
-     * @param Application $app
-     * @param Request     $request
-     * @param int         $page_no
+     * @param Request $request
+     * @param int $page_no
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|array
+     *
+     * @Route("/related_product/search_product", name="admin_related_product_search")
+     * @Route(
+     *      path="/%eccube_admin_route%/related_product/search/product/page/{page_no}",
+     *      name="admin_related_product_search_product_page",
+     *      requirements={"page_no":"\d+"}
+     * )
+     *
+     * @Template("@RelatedProduct/admin/modal_result.twig")
      */
-    public function searchProduct(Application $app, Request $request, $page_no = null)
+    public function searchProduct(Request $request, $page_no = null)
     {
         if (!$request->isXmlHttpRequest()) {
             return null;
         }
 
-        $pageCount = $app['config']['default_page_count'];
-        $session = $app['session'];
+        $pageCount = $this->eccubeConfig['eccube_default_page_count'];
+        $session = $this->session;
         if ('POST' === $request->getMethod()) {
-            log_info('get search data with parameters ', array('id' => $request->get('id'), 'category_id' => $request->get('category_id')));
-            $page_no = 1;
-            $searchData = array(
+            log_info('get search data with parameters ', [
                 'id' => $request->get('id'),
-            );
+                'category_id' => $request->get('category_id'),
+            ]);
+            $page_no = 1;
+            $searchData = ['id' => $request->get('id')];
             if ($categoryId = $request->get('category_id')) {
                 $searchData['category_id'] = $categoryId;
             }
@@ -56,49 +105,21 @@ class RelatedProductController
         }
 
         if (!empty($searchData['category_id'])) {
-            $searchData['category_id'] = $app['eccube.repository.category']->find($searchData['category_id']);
+            $searchData['category_id'] = $this->categoryRepository->find($searchData['category_id']);
         }
 
-        $qb = $app['eccube.repository.product']->getQueryBuilderBySearchDataForAdmin($searchData);
+        $qb = $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
 
         /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
-        $pagination = $app['paginator']()->paginate(
+        $pagination = $this->paginator->paginate(
             $qb,
             $page_no,
             $pageCount,
-            array('wrap-queries' => true)
+            ['wrap-queries' => true]
         );
 
-        $paths = array();
-        $paths[] = $app['config']['template_admin_realdir'];
-        $app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($paths));
-
-        return $app->render('RelatedProduct/Resource/template/admin/modal_result.twig', array(
+        return [
             'pagination' => $pagination,
-        ));
-    }
-
-    /**
-     * get product information.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function getProduct(Application $app, Request $request)
-    {
-        if (!$request->isXmlHttpRequest()) {
-            return null;
-        }
-
-        $productId = $request->get('product_id');
-        $index = $request->get('index');
-        $Product = $app['eccube.repository.product']->find($productId);
-
-        return $app->render('RelatedProduct/Resource/template/admin/product.twig', array(
-            'Product' => $Product,
-            'index' => $index,
-        ));
+        ];
     }
 }

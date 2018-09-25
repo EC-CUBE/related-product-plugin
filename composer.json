@@ -1,0 +1,9 @@
+{
+  "name": "関連商品プラグイン",
+  "version": "1.0.1",
+  "description": "関連商品プラグイン",
+  "type": "eccube-plugin",
+  "extra": {
+    "code": "RelatedProduct"
+  }
+}
