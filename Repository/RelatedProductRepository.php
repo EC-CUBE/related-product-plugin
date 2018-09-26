@@ -11,12 +11,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Repository;
+namespace Plugin\RelatedProduct4\Repository;
 
 use Eccube\Repository\AbstractRepository;
-use Eccube\Entity\Master\ProductStatus;
-use Eccube\Entity\Product;
-use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Plugin\RelatedProduct4\Entity\RelatedProduct;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
@@ -34,63 +32,5 @@ class RelatedProductRepository extends AbstractRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RelatedProduct::class);
-    }
-
-    /**
-     * 子商品の削除.
-     *
-     * @param $Product
-     *
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function removeChildProduct($Product)
-    {
-        $em = $this->getEntityManager();
-        $Children = $this->findBy(['Product' => $Product]);
-        foreach ($Children as $Child) {
-            $em->remove($Child);
-            $em->flush($Child);
-        }
-    }
-
-    /**
-     * show related product with status is display.
-     *
-     * @param Product $Product
-     * @param ProductStatus $ProductStatus
-     *
-     * @return array
-     */
-    public function showRelatedProduct(Product $Product, ProductStatus $ProductStatus)
-    {
-        $query = $this->createQueryBuilder('rp')
-            ->innerJoin('Eccube\Entity\Product', 'p', 'WITH', 'p.id = rp.ChildProduct')
-            ->andWhere('rp.Product = :Product')
-            ->andWhere('p.Status = :ProductStatus')
-            ->setParameter('Product', $Product)
-            ->setParameter('ProductStatus', $ProductStatus)
-            ->orderBy('rp.id')
-            ->getQuery();
-
-        return $query->getResult();
-    }
-
-    /**
-     * get related product with del flg disable.
-     *
-     * @param Product $Product
-     *
-     * @return array
-     */
-    public function getRelatedProduct(Product $Product)
-    {
-        $query = $this->createQueryBuilder('rp')
-            ->innerJoin(Product::class, 'p', 'WITH', 'p.id = rp.ChildProduct')
-            ->andWhere('rp.Product = :Product')
-            ->setParameter('Product', $Product)
-            ->orderBy('rp.id')
-            ->getQuery();
-
-        return $query->getResult();
     }
 }

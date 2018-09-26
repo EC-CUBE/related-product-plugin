@@ -11,80 +11,38 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct;
+namespace Plugin\RelatedProduct4;
 
 use Eccube\Event\TemplateEvent;
-use Eccube\Event\EventArgs;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Plugin\RelatedProduct\Event\Event;
 
-/**
- * Class Event for  new hook point on version >= 3.0.9.
- */
 class RelatedProductEvent implements EventSubscriberInterface
 {
-    /**
-     * @var Event
-     */
-    protected $event;
-
-    /**
-     * EventSubscriber constructor.
-     *
-     * @param Event $event
-     */
-    public function __construct(Event $event)
-    {
-        $this->event = $event;
-    }
-
     public static function getSubscribedEvents()
     {
         return [
-            'admin.product.edit.initialize' => [['onAdminProductEditInitialize', 10]],
-            '@admin/Product/product.twig' => [['onRenderAdminProduct', 10]],
-            'admin.product.edit.complete' => [['onAdminProductEditComplete', 10]],
-            'Product/detail.twig' => [['onRenderProductDetail', 10]],
+            '@admin/Product/product.twig' => 'onRenderAdminProduct',
+            'Product/detail.twig' => 'onRenderProductDetail',
         ];
     }
 
     /**
-     * フロント：商品詳細画面に関連商品を表示.
+     * フロント：商品詳細画面に関連商品を表示する.
      *
      * @param TemplateEvent $event
      */
     public function onRenderProductDetail(TemplateEvent $event)
     {
-        $this->event->onRenderProductDetail($event);
+        $event->addSnippet('@RelatedProduct4/front/related_product.twig');
     }
 
     /**
-     * new hookpoint for init product edit.
-     *
-     * @param EventArgs $event
-     */
-    public function onAdminProductEditInitialize(EventArgs $event)
-    {
-        $this->event->onAdminProductEditInitialize($event);
-    }
-
-    /**
-     * new hookpoint for render RelatedProduct form.
+     * 管理画面：商品登録画面に関連商品登録フォームを表示する.
      *
      * @param TemplateEvent $event
      */
     public function onRenderAdminProduct(TemplateEvent $event)
     {
-        $this->event->onRenderAdminProduct($event);
-    }
-
-    /**
-     * new hookpoint for save RelatedProduct.
-     *
-     * @param EventArgs $event
-     */
-    public function onAdminProductEditComplete(EventArgs  $event)
-    {
-        $this->event->onAdminProductEditComplete($event);
+        $event->addSnippet('@RelatedProduct4/admin/related_product.twig');
     }
 }

@@ -14,7 +14,7 @@
 namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\AbstractWebTestCase;
-use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Plugin\RelatedProduct4\Entity\RelatedProduct;
 use Eccube\Repository\ProductRepository;
 use Eccube\Entity\Product;
 
@@ -52,7 +52,7 @@ class RelatedProductControllerTest extends AbstractWebTestCase
         $this->initRelatedProduct($this->Product->getId());
         $crawler = $this->client->request('GET', $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
 
-        $this->assertContains('関連商品', $crawler->html());
+        $this->assertContains('RelatedProduct-product_area', $crawler->html());
     }
 
     /**

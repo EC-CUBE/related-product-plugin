@@ -11,13 +11,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Form\Extension\Admin;
+namespace Plugin\RelatedProduct4\Form\Extension\Admin;
 
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Plugin\RelatedProduct\Form\Type\Admin\RelatedProductType;
+use Doctrine\ORM\EntityManagerInterface;
+use Eccube\Common\EccubeConfig;
+use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\ProductType;
+use Plugin\RelatedProduct4\Entity\RelatedProduct;
+use Plugin\RelatedProduct4\Form\Type\Admin\RelatedProductType;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
  * Class RelatedCollectionExtension.
@@ -25,23 +31,63 @@ use Eccube\Form\Type\Admin\ProductType;
 class RelatedCollectionExtension extends AbstractTypeExtension
 {
     /**
+     * @var EccubeConfig
+     */
+    private $eccubeConfig;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(EccubeConfig $eccubeConfig, EntityManagerInterface $entityManager)
+    {
+        $this->eccubeConfig = $eccubeConfig;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
      * RelatedCollectionExtension.
      *
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('related_collection', CollectionType::class, [
+            ->add('RelatedProducts', CollectionType::class, [
                 'label' => 'related_product.block.title',
                 'entry_type' => RelatedProductType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'mapped' => false,
-            ])
-        ;
+            ]);
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+            /** @var Product $Product */
+            $Product = $event->getData();
+            $max = $this->eccubeConfig['related_product.max_item_count'];
+            $RelatedProducts = $Product->getRelatedProducts();
+
+            for ($i = 0; $i < $max; $i++) {
+                if (!isset($RelatedProducts[$i])) {
+                    $RelatedProduct = new RelatedProduct();
+                    $RelatedProduct->setProduct($Product);
+                    $Product->addRelatedProduct($RelatedProduct);
+                }
+            }
+            $form = $event->getForm();
+            $form['RelatedProducts']->setData($Product->getRelatedProducts());
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var Product $Product */
+            $Product = $event->getData();
+            $RelatedProducts = $Product->getRelatedProducts();
+            foreach ($RelatedProducts as $RelatedProduct) {
+                if (null === $RelatedProduct->getChildProduct()) {
+                    $Product->removeRelatedProduct($RelatedProduct);
+                    $this->entityManager->remove($RelatedProduct);
+                }
+            }
+        });
     }
 
     /**

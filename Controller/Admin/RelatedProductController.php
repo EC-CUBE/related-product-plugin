@@ -11,15 +11,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Controller\Admin;
+namespace Plugin\RelatedProduct4\Controller\Admin;
 
-use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Eccube\Controller\AbstractController;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class RelatedProductController.
@@ -66,14 +66,10 @@ class RelatedProductController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response|array
      *
-     * @Route("/related_product/search_product", name="admin_related_product_search")
-     * @Route(
-     *      path="/%eccube_admin_route%/related_product/search/product/page/{page_no}",
-     *      name="admin_related_product_search_product_page",
-     *      requirements={"page_no":"\d+"}
-     * )
+     * @Route("/%eccube_admin_route%/related_product/search/product", name="admin_related_product_search")
+     * @Route("/%eccube_admin_route%/related_product/search/product/page/{page_no}", name="admin_related_product_search_product_page", requirements={"page_no":"\d+"})
      *
-     * @Template("@RelatedProduct/admin/modal_result.twig")
+     * @Template("@RelatedProduct4/admin/modal_result.twig")
      */
     public function searchProduct(Request $request, $page_no = null)
     {

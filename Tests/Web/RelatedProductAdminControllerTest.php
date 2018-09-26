@@ -14,9 +14,9 @@
 namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\RelatedProduct\Entity\RelatedProduct;
+use Plugin\RelatedProduct4\Entity\RelatedProduct;
 use Eccube\Repository\ProductRepository;
-use Plugin\RelatedProduct\Repository\RelatedProductRepository;
+use Plugin\RelatedProduct4\Repository\RelatedProductRepository;
 use Eccube\Entity\Master\ProductStatus;
 use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Common\Constant;
@@ -112,8 +112,8 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $this->initRelatedProduct(2);
         $formData = $this->createFormData();
-        $content = $formData['related_collection'][0]['content'];
-        $childProductId = $formData['related_collection'][0]['ChildProduct'];
+        $content = $formData['RelatedProducts'][0]['content'];
+        $childProductId = $formData['RelatedProducts'][0]['ChildProduct'];
 
         $this->client->request(
             'POST',
@@ -405,7 +405,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'images' => null,
             'add_images' => null,
             'delete_images' => null,
-            'related_collection' => [
+            'RelatedProducts' => [
                 0 => ['ChildProduct' => $childId, 'content' => $content],
             ],
             Constant::TOKEN_NAME => 'dummy',
