@@ -150,9 +150,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $RelatedProduct = $this->relatedProductRepository->findOneBy(['content' => $content]);
 
-        $this->expected = 0;
-        $this->actual = count($RelatedProduct);
-        $this->verify();
+        $this->assertNull($RelatedProduct);
     }
 
     /**
