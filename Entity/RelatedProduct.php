@@ -1,51 +1,64 @@
 <?php
+
 /*
- * This file is part of the Related Product plugin
+ * This file is part of EC-CUBE
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright(c) LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * http://www.lockon.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Entity;
+namespace Plugin\RelatedProduct4\Entity;
 
 use Eccube\Entity\Product;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class RelatedProduct.
+ *
+ * @ORM\Table(name="plg_related_product")
+ * @ORM\Entity(repositoryClass="Plugin\RelatedProduct\Repository\RelatedProductRepository")
  */
 class RelatedProduct
 {
     /**
      * @var int
+     *
+     * @ORM\Column(name="id", type="integer", options={"unsigned":true})
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="content", type="string", nullable=true, length=4000)
      */
     private $content;
 
     /**
      * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product", inversedBy="RelatedProducts")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * })
      */
     private $Product;
 
     /**
-     * @var int
-     */
-    private $productId;
-
-    /**
      * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="child_product_id", referencedColumnName="id")
+     * })
      */
     private $ChildProduct;
-
-    /**
-     * @var int
-     */
-    private $childProductId;
 
     /**
      * @return int
@@ -72,7 +85,7 @@ class RelatedProduct
      *
      * @return $this
      */
-    public function setContent($content)
+    public function setContent($content = null)
     {
         $this->content = $content;
 
@@ -104,30 +117,6 @@ class RelatedProduct
     }
 
     /**
-     * get product id.
-     *
-     * @return int
-     */
-    public function getProductId()
-    {
-        return $this->productId;
-    }
-
-    /**
-     * set product id.
-     *
-     * @param int $productId
-     *
-     * @return $this
-     */
-    public function setProductId($productId)
-    {
-        $this->productId = $productId;
-
-        return $this;
-    }
-
-    /**
      * getChildProduct.
      *
      * @return Product
@@ -140,37 +129,13 @@ class RelatedProduct
     /**
      * setChildProduct.
      *
-     * @param Product|null $Product
+     * @param Product $Product
      *
      * @return $this
      */
     public function setChildProduct(Product $Product = null)
     {
         $this->ChildProduct = $Product;
-
-        return $this;
-    }
-
-    /**
-     * getChildProductId.
-     *
-     * @return int
-     */
-    public function getChildProductId()
-    {
-        return $this->childProductId;
-    }
-
-    /**
-     * setChildProductId.
-     *
-     * @param int $productId
-     *
-     * @return $this
-     */
-    public function setChildProductId($productId)
-    {
-        $this->childProductId = $productId;
 
         return $this;
     }

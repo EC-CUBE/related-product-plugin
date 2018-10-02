@@ -8,34 +8,36 @@
  file that was distributed with this source code.
 #}
 <script>
-    function fnSelectProduct(product_id, product_name, product_image_link, product_image_img, product_code_min, product_code_max) {
-        var data_id = $('#relatedDataId').val();
+    function fnRelatedProductSelectProduct(product_id, product_name, product_image_link, product_image_img, product_code_min, product_code_max) {
+        var data_id = $('#RelatedProductDataId').val();
+
         // Add product argument
-        $('#product-name' + data_id).text(product_name);
-        $('#product-image-link' + data_id).attr('href', product_image_link);
-        $('#product-image-img' + data_id).attr('src', product_image_img);
+        $('#RelatedProduct-product_name' + data_id).text(product_name);
+        $('#RelatedProduct-product_image_link' + data_id).attr('href', product_image_link);
+        $('#RelatedProduct-product_image_img' + data_id).attr('src', product_image_img);
+
         if(product_code_min != product_code_max)
             product_code_min += ' ～ ' + product_code_max;
-        $('#product-code' + data_id).text(product_code_min);
+        $('#RelatedProduct_product_code' + data_id).text(product_code_min);
         // Display new product
-        $('.related-view' + data_id).removeClass('hidden');
-        $("#admin_product_related_collection_" + data_id + "_ChildProduct").val(product_id);
+        $('.RelatedProduct-view' + data_id).removeClass('d-none');
+        $("#admin_product_RelatedProducts_" + data_id + "_ChildProduct").val(product_id);
         // モーダル閉じる.
-        $("#searchResult").children().remove();
-        $("#searchProductModal").modal("hide");
+        $("#RelatedProductSearchResult").children().remove();
+        $("#RelatedProductSearchProductModal").modal("hide");
         return false;
     }
 
     // 商品検索
-    $('div.box-footer a').on('click', function(event) {
-        var list = $('#searchResult');
+    $('#RelatedProductSearchProductModal .pagination a').on('click', function(event) {
+        var list = $('#RelatedProductSearchResult');
         list.children().remove();
         $.ajax({
             type: 'GET',
             dataType: 'html',
             url: $(this).attr('href'),
             success: function(data) {
-                $('#searchResult').html(data);
+                $('#RelatedProductSearchResult').html(data);
             },
             error: function() {
                 alert('paginator failed.');
@@ -59,8 +61,9 @@
                         </span>
                     </td>
                     <td class="text-right">
-                        <button onclick="fnSelectProduct('{{ Product.id }}', '{{ Product.name|escape('js') }}', '{{ url('admin_product_product_edit', { id : Product.id }) }}', '{{ app.config.image_save_urlpath }}/{{ Product.mainFileName|no_image_product }}', '{{ Product.code_min|escape('js') }}', '{{ Product.code_max|escape('js') }}')" type="button" class="btn btn-default btn-sm">
-                            決定
+                        <button onclick="fnRelatedProductSelectProduct('{{ Product.id }}', '{{ Product.name|escape('js') }}', '{{ url('admin_product_product_edit', { id : Product.id }) }}', '{{ asset(Product.mainFileName|no_image_product, 'save_image') }}', '{{ Product.code_min|escape('js') }}', '{{ Product.code_max|escape('js') }}')" type="button" class="btn btn-default btn-sm">
+
+                            <i class="fa fa-plus fa-lg font-weight-bold text-secondary"></i>
                         </button>
                     </td>
                 </tr>
@@ -70,6 +73,8 @@
         </tbody>
     </table>
     {% if pagination.totalItemCount > 0 %}
-        {% include "pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
+        <div class="pagination">
+            {% include "@admin/pager.twig" with {'pages': pagination.paginationData, 'routes': 'admin_related_product_search_product_page'} %}
+        </div>
     {% endif %}
 </div>
