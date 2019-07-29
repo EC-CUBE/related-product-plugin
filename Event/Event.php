@@ -2,7 +2,7 @@
 /*
  * This file is part of the Related Product plugin
  *
- * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ * Copyright (C) EC-CUBE CO.,LTD. All Rights Reserved.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -198,7 +198,7 @@ class Event
         } else {
             $Product = new Product();
         }
-        
+
         $maxCount = $app['config']['related_product_max_item_count'];
         $loop = $maxCount - count($RelatedProducts);
         for ($i = 0; $i < $loop; ++$i) {
