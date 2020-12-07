@@ -99,4 +99,14 @@ class RelatedCollectionExtension extends AbstractTypeExtension
     {
         return ProductType::class;
     }
+
+    /**
+     * product admin form name.
+     *
+     * @return string[]
+     */
+    public function getExtendedTypes()
+    {
+        return [ProductType::class];
+    }
 }
