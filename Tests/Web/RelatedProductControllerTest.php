@@ -40,7 +40,7 @@ class RelatedProductControllerTest extends AbstractWebTestCase
     {
         parent::setUp();
 
-        $this->productRepository = $this->container->get(ProductRepository::class);
+        $this->productRepository = $this->entityManager->getRepository(Product::class);
         $this->Product = $this->createProduct('ディナーフォーク');
     }
 

@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class RelatedProduct.
  *
  * @ORM\Table(name="plg_related_product")
- * @ORM\Entity(repositoryClass="Plugin\RelatedProduct\Repository\RelatedProductRepository")
+ * @ORM\Entity(repositoryClass="Plugin\RelatedProduct4\Repository\RelatedProductRepository")
  */
 class RelatedProduct
 {
