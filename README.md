@@ -1,9 +1,6 @@
 # 関連商品プラグイン
 
-[![Build Status](https://travis-ci.org/EC-CUBE/related-product-plugin.svg?branch=feature%2F1.0.0)](https://travis-ci.org/EC-CUBE/related-product-plugin)
-[![Build status](https://ci.appveyor.com/api/projects/status/oni9ptnqfs37uqdb?svg=true)](https://ci.appveyor.com/project/ECCUBE/related-product-plugin-9n48w)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/5c61b4f6-edad-4908-9a9a-6b4f38574a93/mini.png)](https://insight.sensiolabs.com/projects/5c61b4f6-edad-4908-9a9a-6b4f38574a93)
-[![Coverage Status](https://coveralls.io/repos/github/EC-CUBE/related-product-plugin/badge.svg)](https://coveralls.io/github/EC-CUBE/related-product-plugin)
+[![CI for RelatedProduct4](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml)
 
 ## 概要
 商品詳細ページに、関連する商品を表示できるようになるプラグイン。
