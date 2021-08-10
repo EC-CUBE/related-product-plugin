@@ -13,6 +13,7 @@
 
 namespace Plugin\RelatedProduct4\Entity;
 
+use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,9 +21,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Class RelatedProduct.
  *
  * @ORM\Table(name="plg_related_product")
- * @ORM\Entity(repositoryClass="Plugin\RelatedProduct\Repository\RelatedProductRepository")
+ * @ORM\Entity(repositoryClass="Plugin\RelatedProduct4\Repository\RelatedProductRepository")
  */
-class RelatedProduct
+class RelatedProduct extends AbstractEntity
 {
     /**
      * @var int
