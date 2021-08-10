@@ -62,7 +62,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $this->deleteAllRows(['plg_related_product']);
 
         $this->productRepository = $this->entityManager->getRepository(Product::class);
-        $this->relatedProductRepository = $this->entityManager->getRepository(RelateProduct::class);
+        $this->relatedProductRepository = $this->entityManager->getRepository(RelatedProduct::class);
         $this->productStatusRepository = $this->entityManager->getRepository(ProductStatus::class);
 
         $this->Product = $this->createProduct('ディナーフォーク');
