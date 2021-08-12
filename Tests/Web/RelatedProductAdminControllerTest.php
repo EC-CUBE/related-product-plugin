@@ -61,9 +61,9 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         parent::setUp();
         $this->deleteAllRows(['plg_related_product']);
 
-        $this->productRepository = $this->container->get(ProductRepository::class);
-        $this->relatedProductRepository = $this->container->get(RelatedProductRepository::class);
-        $this->productStatusRepository = $this->container->get(ProductStatusRepository::class);
+        $this->productRepository = $this->entityManager->getRepository(Product::class);
+        $this->relatedProductRepository = $this->entityManager->getRepository(RelatedProduct::class);
+        $this->productStatusRepository = $this->entityManager->getRepository(ProductStatus::class);
 
         $this->Product = $this->createProduct('ディナーフォーク');
         $this->Category = $this->Product->getProductCategories()->current();
@@ -393,8 +393,8 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'product_image' => [],
             'description_detail' => $faker->realText,
             'description_list' => $faker->paragraph,
-            'Category' => 1,
-            'Tag' => 1,
+            'Category' => [1],
+            'Tag' => [1],
             'search_word' => $faker->word,
             'free_area' => $faker->realText,
             'Status' => 1,
