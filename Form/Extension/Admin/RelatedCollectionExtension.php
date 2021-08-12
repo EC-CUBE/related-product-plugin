@@ -105,7 +105,7 @@ class RelatedCollectionExtension extends AbstractTypeExtension
      *
      * @return string[]
      */
-    public function getExtendedTypes()
+    public static function getExtendedTypes()
     {
         yield ProductType::class;
     }
