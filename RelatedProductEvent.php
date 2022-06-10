@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4;
+namespace Plugin\RelatedProduct42;
 
 use Eccube\Event\TemplateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -33,7 +33,7 @@ class RelatedProductEvent implements EventSubscriberInterface
      */
     public function onRenderProductDetail(TemplateEvent $event)
     {
-        $event->addSnippet('@RelatedProduct4/front/related_product.twig');
+        $event->addSnippet('@RelatedProduct42/front/related_product.twig');
     }
 
     /**
@@ -43,6 +43,6 @@ class RelatedProductEvent implements EventSubscriberInterface
      */
     public function onRenderAdminProduct(TemplateEvent $event)
     {
-        $event->addSnippet('@RelatedProduct4/admin/related_product.twig');
+        $event->addSnippet('@RelatedProduct42/admin/related_product.twig');
     }
 }

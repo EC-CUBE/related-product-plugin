@@ -11,11 +11,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Repository;
+namespace Plugin\RelatedProduct42\Repository;
 
 use Eccube\Repository\AbstractRepository;
-use Plugin\RelatedProduct4\Entity\RelatedProduct;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Plugin\RelatedProduct42\Entity\RelatedProduct;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * RelatedProductRepository.

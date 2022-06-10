@@ -1,6 +1,6 @@
 # 関連商品プラグイン
 
-[![CI for RelatedProduct4](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml)
+[![CI for RelatedProduct42](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml/badge.svg)](https://github.com/EC-CUBE/related-product-plugin/actions/workflows/main.yml)
 
 ## 概要
 商品詳細ページに、関連する商品を表示できるようになるプラグイン。

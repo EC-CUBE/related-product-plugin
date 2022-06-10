@@ -11,14 +11,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Form\Extension\Admin;
+namespace Plugin\RelatedProduct42\Form\Extension\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\ProductType;
-use Plugin\RelatedProduct4\Entity\RelatedProduct;
-use Plugin\RelatedProduct4\Form\Type\Admin\RelatedProductType;
+use Plugin\RelatedProduct42\Entity\RelatedProduct;
+use Plugin\RelatedProduct42\Form\Type\Admin\RelatedProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -105,7 +105,7 @@ class RelatedCollectionExtension extends AbstractTypeExtension
      *
      * @return string[]
      */
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         yield ProductType::class;
     }

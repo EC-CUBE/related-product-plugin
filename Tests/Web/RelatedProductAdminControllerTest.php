@@ -14,9 +14,9 @@
 namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\RelatedProduct4\Entity\RelatedProduct;
+use Plugin\RelatedProduct42\Entity\RelatedProduct;
 use Eccube\Repository\ProductRepository;
-use Plugin\RelatedProduct4\Repository\RelatedProductRepository;
+use Plugin\RelatedProduct42\Repository\RelatedProductRepository;
 use Eccube\Entity\Master\ProductStatus;
 use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Common\Constant;
@@ -56,7 +56,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * call parent setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->deleteAllRows(['plg_related_product']);

@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Controller\Admin;
+namespace Plugin\RelatedProduct42\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Repository\CategoryRepository;
@@ -69,7 +69,7 @@ class RelatedProductController extends AbstractController
      * @Route("/%eccube_admin_route%/related_product/search/product", name="admin_related_product_search")
      * @Route("/%eccube_admin_route%/related_product/search/product/page/{page_no}", name="admin_related_product_search_product_page", requirements={"page_no":"\d+"})
      *
-     * @Template("@RelatedProduct4/admin/modal_result.twig")
+     * @Template("@RelatedProduct42/admin/modal_result.twig")
      */
     public function searchProduct(Request $request, $page_no = null)
     {

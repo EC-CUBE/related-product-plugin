@@ -11,13 +11,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Form\Type\Admin;
+namespace Plugin\RelatedProduct42\Form\Type\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Product;
 use Eccube\Form\DataTransformer\EntityToIdTransformer;
-use Plugin\RelatedProduct4\Entity\RelatedProduct;
+use Plugin\RelatedProduct42\Entity\RelatedProduct;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
