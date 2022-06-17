@@ -52,7 +52,7 @@ class RelatedProductControllerTest extends AbstractWebTestCase
         $this->initRelatedProduct($this->Product->getId());
         $crawler = $this->client->request('GET', $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
 
-        $this->assertContains('RelatedProduct-product_area', $crawler->html());
+        $this->assertStringContainsString('RelatedProduct-product_area', $crawler->html());
     }
 
     /**
