@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4;
+namespace Plugin\RelatedProduct42;
 
 use Eccube\Plugin\AbstractPluginManager;
 

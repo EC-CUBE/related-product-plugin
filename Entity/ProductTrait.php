@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Entity;
+namespace Plugin\RelatedProduct42\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +25,7 @@ trait ProductTrait
     /**
      * @var RelatedProduct[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="Plugin\RelatedProduct4\Entity\RelatedProduct", mappedBy="Product", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Plugin\RelatedProduct42\Entity\RelatedProduct", mappedBy="Product", cascade={"persist", "remove"})
      * @ORM\OrderBy({
      *     "id"="ASC"
      * })

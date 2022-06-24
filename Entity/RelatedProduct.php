@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct4\Entity;
+namespace Plugin\RelatedProduct42\Entity;
 
 use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class RelatedProduct.
  *
  * @ORM\Table(name="plg_related_product")
- * @ORM\Entity(repositoryClass="Plugin\RelatedProduct4\Repository\RelatedProductRepository")
+ * @ORM\Entity(repositoryClass="Plugin\RelatedProduct42\Repository\RelatedProductRepository")
  */
 class RelatedProduct extends AbstractEntity
 {

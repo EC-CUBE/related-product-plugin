@@ -14,9 +14,9 @@
 namespace Plugin\RelatedProduct\Tests\Web;
 
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\RelatedProduct4\Entity\RelatedProduct;
+use Plugin\RelatedProduct42\Entity\RelatedProduct;
 use Eccube\Repository\ProductRepository;
-use Plugin\RelatedProduct4\Repository\RelatedProductRepository;
+use Plugin\RelatedProduct42\Repository\RelatedProductRepository;
 use Eccube\Entity\Master\ProductStatus;
 use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Common\Constant;
@@ -56,7 +56,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * call parent setUp.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->deleteAllRows(['plg_related_product']);
@@ -76,7 +76,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $crawler = $this->client->request('GET', $this->generateUrl('admin_product_product_new'));
 
-        $this->assertContains('関連商品', $crawler->html());
+        $this->assertStringContainsString('関連商品', $crawler->html());
     }
 
     /**
@@ -192,7 +192,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             ['admin_product' => $formData]
         );
 
-        $this->assertContains('値が長すぎます。4000文字以内でなければなりません。', $crawler->html());
+        $this->assertStringContainsString('値が長すぎます。4000文字以内でなければなりません。', $crawler->html());
     }
 
     /**
@@ -239,7 +239,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -262,7 +262,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -285,7 +285,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -302,7 +302,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -319,7 +319,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -336,7 +336,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -353,7 +353,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         );
 
         $productList = $crawler->html();
-        $this->assertContains($this->Product->getName(), $productList);
+        $this->assertStringContainsString($this->Product->getName(), $productList);
     }
 
     /**
@@ -399,10 +399,10 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             'free_area' => $faker->realText,
             'Status' => 1,
             'note' => $faker->realText,
-            'tags' => null,
-            'images' => null,
-            'add_images' => null,
-            'delete_images' => null,
+            'tags' => [],
+            'images' => [],
+            'add_images' => [],
+            'delete_images' => [],
             'RelatedProducts' => [
                 0 => ['ChildProduct' => $childId, 'content' => $content],
             ],
