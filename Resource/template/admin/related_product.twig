@@ -86,7 +86,7 @@ $(function() {
                             </span>
                         </div>
                         <div>
-                            <button type="button" id="RelatedProduct-search{{ loop.index0 }}" class="btn btn-ec-regular" data-toggle="modal" data-target="#RelatedProductSearchProductModal" data-id="{{ loop.index0 }}">
+                            <button type="button" id="RelatedProduct-search{{ loop.index0 }}" class="btn btn-ec-regular" data-bs-toggle="modal" data-bs-target="#RelatedProductSearchProductModal" data-id="{{ loop.index0 }}">
                                 {{ 'related_product.select_product'|trans }}
                             </button>
                             <button type="button" id="RelatedProduct-delete{{ loop.index0 }}" class="btn btn-default text-right RelatedProduct-view{{ loop.index0 }}" data-id="{{ loop.index0 }}">
@@ -104,7 +104,7 @@ $(function() {
                             <span id="RelatedProduct-product_code{{ loop.index0 }}" class="RelatedProduct-view{{ loop.index0 }} hidden"></span>
                         </div>
                         <div>
-                            <button type="button" id="RelatedProduct-search{{ loop.index0 }}" class="btn btn-ec-regular" data-toggle="modal" data-target="#RelatedProductSearchProductModal" data-id="{{ loop.index0 }}">
+                            <button type="button" id="RelatedProduct-search{{ loop.index0 }}" class="btn btn-ec-regular" data-bs-toggle="modal" data-bs-target="#RelatedProductSearchProductModal" data-id="{{ loop.index0 }}">
                                 {{ 'related_product.select_product'|trans }}
                             </button>
                             <button  type="button" id="RelatedProduct-delete{{ loop.index0 }}" class="btn text-right RelatedProduct-view{{ loop.index0 }} d-none" data-id="{{ loop.index0 }}">
@@ -142,19 +142,17 @@ $(function() {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'related_product.modal.product_search.title'|trans }}</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     {{ form_widget(searchForm.id, { attr : { placeholder : 'related_product.modal.product_search.input_name' } } ) }}
                 </div>
-                <div class="form-group">
+                <div class="form-group mb-3">
                     {{ form_widget(searchForm.category_id) }}
                 </div>
-                <div class="form-group">
-                    <button type="button" id="RelatedProductSearchButton" class="btn btn-primary" >
+                <div class="form-group mb-3">
+                    <button type="button" id="RelatedProductSearchButton" class="btn btn-ec-conversion" >
                         {{ 'admin.common.execute'|trans }}
                     </button>
                 </div>
