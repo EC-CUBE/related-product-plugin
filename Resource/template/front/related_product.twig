@@ -27,7 +27,7 @@
                             {% endif %}
                         </p>
                     </a>
-                    <span>{{ RelatedProduct.content|raw }}</span>
+                    <span>{{ RelatedProduct.content|raw|purify }}</span>
                 </li>
             {% endif %}
         {% endfor %}
