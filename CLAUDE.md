@@ -98,6 +98,10 @@ Plugin\:
 
 ブラウザログインには実セッション（`session.storage.factory.native`）が必要。`APP_ENV=test` ではモックストレージ（`mock_file`）になりログインできない。また EC-CUBE 4.4（Symfony 7）は既定 `cookie_samesite: none` のため、HTTP 環境では `dockerbuild/dev-framework.yaml`（`cookie_secure:false` / `cookie_samesite:lax`）を `app/config/eccube/packages/dev/framework.yaml` に重ねて回避している。
 
+### プラグイン有効化後は `cache:warmup` まで実行する（TemplateEvent 対策）
+
+本プラグインは `RelatedProductEvent` が `TemplateEvent` で core テンプレート（`@admin/Product/product.twig` / `Product/detail.twig`）にスニペットを注入し、`RelatedCollectionExtension` が `ProductType` を拡張する。これらプラグイン由来のフック／フォーム拡張は、**`eccube:plugin:enable` 直後の 1 回の `cache:clear` では確定しない**（商品編集画面に関連商品フォームが描画されない）。検証の結果、enable とは別パスで **`cache:clear` をもう一度実行**すると確定することがわかった（`enable` が内部で行うキャッシュ再生成と競合するためと見られる）。そのため `docker-compose.dev.yml` の entrypoint は有効化後に `bin/console cache:clear` を **2 回** 実行する。手動でプラグインを再有効化した場合も、`cache:clear` を 2 回（または apache 起動後にもう一度）行うこと。
+
 ### プラグインの導入方法（tar + plugin:install）
 
 `docker-compose.dev.yml` はマウントしたプラグインを `./*` で tar 化し `eccube:plugin:install --path` で導入する。`eccube:composer:require` はパッケージ API（`extra.id`）を要求するため path プラグインでは使えない。また **`PharData` は先頭の `./` エントリで展開に失敗する**ため、プラグインディレクトリ内で `./*` を対象に tar 化する（`-C dir .` は不可）。

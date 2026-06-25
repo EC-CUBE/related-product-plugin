@@ -6,6 +6,10 @@ services:
     #    PharData は先頭の "./" エントリで失敗するため、プラグインディレクトリ内で
     #    "./*" を対象に tar 化する（ドットファイル/docker 関連は除外される）
     # 3. プラグインを有効化してから Apache を起動
+    #    eccube:plugin:enable は内部でキャッシュ再生成を行うが、その直後の cache:clear
+    #    だけではプラグイン由来の TemplateEvent / FormExtension が確定しない
+    #    （商品編集画面に関連商品フォームが描画されない）。enable とは別パスで
+    #    cache:clear をもう一度実行すると確定するため、cache:clear を 2 回流す。
     entrypoint: >
       /bin/bash -c "
       docker-php-entrypoint ls &&
@@ -14,7 +18,8 @@ services:
       --exclude='./var' --exclude='./vendor' --exclude='./node_modules' ./* ) &&
       bin/console eccube:plugin:install --code=RelatedProduct44 --path=/tmp/RelatedProduct44.tar.gz --if-not-exists &&
       bin/console eccube:plugin:enable --code=RelatedProduct44 &&
-      bin/console cache:clear --no-warmup &&
+      bin/console cache:clear &&
+      bin/console cache:clear &&
       apache2-foreground
       "
     environment:
