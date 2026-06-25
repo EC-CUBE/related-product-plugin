@@ -5,23 +5,23 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Tests\Web;
+namespace Plugin\RelatedProduct44\Tests\Web;
 
-use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
-use Plugin\RelatedProduct42\Entity\RelatedProduct;
-use Eccube\Repository\ProductRepository;
-use Plugin\RelatedProduct42\Repository\RelatedProductRepository;
-use Eccube\Entity\Master\ProductStatus;
-use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Common\Constant;
+use Eccube\Entity\Master\ProductStatus;
 use Eccube\Entity\Product;
 use Eccube\Entity\ProductCategory;
+use Eccube\Repository\Master\ProductStatusRepository;
+use Eccube\Repository\ProductRepository;
+use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use Plugin\RelatedProduct44\Entity\RelatedProduct;
+use Plugin\RelatedProduct44\Repository\RelatedProductRepository;
 
 /**
  * Class RelatedProductAdminControllerTest.
@@ -72,7 +72,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test route product edit page.
      */
-    public function testRoutingAdminProductRegistration()
+    public function testRoutingAdminProductRegistration(): void
     {
         $crawler = $this->client->request('GET', $this->generateUrl('admin_product_product_new'));
 
@@ -82,7 +82,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test create related product.
      */
-    public function testCreateRelatedProduct()
+    public function testCreateRelatedProduct(): void
     {
         $faker = $this->getFaker();
         $content = $faker->word;
@@ -108,7 +108,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test update related product.
      */
-    public function testUpdateRelatedProduct()
+    public function testUpdateRelatedProduct(): void
     {
         $this->initRelatedProduct(2);
         $formData = $this->createFormData();
@@ -135,7 +135,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test create related product with no child product.
      */
-    public function testCreateRelatedProductNoChildProduct()
+    public function testCreateRelatedProductNoChildProduct(): void
     {
         $faker = $this->getFaker();
         $content = $faker->word;
@@ -156,7 +156,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test create related product with no content.
      */
-    public function testCreateRelatedProductNoContent()
+    public function testCreateRelatedProductNoContent(): void
     {
         $content = null;
         $childProductId = 1;
@@ -179,7 +179,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test create related product with content over 4000 character.
      */
-    public function testCreateRelatedProductNoMaxLengthContent()
+    public function testCreateRelatedProductNoMaxLengthContent(): void
     {
         $faker = $this->getFaker();
         $content = $faker->text(9999);
@@ -192,13 +192,13 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             ['admin_product' => $formData]
         );
 
-        $this->assertStringContainsString('値が長すぎます。4000文字以内でなければなりません。', $crawler->html());
+        $this->assertStringContainsString('長すぎます。この値は4000文字以下で入力してください。', $crawler->html());
     }
 
     /**
      * test related product maximum 5 items.
      */
-    public function testRelatedProductMaximum5()
+    public function testRelatedProductMaximum5(): void
     {
         for ($i = 1; $i < 6; ++$i) {
             $this->initRelatedProduct(2);
@@ -213,7 +213,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test related product over maximum 5 items.
      */
-    public function testRelatedProductOverMaximum5()
+    public function testRelatedProductOverMaximum5(): void
     {
         for ($i = 1; $i < 10; ++$i) {
             $this->initRelatedProduct(2);
@@ -228,7 +228,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * search with none condition.
      */
-    public function testAjaxSearchProductEmpty()
+    public function testAjaxSearchProductEmpty(): void
     {
         $crawler = $this->client->request(
             'POST',
@@ -245,7 +245,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      *  test display public product.
      */
-    public function testAjaxSearchPublicProduct()
+    public function testAjaxSearchPublicProduct(): void
     {
         $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
         $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
@@ -268,7 +268,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * test display unpublic product.
      */
-    public function testAjaxSearchUnpublicProduct()
+    public function testAjaxSearchUnpublicProduct(): void
     {
         $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_HIDE);
         $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
@@ -291,7 +291,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * search product name.
      */
-    public function testAjaxSearchProductName()
+    public function testAjaxSearchProductName(): void
     {
         $crawler = $this->client->request(
             'POST',
@@ -308,7 +308,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * search by product code.
      */
-    public function testAjaxSearchProductValueCode()
+    public function testAjaxSearchProductValueCode(): void
     {
         $crawler = $this->client->request(
             'POST',
@@ -325,7 +325,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * search by product id.
      */
-    public function testAjaxSearchProductValueId()
+    public function testAjaxSearchProductValueId(): void
     {
         $crawler = $this->client->request(
             'POST',
@@ -342,7 +342,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * search by category.
      */
-    public function testAjaxSearchProductCategory()
+    public function testAjaxSearchProductCategory(): void
     {
         $crawler = $this->client->request(
             'POST',
@@ -359,12 +359,9 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     /**
      * create form data for save related product.
      *
-     * @param string $content
-     * @param int $childId
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function createFormData($content = null, $childId = 1)
+    public function createFormData(?string $content = null, ?int $childId = 1): array
     {
         $faker = $this->getFaker();
 
@@ -414,12 +411,8 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
     /**
      * insert related product in DB.
-     *
-     * @param $id
-     *
-     * @return RelatedProduct
      */
-    private function initRelatedProduct($id)
+    private function initRelatedProduct(int $id): RelatedProduct
     {
         $fake = $this->getFaker();
         $Product = $this->productRepository->find($id);

@@ -5,20 +5,20 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42\Form\Extension\Admin;
+namespace Plugin\RelatedProduct44\Form\Extension\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Product;
 use Eccube\Form\Type\Admin\ProductType;
-use Plugin\RelatedProduct42\Entity\RelatedProduct;
-use Plugin\RelatedProduct42\Form\Type\Admin\RelatedProductType;
+use Plugin\RelatedProduct44\Entity\RelatedProduct;
+use Plugin\RelatedProduct44\Form\Type\Admin\RelatedProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,29 +30,19 @@ use Symfony\Component\Form\FormEvents;
  */
 class RelatedCollectionExtension extends AbstractTypeExtension
 {
-    /**
-     * @var EccubeConfig
-     */
-    private $eccubeConfig;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(EccubeConfig $eccubeConfig, EntityManagerInterface $entityManager)
-    {
-        $this->eccubeConfig = $eccubeConfig;
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EccubeConfig $eccubeConfig,
+        private readonly EntityManagerInterface $entityManager
+    ) {
     }
 
     /**
      * RelatedCollectionExtension.
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('RelatedProducts', CollectionType::class, [
@@ -88,16 +78,6 @@ class RelatedCollectionExtension extends AbstractTypeExtension
                 }
             }
         });
-    }
-
-    /**
-     * product admin form name.
-     *
-     * @return string
-     */
-    public function getExtendedType()
-    {
-        return ProductType::class;
     }
 
     /**

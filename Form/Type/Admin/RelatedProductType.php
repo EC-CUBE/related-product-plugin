@@ -5,19 +5,19 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42\Form\Type\Admin;
+namespace Plugin\RelatedProduct44\Form\Type\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Product;
 use Eccube\Form\DataTransformer\EntityToIdTransformer;
-use Plugin\RelatedProduct42\Entity\RelatedProduct;
+use Plugin\RelatedProduct44\Entity\RelatedProduct;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -31,36 +31,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RelatedProductType extends AbstractType
 {
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @var EccubeConfig
-     */
-    protected $eccubeConfig;
-
-    /**
      * RelatedProductType constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param EccubeConfig $eccubeConfig
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        EccubeConfig $eccubeConfig
+        protected EntityManagerInterface $entityManager,
+        protected EccubeConfig $eccubeConfig
     ) {
-        $this->entityManager = $entityManager;
-        $this->eccubeConfig = $eccubeConfig;
     }
 
     /**
      * RelatedProduct form builder.
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -72,9 +60,7 @@ class RelatedProductType extends AbstractType
                 'label' => '説明文',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length([
-                        'max' => $this->eccubeConfig['related_product.text_area_len'],
-                    ]),
+                    new Assert\Length(max: $this->eccubeConfig['related_product.text_area_len']),
                 ],
                 'attr' => [
                     'maxlength' => $this->eccubeConfig['related_product.text_area_len'],
@@ -86,7 +72,7 @@ class RelatedProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => RelatedProduct::class,
