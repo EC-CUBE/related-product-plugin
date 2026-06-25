@@ -38,7 +38,7 @@ class RelatedProductController extends AbstractController
     public function __construct(
         protected CategoryRepository $categoryRepository,
         protected ProductRepository $productRepository,
-        protected PaginatorInterface $paginator
+        protected PaginatorInterface $paginator,
     ) {
     }
 

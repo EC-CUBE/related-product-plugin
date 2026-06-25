@@ -17,8 +17,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Eccube\Attribute\EntityExtension;
+use Eccube\Entity\Product;
 
-#[EntityExtension(\Eccube\Entity\Product::class)]
+#[EntityExtension(Product::class)]
 trait ProductTrait
 {
     /**
@@ -31,7 +32,7 @@ trait ProductTrait
     /**
      * @return Collection<int, RelatedProduct>
      */
-    public function getRelatedProducts()
+    public function getRelatedProducts(): Collection
     {
         if (null === $this->RelatedProducts) {
             $this->RelatedProducts = new ArrayCollection();

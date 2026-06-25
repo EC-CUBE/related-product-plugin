@@ -38,7 +38,7 @@ class RelatedProductType extends AbstractType
      */
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected EccubeConfig $eccubeConfig
+        protected EccubeConfig $eccubeConfig,
     ) {
     }
 

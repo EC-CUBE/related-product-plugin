@@ -32,7 +32,7 @@ class RelatedCollectionExtension extends AbstractTypeExtension
 {
     public function __construct(
         private readonly EccubeConfig $eccubeConfig,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
