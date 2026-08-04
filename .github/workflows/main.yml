@@ -208,7 +208,10 @@ jobs:
       - name: Setup EC-CUBE
         working-directory: 'ec-cube'
         run: |
-          bin/console doctrine:database:create
+          # SQLite では doctrine:database:create を実行しない。DBAL 4 で
+          # SQLitePlatform::getCreateDatabaseSQL() が非対応になり
+          # 「Operation ... is not supported by platform.」で失敗するため。
+          # SQLite のファイルは doctrine:schema:create の接続時に自動生成される。
           bin/console doctrine:schema:create
           # プラグイン有効化時に DeviceType 等のマスタデータを参照するため fixtures を投入する
           bin/console eccube:fixtures:load
