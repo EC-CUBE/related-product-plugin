@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of EC-CUBE
  *
@@ -17,11 +19,12 @@ use Eccube\Entity\Product;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\AbstractWebTestCase;
 use Plugin\RelatedProduct44\Entity\RelatedProduct;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class RelatedProductControllerTest.
  */
-class RelatedProductControllerTest extends AbstractWebTestCase
+final class RelatedProductControllerTest extends AbstractWebTestCase
 {
     /**
      * @var ProductRepository
@@ -50,7 +53,7 @@ class RelatedProductControllerTest extends AbstractWebTestCase
     public function testShowRelatedProduct(): void
     {
         $this->initRelatedProduct($this->Product->getId());
-        $crawler = $this->client->request('GET', $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
+        $crawler = $this->client->request(Request::METHOD_GET, $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
 
         $this->assertStringContainsString('RelatedProduct-product_area', $crawler->html());
     }

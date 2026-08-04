@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,10 +15,18 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\Set\DoctrineSetList;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\ValueObject\PhpVersion;
+
+// この設定ファイルは Rector の CLI 実行専用。
+// 公開ディレクトリに配置された場合に Web 経由で実行されないようガードする。
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit;
+}
 
 return RectorConfig::configure()
     // EC-CUBE 4.4 の最小サポートバージョンに合わせる
@@ -29,6 +37,7 @@ return RectorConfig::configure()
         dirname(__DIR__).'/Entity',
         dirname(__DIR__).'/Form',
         dirname(__DIR__).'/Repository',
+        dirname(__DIR__).'/Tests',
         dirname(__DIR__).'/PluginManager.php',
         dirname(__DIR__).'/RelatedProductEvent.php',
     ])
@@ -45,6 +54,9 @@ return RectorConfig::configure()
         DoctrineSetList::DOCTRINE_CODE_QUALITY,
         DoctrineSetList::DOCTRINE_DBAL_30,
         DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
+        // PHPUnit 11 対応 (テストメソッドの : void、データプロバイダの静的化等)
+        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
+        PHPUnitSetList::PHPUNIT_110,
     ])
     // Symfony/Doctrine 等のアノテーション → アトリビュート変換を有効化
     ->withAttributesSets()

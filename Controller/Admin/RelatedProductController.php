@@ -46,7 +46,7 @@ class RelatedProductController extends AbstractController
      * search product modal.
      *
      * @param Request $request
-     * @param int $page_no
+     * @param int|string|null $page_no ルートの requirements 経由では文字列, 第 1 ルート経由では null になる
      *
      * @return Response|array<string, mixed>|null
      */

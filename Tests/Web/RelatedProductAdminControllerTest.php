@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of EC-CUBE
  *
@@ -22,11 +24,12 @@ use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
 use Plugin\RelatedProduct44\Entity\RelatedProduct;
 use Plugin\RelatedProduct44\Repository\RelatedProductRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class RelatedProductAdminControllerTest.
  */
-class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
+final class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 {
     /**
      * @var ProductRepository
@@ -74,7 +77,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
      */
     public function testRoutingAdminProductRegistration(): void
     {
-        $crawler = $this->client->request('GET', $this->generateUrl('admin_product_product_new'));
+        $crawler = $this->client->request(Request::METHOD_GET, $this->generateUrl('admin_product_product_new'));
 
         $this->assertStringContainsString('関連商品', $crawler->html());
     }
@@ -90,7 +93,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $formData = $this->createFormData($content, $childProductId);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_product_product_new'),
             ['admin_product' => $formData]
         );
@@ -101,6 +104,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         ]);
 
         $this->expected = $childProductId;
+        $this->assertInstanceOf(RelatedProduct::class, $RelatedProduct);
         $this->actual = $RelatedProduct->getChildProduct()->getId();
         $this->verify();
     }
@@ -116,7 +120,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $childProductId = $formData['RelatedProducts'][0]['ChildProduct'];
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_product_product_edit', ['id' => 2]),
             ['admin_product' => $formData]
         );
@@ -128,6 +132,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         ]);
 
         $this->expected = $content;
+        $this->assertInstanceOf(RelatedProduct::class, $RelatedProduct);
         $this->actual = $RelatedProduct->getContent();
         $this->verify();
     }
@@ -143,14 +148,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $formData = $this->createFormData($content, $childProductId);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_product_product_new'),
             ['admin_product' => $formData]
         );
 
         $RelatedProduct = $this->relatedProductRepository->findOneBy(['content' => $content]);
 
-        $this->assertNull($RelatedProduct);
+        $this->assertNotInstanceOf(RelatedProduct::class, $RelatedProduct);
     }
 
     /**
@@ -163,7 +168,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $formData = $this->createFormData($content, $childProductId);
 
         $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_product_product_new'),
             ['admin_product' => $formData]
         );
@@ -172,6 +177,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $RelatedProduct = $this->relatedProductRepository->findOneBy(['ChildProduct' => $ChildProduct]);
 
         $this->expected = $childProductId;
+        $this->assertInstanceOf(RelatedProduct::class, $RelatedProduct);
         $this->actual = $RelatedProduct->getChildProduct()->getId();
         $this->verify();
     }
@@ -187,7 +193,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
         $formData = $this->createFormData($content, $childProductId);
 
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_product_product_new'),
             ['admin_product' => $formData]
         );
@@ -204,7 +210,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             $this->initRelatedProduct(2);
         }
         $this->client->request(
-            'GET',
+            Request::METHOD_GET,
             $this->generateUrl('admin_product_product_edit', ['id' => 2])
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -219,7 +225,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
             $this->initRelatedProduct(2);
         }
         $this->client->request(
-            'GET',
+            Request::METHOD_GET,
             $this->generateUrl('admin_product_product_edit', ['id' => 2])
         );
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -231,7 +237,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function testAjaxSearchProductEmpty(): void
     {
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -249,12 +255,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_SHOW);
         $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
+        $this->assertInstanceOf(Product::class, $Product);
+        $this->assertInstanceOf(ProductStatus::class, $ProductStatus);
         $Product->setStatus($ProductStatus);
         $this->entityManager->persist($Product);
         $this->entityManager->flush();
 
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -272,12 +280,14 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     {
         $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_HIDE);
         $Product = $this->productRepository->findOneBy(['name' => $this->Product->getName()]);
+        $this->assertInstanceOf(Product::class, $Product);
+        $this->assertInstanceOf(ProductStatus::class, $ProductStatus);
         $Product->setStatus($ProductStatus);
         $this->entityManager->persist($Product);
         $this->entityManager->flush();
 
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -294,7 +304,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function testAjaxSearchProductName(): void
     {
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getName(), 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -311,7 +321,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function testAjaxSearchProductValueCode(): void
     {
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getId(), 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -328,7 +338,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function testAjaxSearchProductValueId(): void
     {
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => $this->Product->getId(), 'category_id' => '', '_token' => 'dummy']),
             [],
             [],
@@ -345,7 +355,7 @@ class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
     public function testAjaxSearchProductCategory(): void
     {
         $crawler = $this->client->request(
-            'POST',
+            Request::METHOD_POST,
             $this->generateUrl('admin_related_product_search', ['id' => '', 'category_id' => $this->Category->getCategoryId(), '_token' => 'dummy']),
             [],
             [],

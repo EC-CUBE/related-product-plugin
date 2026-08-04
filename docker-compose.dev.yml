@@ -6,10 +6,13 @@ services:
     #    PharData は先頭の "./" エントリで失敗するため、プラグインディレクトリ内で
     #    "./*" を対象に tar 化する（ドットファイル/docker 関連は除外される）
     # 3. プラグインを有効化してから Apache を起動
-    #    eccube:plugin:enable は内部でキャッシュ再生成を行うが、その直後の cache:clear
-    #    だけではプラグイン由来の TemplateEvent / FormExtension が確定しない
-    #    （商品編集画面に関連商品フォームが描画されない）。enable とは別パスで
-    #    cache:clear をもう一度実行すると確定するため、cache:clear を 2 回流す。
+    #    eccube:plugin:enable コマンド自身の起動時に、まだ enabled=0 の状態でコンテナが
+    #    再コンパイルされるため、eccube.plugins.enabled が空のコンテナが残る。この状態では
+    #    プラグイン由来の TemplateEvent / FormExtension / Twig 名前空間 / ルーティングが
+    #    すべて欠落する（商品編集画面に関連商品フォームが描画されない）。
+    #    この経路では cache:clear 1 回目でも enabled は空のままで、2 回目でようやく
+    #    ['RelatedProduct44'] になることを実測で確認しているため、cache:clear を 2 回流す。
+    #    本体側 issue: https://github.com/EC-CUBE/ec-cube/issues/7018
     entrypoint: >
       /bin/bash -c "
       docker-php-entrypoint ls &&

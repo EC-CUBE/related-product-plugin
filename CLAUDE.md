@@ -82,15 +82,19 @@ phpstan は level 6 で **baseline なし・エラーゼロ**。Repository は `
 
 `rector.php` や `.php-cs-fixer.dist.php` を**プラグインのルート直下に置いてはならない**。`Resource/` 配下に置く。
 
-**理由**: EC-CUBE 本体の `config/eccube/services.yaml` がプラグインを丸ごと PSR-4 サービス検出対象として読み込む:
+**理由**: EC-CUBE 本体の `app/config/eccube/services.php` がプラグインを丸ごと PSR-4 サービス検出対象として読み込む:
 
-```yaml
-Plugin\:
-    resource: '../../../app/Plugin/*'
-    exclude: '../../../app/Plugin/*/{Entity,Resource,ServiceProvider,Tests,Codeception,DoctrineMigrations}'
+```php
+$excludes = [
+    $pluginDir.'/*/{Entity,Resource,ServiceProvider,Tests,Codeception,DoctrineMigrations,vendor}',
+];
+// ... プラグイン配下のネストした composer.json (同梱パッケージ) を検出して動的に exclude へ追加
+$services->load('Plugin\\', $pluginDir.'/*')->exclude($excludes);
 ```
 
 ルート直下の `*.php` は「サービスクラス」として読み込まれるため、`rector.php` を置くと Symfony が `Plugin\RelatedProduct44\rector` クラスを期待し、見つからず **EC-CUBE 全体が 500 エラー**になる。`exclude` に `Resource` が含まれるため `Resource/` 配下なら衝突しない。`phpstan.neon.dist` は `.php` ではないためルートに置ける。
+
+なお 4.2/4.3 まではこの登録が `config/eccube/services.yaml` の `Plugin\:` ブロックだったが、4.4 では [#6915](https://github.com/EC-CUBE/ec-cube/pull/6915) で `app/config/eccube/services.php` へ移された（同梱ライブラリを動的に除外するため）。`services.yaml` 側にはその旨のコメントだけが残る。**exclude に `Resource` が含まれる点は移動後も同じ**なので、この配置ルールの根拠は変わらない。
 
 **将来「本体に合わせてルートへ戻す」とリグレッションするため、この配置を変更しないこと。**
 
@@ -98,9 +102,23 @@ Plugin\:
 
 ブラウザログインには実セッション（`session.storage.factory.native`）が必要。`APP_ENV=test` ではモックストレージ（`mock_file`）になりログインできない。また EC-CUBE 4.4（Symfony 7）は既定 `cookie_samesite: none` のため、HTTP 環境では `dockerbuild/dev-framework.yaml`（`cookie_secure:false` / `cookie_samesite:lax`）を `app/config/eccube/packages/dev/framework.yaml` に重ねて回避している。
 
-### プラグイン有効化後は `cache:warmup` まで実行する（TemplateEvent 対策）
+### プラグイン有効化後は `cache:clear` を 2 回実行する（TemplateEvent 対策）
 
-本プラグインは `RelatedProductEvent` が `TemplateEvent` で core テンプレート（`@admin/Product/product.twig` / `Product/detail.twig`）にスニペットを注入し、`RelatedCollectionExtension` が `ProductType` を拡張する。これらプラグイン由来のフック／フォーム拡張は、**`eccube:plugin:enable` 直後の 1 回の `cache:clear` では確定しない**（商品編集画面に関連商品フォームが描画されない）。検証の結果、enable とは別パスで **`cache:clear` をもう一度実行**すると確定することがわかった（`enable` が内部で行うキャッシュ再生成と競合するためと見られる）。そのため `docker-compose.dev.yml` の entrypoint は有効化後に `bin/console cache:clear` を **2 回** 実行する。手動でプラグインを再有効化した場合も、`cache:clear` を 2 回（または apache 起動後にもう一度）行うこと。
+本プラグインは `RelatedProductEvent` が `TemplateEvent` で core テンプレート（`@admin/Product/product.twig` / `Product/detail.twig`）にスニペットを注入し、`RelatedCollectionExtension` が `ProductType` を拡張する。これらプラグイン由来のフック／フォーム拡張は、**`eccube:plugin:enable` 直後の 1 回の `cache:clear` では確定しない**（商品編集画面に関連商品フォームが描画されない）。
+
+原因は本体側の挙動で、**`eccube:plugin:enable` コマンド自身のカーネル起動時に行われるコンテナ再コンパイルが、`enabled` フラグを 1 に更新する前に走る**ため。プラグインディレクトリ配置前のコンテナキャッシュが残っている状態で有効化すると、`eccube.plugins.enabled` が空のままコンテナがダンプされ、Twig 名前空間・ルーティング・フックがすべて欠落する。`enable` が内部で実行する `cache:clear --no-warmup` は、その誤ったコンテナを「新鮮」と判定するため作り直さない。
+
+実測（`docker-compose.dev.yml` の entrypoint 経路、`dtb_plugin.enabled = 1` の状態）:
+
+| 段階 | コンパイル済みコンテナの `eccube.plugins.enabled` | 商品編集画面 |
+|---|---|---|
+| `eccube:plugin:enable` 直後 | `[]` | フォームなし |
+| ＋ `cache:clear` 1 回目 | `[]` | フォームなし |
+| ＋ `cache:clear` 2 回目 | `['RelatedProduct44']` | フォームあり |
+
+そのため entrypoint は有効化後に `bin/console cache:clear` を **2 回** 実行する。手動でプラグインを再有効化した場合も 2 回行うこと。
+
+本体側 issue: [EC-CUBE/ec-cube#7018](https://github.com/EC-CUBE/ec-cube/issues/7018)（コアが修正されたら 2 回目は不要になる）
 
 ### プラグインの導入方法（tar + plugin:install）
 
