@@ -5,76 +5,52 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42\Entity;
+namespace Plugin\RelatedProduct44\Entity;
 
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Eccube\Entity\AbstractEntity;
 use Eccube\Entity\Product;
-use Doctrine\ORM\Mapping as ORM;
+use Plugin\RelatedProduct44\Repository\RelatedProductRepository;
 
 /**
  * Class RelatedProduct.
- *
- * @ORM\Table(name="plg_related_product")
- * @ORM\Entity(repositoryClass="Plugin\RelatedProduct42\Repository\RelatedProductRepository")
  */
+#[ORM\Table(name: 'plg_related_product')]
+#[ORM\Entity(repositoryClass: RelatedProductRepository::class)]
 class RelatedProduct extends AbstractEntity
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", options={"unsigned":true})
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER, options: ['unsigned' => true])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    private ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="content", type="string", nullable=true, length=4000)
-     */
-    private $content;
+    #[ORM\Column(name: 'content', type: Types::STRING, nullable: true, length: 4000)]
+    private ?string $content = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product", inversedBy="RelatedProducts")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     * })
-     */
-    private $Product;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'RelatedProducts')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id')]
+    private ?Product $Product = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Eccube\Entity\Product")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="child_product_id", referencedColumnName="id")
-     * })
-     */
-    private $ChildProduct;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'child_product_id', referencedColumnName: 'id')]
+    private ?Product $ChildProduct = null;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
      * getContent.
-     *
-     * @return string
      */
-    public function getContent()
+    public function getContent(): ?string
     {
         return $this->content;
     }
@@ -82,11 +58,9 @@ class RelatedProduct extends AbstractEntity
     /**
      * set related product content.
      *
-     * @param string $content
-     *
      * @return $this
      */
-    public function setContent($content = null)
+    public function setContent(?string $content = null): self
     {
         $this->content = $content;
 
@@ -94,11 +68,9 @@ class RelatedProduct extends AbstractEntity
     }
 
     /**
-     * get related product content.
-     *
-     * @return Product
+     * get related product product.
      */
-    public function getProduct()
+    public function getProduct(): ?Product
     {
         return $this->Product;
     }
@@ -106,11 +78,9 @@ class RelatedProduct extends AbstractEntity
     /**
      * set related product product.
      *
-     * @param Product $Product
-     *
      * @return $this
      */
-    public function setProduct(Product $Product)
+    public function setProduct(Product $Product): self
     {
         $this->Product = $Product;
 
@@ -119,10 +89,8 @@ class RelatedProduct extends AbstractEntity
 
     /**
      * getChildProduct.
-     *
-     * @return Product
      */
-    public function getChildProduct()
+    public function getChildProduct(): ?Product
     {
         return $this->ChildProduct;
     }
@@ -130,11 +98,9 @@ class RelatedProduct extends AbstractEntity
     /**
      * setChildProduct.
      *
-     * @param Product $Product
-     *
      * @return $this
      */
-    public function setChildProduct(Product $Product = null)
+    public function setChildProduct(?Product $Product = null): self
     {
         $this->ChildProduct = $Product;
 

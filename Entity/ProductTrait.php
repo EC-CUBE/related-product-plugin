@@ -5,37 +5,34 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42\Entity;
+namespace Plugin\RelatedProduct44\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Eccube\Annotation\EntityExtension;
+use Doctrine\ORM\Mapping as ORM;
+use Eccube\Attribute\EntityExtension;
+use Eccube\Entity\Product;
 
-/**
- * @EntityExtension("Eccube\Entity\Product")
- */
+#[EntityExtension(Product::class)]
 trait ProductTrait
 {
     /**
-     * @var RelatedProduct[]|Collection
-     *
-     * @ORM\OneToMany(targetEntity="Plugin\RelatedProduct42\Entity\RelatedProduct", mappedBy="Product", cascade={"persist", "remove"})
-     * @ORM\OrderBy({
-     *     "id"="ASC"
-     * })
+     * @var Collection<int, RelatedProduct>
      */
+    #[ORM\OneToMany(targetEntity: RelatedProduct::class, mappedBy: 'Product', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private $RelatedProducts;
 
     /**
-     * @return RelatedProduct[]|Collection
+     * @return Collection<int, RelatedProduct>
      */
-    public function getRelatedProducts()
+    public function getRelatedProducts(): Collection
     {
         if (null === $this->RelatedProducts) {
             $this->RelatedProducts = new ArrayCollection();
@@ -44,10 +41,7 @@ trait ProductTrait
         return $this->RelatedProducts;
     }
 
-    /**
-     * @param RelatedProduct $RelatedProduct
-     */
-    public function addRelatedProduct(RelatedProduct $RelatedProduct)
+    public function addRelatedProduct(RelatedProduct $RelatedProduct): void
     {
         if (null === $this->RelatedProducts) {
             $this->RelatedProducts = new ArrayCollection();
@@ -56,12 +50,7 @@ trait ProductTrait
         $this->RelatedProducts[] = $RelatedProduct;
     }
 
-    /**
-     * @param RelatedProduct $RelatedProduct
-     *
-     * @return bool
-     */
-    public function removeRelatedProduct(RelatedProduct $RelatedProduct)
+    public function removeRelatedProduct(RelatedProduct $RelatedProduct): bool
     {
         if (null === $this->RelatedProducts) {
             $this->RelatedProducts = new ArrayCollection();

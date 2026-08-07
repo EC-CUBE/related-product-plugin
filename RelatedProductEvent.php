@@ -5,20 +5,23 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42;
+namespace Plugin\RelatedProduct44;
 
 use Eccube\Event\TemplateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class RelatedProductEvent implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    /**
+     * @return array<string, string>
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             '@admin/Product/product.twig' => 'onRenderAdminProduct',
@@ -31,9 +34,9 @@ class RelatedProductEvent implements EventSubscriberInterface
      *
      * @param TemplateEvent $event
      */
-    public function onRenderProductDetail(TemplateEvent $event)
+    public function onRenderProductDetail(TemplateEvent $event): void
     {
-        $event->addSnippet('@RelatedProduct42/front/related_product.twig');
+        $event->addSnippet('@RelatedProduct44/front/related_product.twig');
     }
 
     /**
@@ -41,8 +44,8 @@ class RelatedProductEvent implements EventSubscriberInterface
      *
      * @param TemplateEvent $event
      */
-    public function onRenderAdminProduct(TemplateEvent $event)
+    public function onRenderAdminProduct(TemplateEvent $event): void
     {
-        $event->addSnippet('@RelatedProduct42/admin/related_product.twig');
+        $event->addSnippet('@RelatedProduct44/admin/related_product.twig');
     }
 }

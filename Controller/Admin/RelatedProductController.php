@@ -5,42 +5,29 @@
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct42\Controller\Admin;
+namespace Plugin\RelatedProduct44\Controller\Admin;
 
 use Eccube\Controller\AbstractController;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\ProductRepository;
+use Knp\Component\Pager\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Class RelatedProductController.
  */
 class RelatedProductController extends AbstractController
 {
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $productRepository;
-
-    /**
-     * @var PaginatorInterface
-     */
-    protected $paginator;
-
     /**
      * RelatedProductController constructor.
      *
@@ -49,28 +36,23 @@ class RelatedProductController extends AbstractController
      * @param PaginatorInterface $paginator
      */
     public function __construct(
-        CategoryRepository $categoryRepository,
-        ProductRepository $productRepository,
-        PaginatorInterface $paginator
+        protected CategoryRepository $categoryRepository,
+        protected ProductRepository $productRepository,
+        protected PaginatorInterface $paginator,
     ) {
-        $this->categoryRepository = $categoryRepository;
-        $this->productRepository = $productRepository;
-        $this->paginator = $paginator;
     }
 
     /**
      * search product modal.
      *
      * @param Request $request
-     * @param int $page_no
+     * @param int|string|null $page_no ルートの requirements 経由では文字列, 第 1 ルート経由では null になる
      *
-     * @return \Symfony\Component\HttpFoundation\Response|array
-     *
-     * @Route("/%eccube_admin_route%/related_product/search/product", name="admin_related_product_search")
-     * @Route("/%eccube_admin_route%/related_product/search/product/page/{page_no}", name="admin_related_product_search_product_page", requirements={"page_no":"\d+"})
-     *
-     * @Template("@RelatedProduct42/admin/modal_result.twig")
+     * @return Response|array<string, mixed>|null
      */
+    #[Route(path: '/%eccube_admin_route%/related_product/search/product', name: 'admin_related_product_search')]
+    #[Route(path: '/%eccube_admin_route%/related_product/search/product/page/{page_no}', name: 'admin_related_product_search_product_page', requirements: ['page_no' => '\d+'])]
+    #[Template('@RelatedProduct44/admin/modal_result.twig')]
     public function searchProduct(Request $request, $page_no = null)
     {
         if (!$request->isXmlHttpRequest()) {
@@ -106,7 +88,7 @@ class RelatedProductController extends AbstractController
 
         $qb = $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
 
-        /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
+        /** @var SlidingPagination<int, mixed> $pagination */
         $pagination = $this->paginator->paginate(
             $qb,
             $page_no,

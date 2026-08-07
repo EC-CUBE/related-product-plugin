@@ -1,12 +1,12 @@
 {
-  "name": "ec-cube/relatedproduct42",
-  "version": "4.3.0",
+  "name": "ec-cube/relatedproduct44",
+  "version": "4.4.0",
   "description": "関連商品プラグイン",
   "type": "eccube-plugin",
   "require": {
     "ec-cube/plugin-installer": "^2.0"
   },
   "extra": {
-    "code": "RelatedProduct42"
+    "code": "RelatedProduct44"
   }
 }

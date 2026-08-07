@@ -1,0 +1,34 @@
+services:
+  ec-cube:
+    # 1. EC-CUBE 本体を初回起動時に自動インストール（installer-scripts で fixtures も投入）
+    # 2. マウントしたプラグインを tar 化し eccube:plugin:install でインストール
+    #    （eccube:composer:require はパッケージ API が必要なため path プラグインでは使えない）
+    #    PharData は先頭の "./" エントリで失敗するため、プラグインディレクトリ内で
+    #    "./*" を対象に tar 化する（ドットファイル/docker 関連は除外される）
+    # 3. プラグインを有効化してから Apache を起動
+    #    eccube:plugin:enable コマンド自身の起動時に、まだ enabled=0 の状態でコンテナが
+    #    再コンパイルされるため、eccube.plugins.enabled が空のコンテナが残る。この状態では
+    #    プラグイン由来の TemplateEvent / FormExtension / Twig 名前空間 / ルーティングが
+    #    すべて欠落する（商品編集画面に関連商品フォームが描画されない）。
+    #    この経路では cache:clear 1 回目でも enabled は空のままで、2 回目でようやく
+    #    ['RelatedProduct44'] になることを実測で確認しているため、cache:clear を 2 回流す。
+    #    本体側 issue: https://github.com/EC-CUBE/ec-cube/issues/7018
+    entrypoint: >
+      /bin/bash -c "
+      docker-php-entrypoint ls &&
+      ( cd /var/www/plugin && tar czf /tmp/RelatedProduct44.tar.gz
+      --exclude='./dockerbuild' --exclude='./docker-compose*'
+      --exclude='./var' --exclude='./vendor' --exclude='./node_modules' ./* ) &&
+      bin/console eccube:plugin:install --code=RelatedProduct44 --path=/tmp/RelatedProduct44.tar.gz --if-not-exists &&
+      bin/console eccube:plugin:enable --code=RelatedProduct44 &&
+      bin/console cache:clear &&
+      bin/console cache:clear &&
+      apache2-foreground
+      "
+    environment:
+      USER_ID: ${UID:-}
+      GROUP_ID: ${GID:-}
+    volumes:
+      - ".:/var/www/plugin:cached"
+      # 開発環境(HTTP)でログインできるよう Cookie 設定を上書き
+      - "./dockerbuild/dev-framework.yaml:/var/www/html/app/config/eccube/packages/dev/framework.yaml"

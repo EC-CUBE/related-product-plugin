@@ -1,27 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of EC-CUBE
  *
  * Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
  *
- * http://www.ec-cube.co.jp/
+ * https://www.ec-cube.co.jp/
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Plugin\RelatedProduct\Tests\Web;
+namespace Plugin\RelatedProduct44\Tests\Web;
 
-use Eccube\Tests\Web\AbstractWebTestCase;
-use Plugin\RelatedProduct42\Entity\RelatedProduct;
-use Eccube\Repository\ProductRepository;
 use Eccube\Entity\Product;
+use Eccube\Repository\ProductRepository;
+use Eccube\Tests\Web\AbstractWebTestCase;
+use Plugin\RelatedProduct44\Entity\RelatedProduct;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class RelatedProductControllerTest.
  */
-class RelatedProductControllerTest extends AbstractWebTestCase
+final class RelatedProductControllerTest extends AbstractWebTestCase
 {
     /**
      * @var ProductRepository
@@ -47,22 +50,18 @@ class RelatedProductControllerTest extends AbstractWebTestCase
     /**
      * Test display related product in product detail page.
      */
-    public function testShowRelatedProduct()
+    public function testShowRelatedProduct(): void
     {
         $this->initRelatedProduct($this->Product->getId());
-        $crawler = $this->client->request('GET', $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
+        $crawler = $this->client->request(Request::METHOD_GET, $this->generateUrl('product_detail', ['id' => $this->Product->getId()]));
 
         $this->assertStringContainsString('RelatedProduct-product_area', $crawler->html());
     }
 
     /**
      * insert related product in DB.
-     *
-     * @param $id
-     *
-     * @return RelatedProduct
      */
-    private function initRelatedProduct($id)
+    private function initRelatedProduct(int $id): RelatedProduct
     {
         $fake = $this->getFaker();
         $Product = $this->productRepository->find($id);
