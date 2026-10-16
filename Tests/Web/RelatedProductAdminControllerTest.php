@@ -22,9 +22,11 @@ use Eccube\Entity\ProductCategory;
 use Eccube\Repository\Master\ProductStatusRepository;
 use Eccube\Repository\ProductRepository;
 use Eccube\Tests\Web\Admin\AbstractAdminWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Plugin\RelatedProduct44\Entity\RelatedProduct;
 use Plugin\RelatedProduct44\Repository\RelatedProductRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class RelatedProductAdminControllerTest.
@@ -364,6 +366,105 @@ final class RelatedProductAdminControllerTest extends AbstractAdminWebTestCase
 
         $productList = $crawler->html();
         $this->assertStringContainsString($this->Product->getName(), $productList);
+    }
+
+    /**
+     * 整数の ID でないカテゴリは 400 を返す (DB の型エラーで 500 にしない).
+     */
+    #[DataProvider('invalidIdProvider')]
+    public function testAjaxSearchProductWithInvalidCategoryId(mixed $categoryId): void
+    {
+        $this->client->request(
+            Request::METHOD_POST,
+            $this->generateUrl('admin_related_product_search'),
+            ['id' => '', 'category_id' => $categoryId],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+    }
+
+    /**
+     * 範囲外のページ番号は 400 を返す.
+     */
+    #[DataProvider('invalidPageNoProvider')]
+    public function testAjaxSearchProductPageWithInvalidPageNo(string $pageNo): void
+    {
+        $this->client->request(
+            Request::METHOD_GET,
+            $this->generateUrl('admin_related_product_search_product_page', ['page_no' => $pageNo]),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode(), (string) $this->client->getResponse()->getContent());
+    }
+
+    /**
+     * 検索の前にページ番号なしで開いても 1 ページ目を返す.
+     */
+    public function testAjaxSearchProductWithoutSearchData(): void
+    {
+        $crawler = $this->client->request(
+            Request::METHOD_GET,
+            $this->generateUrl('admin_related_product_search'),
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertStringContainsString($this->Product->getName(), $crawler->html());
+    }
+
+    /**
+     * セッションに残った以前の検索条件の不正な値は条件から外す (ページ送りを 500 にしない).
+     */
+    #[DataProvider('invalidIdProvider')]
+    public function testAjaxSearchProductPageWithInvalidSearchDataInSession(mixed $invalidValue): void
+    {
+        $session = $this->createSession($this->client);
+        $session->set('eccube.plugin.related_product.product.search', ['id' => '', 'category_id' => $invalidValue]);
+        $session->set('eccube.plugin.related_product.product.search.page_no', $invalidValue);
+        $session->save();
+
+        foreach ([
+            $this->generateUrl('admin_related_product_search'),
+            $this->generateUrl('admin_related_product_search_product_page', ['page_no' => 1]),
+        ] as $url) {
+            $crawler = $this->client->request(
+                Request::METHOD_GET,
+                $url,
+                [],
+                [],
+                ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+            );
+
+            $this->assertTrue($this->client->getResponse()->isSuccessful(), $url);
+            $this->assertStringContainsString($this->Product->getName(), $crawler->html(), $url);
+        }
+    }
+
+    /**
+     * @return \Iterator<string, array<mixed>>
+     */
+    public static function invalidIdProvider(): \Iterator
+    {
+        yield '文字列' => ['abc'];
+        yield '整数の範囲外' => ['99999999999'];
+        yield '負の数' => ['-1'];
+        yield '配列' => [['1']];
+    }
+
+    /**
+     * @return \Iterator<string, array<string>>
+     */
+    public static function invalidPageNoProvider(): \Iterator
+    {
+        yield '0' => ['0'];
+        yield '整数の範囲外' => ['99999999999999999999'];
     }
 
     /**
